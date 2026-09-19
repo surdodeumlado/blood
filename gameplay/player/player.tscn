@@ -1,0 +1,127 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://gameplay/player/player.gd" id="1_player"]
+[ext_resource type="Script" path="res://gameplay/movement/movement_controller.gd" id="2_movement"]
+[ext_resource type="Resource" path="res://data/movement/default_movement.tres" id="3_config"]
+[ext_resource type="Script" path="res://presentation/camera/first_person_camera.gd" id="4_camera"]
+[ext_resource type="Script" path="res://presentation/ui/debug_hud.gd" id="5_hud"]
+[ext_resource type="Script" path="res://gameplay/weapons/test_blaster.gd" id="6_blaster"]
+[ext_resource type="Resource" path="res://data/combat/default_combat.tres" id="7_combat"]
+[ext_resource type="Script" path="res://presentation/fx/impact_fx.gd" id="8_fx"]
+[ext_resource type="Script" path="res://presentation/ui/crosshair.gd" id="9_crosshair"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
+radius = 0.4
+height = 1.8
+
+[sub_resource type="StandardMaterial3D" id="Material_gun"]
+albedo_color = Color(0.16, 0.16, 0.19, 1)
+metallic = 0.3
+roughness = 0.45
+
+[sub_resource type="BoxMesh" id="BoxMesh_gun"]
+material = SubResource("Material_gun")
+size = Vector3(0.12, 0.13, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_barrel"]
+material = SubResource("Material_gun")
+size = Vector3(0.06, 0.06, 0.24)
+
+[sub_resource type="StandardMaterial3D" id="Material_flash"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_color = Color(1, 0.85, 0.42, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_flash"]
+material = SubResource("Material_flash")
+radius = 0.055
+height = 0.11
+radial_segments = 8
+rings = 4
+
+[node name="Player" type="CharacterBody3D"]
+collision_layer = 1
+collision_mask = 1
+floor_max_angle = 0.959931
+floor_snap_length = 0.3
+script = ExtResource("1_player")
+
+[node name="Collider" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_player")
+
+[node name="Head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+
+[node name="Camera" type="Camera3D" parent="Head"]
+current = true
+fov = 90.0
+near = 0.05
+far = 500.0
+script = ExtResource("4_camera")
+
+[node name="Blaster" type="Node3D" parent="Head/Camera"]
+script = ExtResource("6_blaster")
+config = ExtResource("7_combat")
+
+[node name="Rig" type="Node3D" parent="Head/Camera/Blaster"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.26, -0.2, -0.3)
+
+[node name="Body" type="MeshInstance3D" parent="Head/Camera/Blaster/Rig"]
+mesh = SubResource("BoxMesh_gun")
+cast_shadow = 0
+
+[node name="Barrel" type="MeshInstance3D" parent="Head/Camera/Blaster/Rig"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, -0.17)
+mesh = SubResource("BoxMesh_barrel")
+cast_shadow = 0
+
+[node name="Muzzle" type="Node3D" parent="Head/Camera/Blaster/Rig"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, -0.26)
+
+[node name="Flash" type="MeshInstance3D" parent="Head/Camera/Blaster/Rig/Muzzle"]
+mesh = SubResource("SphereMesh_flash")
+cast_shadow = 0
+
+[node name="Light" type="OmniLight3D" parent="Head/Camera/Blaster/Rig/Muzzle"]
+light_color = Color(1, 0.84, 0.55, 1)
+light_energy = 7.0
+shadow_enabled = false
+omni_range = 7.0
+
+[node name="ImpactFx" type="Node3D" parent="Head/Camera/Blaster"]
+script = ExtResource("8_fx")
+config = ExtResource("7_combat")
+
+[node name="Movement" type="Node" parent="."]
+script = ExtResource("2_movement")
+config = ExtResource("3_config")
+
+[node name="SlideAudio" type="AudioStreamPlayer" parent="."]
+volume_db = -16.0
+
+[node name="DebugHud" type="CanvasLayer" parent="."]
+script = ExtResource("5_hud")
+
+[node name="Panel" type="PanelContainer" parent="DebugHud"]
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 300.0
+offset_bottom = 232.0
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="DebugHud/Panel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 13
+text = "FPS"
+
+[node name="Crosshair" type="Control" parent="DebugHud"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("9_crosshair")

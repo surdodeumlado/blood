@@ -1,0 +1,264 @@
+# MOVEMENT
+
+Prototype 0.2 — THE BOX: KINETIC FEEL.
+
+## Philosophy
+
+The player is already fast. **There is no sprint.** Shift is **dash**. Nothing
+about the movement set rewards holding a key down for a baseline the game should
+have given you for free.
+
+Movement favours: speed, future aggression, mechanical mastery, momentum
+conservation, fast direction changes, responsive air movement.
+
+**Game feel beats realism.** Where physical plausibility and control fight each
+other, control wins.
+
+### Bunnyhop philosophy
+
+> **WALKING IS ENOUGH TO WIN. MOVEMENT MASTERY IS ENOUGH TO DOMINATE.**
+
+Bunnyhop is never required. A player who only walks, jumps, dashes and slides
+moves at ~9 m/s and has full control of the game. A player who learns to
+air-strafe moves at 20–24 m/s, and the difference is entirely theirs.
+
+The skill lives in: jump/landing timing, synchronising A/D with mouse movement,
+the trajectory you choose, whether you keep momentum through the landing, map
+knowledge, and combining the systems. It is not a one-frame window and it is not
+automated either.
+
+**There is no auto-bhop.** Jump reads `is_action_just_pressed`, so holding Space
+produces exactly one jump, ever. You have to press it again, and you have to
+press it at the right moment.
+
+## Where the numbers live
+
+All of them: `data/movement/default_movement.tres`
+Schema and documentation: `gameplay/movement/movement_config.gd`
+Combat / feedback numbers: `data/combat/default_combat.tres`
+
+Nothing hardcodes a tuning value. Edit the `.tres` and press Play. To add a knob,
+add an `@export` to `MovementConfig` and use it.
+
+## The air model, in two terms
+
+This is the core of 0.2. Air movement is deliberately split so that
+responsiveness and skill gain are separate, independently tunable things.
+
+### Term 1 — baseline control (`air_acceleration`, `air_turn_rate`)
+
+- While horizontal speed is **below** `move_speed` (9 m/s): ordinary Quake-style
+  acceleration at 16 m/s². Step off a ledge from a standstill and you can still
+  fly the jump normally.
+- While horizontal speed is **at or above** `move_speed`: the term stops adding
+  and becomes a **speed-preserving turn** limited to `air_turn_rate` (110 °/s).
+  It rotates the velocity vector; it cannot lengthen it.
+
+This is why the game still feels responsive at 24 m/s while remaining impossible
+to farm. Holding a strafe key at speed redirects you and gives you nothing.
+
+### Term 2 — the technique (`air_strafe_acceleration`, `air_speed_cap`)
+
+Identical in shape to Quake/CS air acceleration, but the wish speed is
+`air_speed_cap` (1.1 m/s) rather than the full move speed:
+
+```
+add_speed = air_speed_cap - dot(velocity, wish_dir)
+if add_speed <= 0: nothing happens
+gain = min(air_strafe_acceleration * dt, add_speed) * soft_ceiling_falloff(speed)
+velocity += wish_dir * gain
+```
+
+Consequences, which are the whole design:
+
+| What you do | What happens |
+|---|---|
+| Hold W at speed | velocity is aligned with the wish dir, `dot >> cap`, **zero gain** |
+| Hold A, view fixed | velocity rotates toward A, `dot` crosses the cap in ~3 ticks, **gain stops** |
+| Hold A **and turn the view to match** | wish dir stays just ahead of velocity, `dot` stays under the cap, **speed is added every tick** |
+| Hold A and turn too fast/slow | you fall in and out of the gain window; partial gain |
+
+Measured in the headless test: holding a strafe key with a fixed view over half
+a second gains **+0.07 m/s**. A correct strafe run goes **9 → 22.9 m/s**.
+
+## Bunnyhop: what jumping actually does
+
+The reward for a clean hop is **friction you never pay**.
+
+`MovementController.step()` knows, before running ground physics, whether a jump
+will fire this tick. If it will, ground friction is skipped entirely. So:
+
+- **Land and jump on the same tick** → you keep 100% of your speed.
+- **Land and jump three ticks late** → you paid `momentum_friction` (14 m/s²)
+  for three ticks, about 0.7 m/s.
+- **Land and just run** → you bleed back toward 9 m/s in roughly a second.
+
+No magic window, no bonus, no combo counter that does anything. Just timing.
+
+### Jump buffer and coyote time
+
+| Knob | Value | Purpose |
+|---|---|---|
+| `jump_buffer_time` | **0.10 s** | a jump pressed up to 100 ms before landing still fires on the landing tick |
+| `coyote_time` | **0.10 s** | jump still works for 100 ms after walking off an edge |
+| `bhop_grace_time` | 0.12 s | **display only** — classifies a hop as "clean" for the HUD chain counter. Grants nothing. |
+
+0.10 s is 6 physics ticks at 60 Hz. It exists so that input timing is fair across
+framerates and so that landing does not eat a press, not to automate the
+technique: you still have to press per hop, and pressing early enough to be
+buffered is itself the timing.
+
+**Tune `jump_buffer_time` first if bhop feels too hard or too free.**
+
+## Soft ceiling
+
+Not a clamp. `soft_ceiling_falloff()` scales term 2's gain:
+
+```
+speed <= air_falloff_start (14)   -> factor 1.0     full gain
+speed >= air_soft_ceiling  (25)   -> factor 0.0     gain has faded to nothing
+between                           -> pow(1 - t, air_falloff_exponent)
+```
+
+With `air_falloff_exponent = 1.0` the falloff is linear, so gain per hop shrinks
+smoothly from 14 m/s upward and a skilled player asymptotes toward 25 rather than
+slamming into it. Raise the exponent to keep gain longer and then lose it
+suddenly; lower it to make the last few m/s much harder.
+
+Above the ceiling — reachable by dashing, or sliding down the ramp —
+`overspeed_drag` (6 m/s²) gently bleeds airborne speed back down to it. Nothing
+snaps.
+
+`safety_speed_limit` (40 m/s) is a **safety net against physics blowups, not a
+gameplay cap**. It sits far above the soft ceiling and reaching it means a bug.
+
+### Speed bands (targets, measured at 60 Hz)
+
+| Band | Speed |
+|---|---|
+| Normal movement | 9 m/s |
+| Competent bhop | 12–16 m/s |
+| Good bhop | 16–20 m/s |
+| Excellent bhop | 20–24 m/s |
+| Soft ceiling | 25 m/s |
+
+## Current values
+
+| Knob | Value | Note |
+|---|---|---|
+| move_speed | 9.0 | base ground speed |
+| ground_acceleration | 55.0 | 0 → 9 m/s in ~0.16 s |
+| ground_deceleration | 45.0 | applied only with no input |
+| momentum_friction | 14.0 | above move_speed with input; the bhop timing pressure |
+| crouch_speed_multiplier | 0.45 | |
+| air_acceleration | 16.0 | only below move_speed |
+| air_turn_rate | 110 °/s | speed-preserving redirection above move_speed |
+| air_strafe_acceleration | 60.0 | the skill term |
+| air_speed_cap | 1.1 | the gain window |
+| air_falloff_start | 14.0 | |
+| air_soft_ceiling | 25.0 | |
+| air_falloff_exponent | 1.0 | linear |
+| overspeed_drag | 6.0 | |
+| safety_speed_limit | 40.0 | safety net, not a cap |
+| jump_velocity / gravity | 8.5 / 24.0 | ~0.71 s airtime |
+| coyote_time / jump_buffer_time | 0.10 / 0.10 | |
+| dash_speed / duration / cooldown | 20.0 / 0.14 s / 0.50 s | cooldown starts at dash end |
+| dash_exit_speed_multiplier | 0.85 | dashing while fast is a net loss |
+| air_dash_limit | 1 | refilled on landing |
+| slide_min_speed / slide_end_speed | 7.0 / 4.0 | |
+| slide_entry_speed_multiplier | 1.25 | entry = max(current, 11.25) |
+| slide_friction | 3.0 | vs 45 standing |
+| slide_steer_acceleration | 9.0 | direction only |
+| slide_slope_acceleration | 18.0 | downhill gain |
+| stand / crouch height | 1.8 / 0.9 | capsule radius 0.4 |
+| fov_base → fov_max | 90 → 108 | mapped over 9 → 25 m/s |
+| mouse_sensitivity | 0.0022 | radians per pixel |
+
+## Dash / slide / bhop interaction
+
+The goal is that dash and slide **complement** bunnyhop rather than replace it.
+Nothing below is scripted as a combo; it all falls out of the rules.
+
+**Dash is a correction tool, not a speed source.** It sets speed to
+`max(dash_speed, current_speed)` — never additive — and multiplies by 0.85 on
+exit. So mashing it on cooldown while already at 22 m/s makes you *slower*, and
+the headless test confirms dash spam peaks at exactly `dash_speed`. It also zeros
+vertical velocity for its duration, so a mistimed air dash kills the hop you were
+in the middle of. Used well it is a dodge, a mid-air trajectory correction, or a
+way to convert a bad landing into a slide.
+
+**Slide is a momentum bank.** Friction is 3 m/s² instead of 14, entry is a
+`max()` and steering only rotates, so a slide preserves a fast landing for over a
+second without ever generating speed. Slide-jump carries 100% of horizontal
+velocity.
+
+Emergent combinations that work because of the above, not because anything
+codes for them:
+
+- **bhop → slide → jump** — bank a fast landing, ride it, launch back into hops.
+- **dash → jump → air-strafe** — dash gives you 20 m/s to start strafing from
+  above `air_falloff_start`, at the cost of the dash cooldown.
+- **high-speed landing → slide** — the cheapest way to not lose a bad hop.
+- **ramp slide → jump** — slope acceleration can put you over the soft ceiling;
+  `overspeed_drag` takes it back slowly, so the ramp is genuinely worth knowing.
+
+If something emergent turns out to be fun, has skill expression and does not
+break combat, it stays.
+
+## Momentum decisions
+
+**Jump never resets horizontal velocity.** Neither does landing. Speed is only
+removed by friction, by the slide ending, by `overspeed_drag`, or by hitting
+geometry.
+
+**Nothing additive.** Every speed-granting move uses `max()` or a bounded gain:
+dash `max()`, slide entry `max()`, air redirection and slide steering rotate
+without lengthening, and the strafe term is gated by `air_speed_cap` and faded by
+the soft ceiling.
+
+## Crouch / slide safety
+
+The capsule is resized from `MovementConfig`, and the controller **never grows
+the capsule into geometry**. Before standing, a `PhysicsShapeQueryParameters3D`
+shape query tests a standing capsule at the player position; if anything is hit,
+the player stays crouched. The check capsule is 2 cm thinner than the real one so
+hugging a wall does not falsely block standing. The same guard runs in
+`_update_height()`, so a slide-jump under a low ceiling cannot pop you into it.
+
+## Frame-rate independence
+
+All movement runs in `_physics_process`, which Godot ticks at a fixed rate
+(`physics/common/physics_ticks_per_second = 60`, now set explicitly). The
+headless test runs the same perfect-strafe bot at 60 Hz and at 120 Hz: peak speed
+**22.93 vs 23.55 m/s, 2.7% drift**. The residual comes from the vector geometry
+of the Quake air model when the wish direction is exactly perpendicular, and is
+inherent to it; correct strafing (wish direction slightly ahead of velocity)
+integrates cleanly.
+
+The camera — look, recoil recovery and FOV easing — runs in `_process` at render
+rate, using `1 - exp(-k * dt)` easing so it is also rate independent.
+
+## Architecture
+
+```
+gameplay/player/player.gd                   reads input actions, wires feedback
+gameplay/movement/movement_controller.gd    all movement, _physics_process
+gameplay/movement/movement_config.gd        the tuning schema (Resource)
+presentation/camera/first_person_camera.gd  pitch, recoil, dynamic FOV
+presentation/ui/debug_hud.gd                tuning readout
+presentation/ui/crosshair.gd                crosshair + hitmarker
+```
+
+`player.gd` fills `MovementController.input_dir / wants_jump / wants_dash /
+wants_crouch` once per physics tick and calls `step(delta)`. The controller emits
+`jumped / landed / dashed / slide_started / slide_ended`, which the player turns
+into audio. Yaw is applied to the `CharacterBody3D`; pitch to the `Camera3D`.
+
+Input goes through the project's input actions only — no keycodes in gameplay
+code.
+
+## Not yet
+
+No head bob. No weapon sway. No wall running, no grappling, no ledge grab, no
+stamina. Deliberately: the movement already provides plenty of camera motion at
+23 m/s and anything more makes this nauseating.

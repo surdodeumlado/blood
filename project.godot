@@ -12,7 +12,12 @@ config_version=5
 
 config/name="Blood Splatter: Nine Circles"
 config/features=PackedStringArray("4.7", "GL Compatibility")
+run/main_scene="res://world/chambers/prototype/the_box.tscn"
 config/icon="res://icon.svg"
+
+[autoload]
+
+Sfx="*res://core/autoload/sfx.gd"
 
 [display]
 
@@ -92,6 +97,7 @@ weapon_previous={
 [physics]
 
 3d/physics_engine="Jolt Physics"
+common/physics_ticks_per_second=60
 
 [rendering]
 

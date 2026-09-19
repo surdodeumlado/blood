@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="MovementConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://gameplay/movement/movement_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+move_speed = 9.0
+ground_acceleration = 55.0
+ground_deceleration = 45.0
+momentum_friction = 14.0
+crouch_speed_multiplier = 0.45
+air_acceleration = 16.0
+air_turn_rate = 110.0
+air_strafe_acceleration = 60.0
+air_speed_cap = 1.1
+air_falloff_start = 14.0
+air_soft_ceiling = 25.0
+air_falloff_exponent = 1.0
+overspeed_drag = 6.0
+safety_speed_limit = 40.0
+max_fall_speed = 45.0
+jump_velocity = 8.5
+gravity = 24.0
+coyote_time = 0.1
+jump_buffer_time = 0.1
+bhop_grace_time = 0.12
+dash_speed = 20.0
+dash_duration = 0.14
+dash_cooldown = 0.5
+dash_exit_speed_multiplier = 0.85
+air_dash_limit = 1
+slide_min_speed = 7.0
+slide_end_speed = 4.0
+slide_entry_speed_multiplier = 1.25
+slide_friction = 3.0
+slide_steer_acceleration = 9.0
+slide_slope_acceleration = 18.0
+stand_height = 1.8
+crouch_height = 0.9
+capsule_radius = 0.4
+eye_offset = 0.2
+height_change_speed = 6.0
+mouse_sensitivity = 0.0022
+pitch_limit_degrees = 89.0
+fov_base = 90.0
+fov_max = 108.0
+fov_speed_start = 9.0
+fov_speed_full = 25.0
+fov_lerp_speed = 6.0
