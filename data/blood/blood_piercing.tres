@@ -1,0 +1,72 @@
+[gd_resource type="Resource" script_class="BloodProfile" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://presentation/gore/blood_profile.gd" id="1_profile"]
+
+[resource]
+script = ExtResource("1_profile")
+damage_type = 2
+burst_amount = 6
+burst_scale = 0.04
+streak_stretch = 3.4
+particle_speed_min = 3.5
+particle_speed_max = 8.0
+particle_lifetime = 0.45
+directional_bias = 0.95
+radial_scatter_fraction = 0.12
+velocity_variance = 0.45
+lateral_bias = 0.0
+
+
+env_splat_chance = 0.65
+env_splat_count = 2
+env_splat_size_min = 0.12
+env_splat_size_max = 0.3
+env_splat_distance = 3.5
+env_streak_ratio = 1.5
+env_splat_lifetime = 0.0
+headshot_multiplier = 2.2
+kill_multiplier = 1.6
+limb_multiplier = 0.6
+combined_event_falloff = 0.5
+energy_influence = 1.0
+overkill_influence = 0.5
+color = Color(0.42, 0.015, 0.03, 1)
+env_color = Color(0.24, 0.01, 0.02, 1)
+spread_angle = 22.0
+spread_concentration = 2.4
+lateral_flatten = 1.0
+chunk_spread_angle = 70.0
+chunk_elevation_min = 10.0
+chunk_elevation_max = 55.0
+droplet_count = 8
+droplet_spread_angle = 40.0
+droplet_elevation_min = -5.0
+droplet_elevation_max = 40.0
+droplet_speed_min = 4.0
+droplet_speed_max = 10.0
+droplet_size = 0.035
+droplet_splat_size = 0.35
+droplet_medium_fraction = 0.2
+droplet_large_fraction = 0.04
+back_fraction = 0.06
+back_spread_angle = 55.0
+back_speed_scale = 0.5
+back_size_scale = 1.2
+micro_weight = 0.7
+small_weight = 0.7
+medium_weight = 0.7
+grain_weight = 0.3
+chunk_weight = 0.3
+micro_speed = 8.0
+small_speed = 9.0
+medium_speed = 13.0
+large_speed = 5.0
+micro_size = 0.024
+small_size = 0.045
+medium_size = 0.065
+grain_size = 0.04
+chunk_size = 0.09
+stain_shape_weights = PackedFloat32Array(0.3, 0.3, 0.06, 0.2, 0.1, 0.04, 0.0)
+stain_scale = 0.8
+direct_accent_rays = 3
+direct_accent_distance = 5.0

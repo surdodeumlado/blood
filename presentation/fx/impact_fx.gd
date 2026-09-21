@@ -15,6 +15,11 @@ const HEAD_SCALE := 1.45
 
 @export var config: CombatConfig
 
+## Last beam drawn, kept so the smoke test can prove the visual tracer ends
+## exactly where the gameplay raycast landed. Debug only; nothing reads these.
+var last_tracer_from := Vector3.ZERO
+var last_tracer_to := Vector3.ZERO
+
 var _tracers: Array[MeshInstance3D] = []
 var _tracer_mats: Array[StandardMaterial3D] = []
 var _tracer_life: Array[float] = []
@@ -87,6 +92,8 @@ func _process(delta: float) -> void:
 
 ## Draws a beam from the muzzle to the impact point for tracer_lifetime seconds.
 func tracer(from: Vector3, to: Vector3) -> void:
+	last_tracer_from = from
+	last_tracer_to = to
 	var dir := to - from
 	var length := dir.length()
 	if length < 0.05:

@@ -10,18 +10,33 @@ const ZONE_HEAD := &"head"
 
 @export var config: CombatConfig
 
+## Toggled together for every dummy via the "dummies" group.
+const DEBUG_GROUP := &"dummies"
+
 @onready var _visual: Node3D = $Visual
+@onready var _reservoir: BloodReservoir = $BloodReservoir
 @onready var _collider: CollisionShape3D = $Collider
-@onready var _head_collider: CollisionShape3D = $HeadCollider
+@onready var _body_hurtbox: Hurtbox = $Hurtboxes/BodyHurtbox
+@onready var _head_hurtbox: Hurtbox = $Hurtboxes/HeadHurtbox
+@onready var _body_hurtbox_shape: CollisionShape3D = $Hurtboxes/BodyHurtbox/Shape
+@onready var _head_hurtbox_shape: CollisionShape3D = $Hurtboxes/HeadHurtbox/Shape
+@onready var _hurtbox_debug: Node3D = $HurtboxDebug
 
 var _health := 0.0
 var _flash := 0.0
 var _stagger := 0.0
 var _lean := Vector3.ZERO
+## PURELY PRESENTATIONAL death throw. The visual is carried along the blow for a
+## moment before it is hidden, so a maul kill has something moving in the
+## direction the blood went. Hurtboxes and the collider are already disabled by
+## the time this runs, so it cannot affect gameplay in any way.
+var _death_throw := Vector3.ZERO
+var _death_spin := Vector3.ZERO
+var _death_time := 0.0
 var _alive := true
 var _spawn_position := Vector3.ZERO
 var _material: StandardMaterial3D
-var _head_shape_index := -1
+var _overkill := 0.0
 
 
 func _ready() -> void:
@@ -32,15 +47,93 @@ func _ready() -> void:
 	for child in _visual.get_children():
 		if child is MeshInstance3D:
 			child.material_override = _material
-	# Own the head sphere too, so its generosity is a config number and not
-	# something buried in a scene file.
-	var head_shape := SphereShape3D.new()
-	head_shape.radius = config.dummy_head_radius
-	_head_collider.shape = head_shape
-	_head_shape_index = _shape_index_of(_head_collider)
-
+	_build_hurtboxes()
+	add_to_group(DEBUG_GROUP)
 	_health = config.dummy_max_health
 	_refresh_tint()
+	# The blood system ticks every registered reservoir's wounds, so a wounded
+	# dummy drips without this scene needing a _process of its own.
+	var blood := BloodSystem.find(get_tree())
+	if blood != null:
+		blood.register_reservoir(_reservoir)
+
+
+## Hurtbox geometry is owned here and driven entirely by config, so aim
+## forgiveness is a number you can tune rather than something buried in a scene.
+func _build_hurtboxes() -> void:
+	var body_shape := CapsuleShape3D.new()
+	body_shape.radius = config.body_hurtbox_radius
+	body_shape.height = config.body_hurtbox_height
+	_body_hurtbox_shape.shape = body_shape
+	_body_hurtbox_shape.position.y = config.body_hurtbox_height * 0.5
+	_body_hurtbox.zone = Hurtbox.ZONE_BODY
+	_body_hurtbox.collision_layer = config.hurtbox_layer
+
+	var head_shape := BoxShape3D.new()
+	head_shape.size = config.head_hurtbox_size
+	_head_hurtbox_shape.shape = head_shape
+	_head_hurtbox_shape.position.y = config.head_hurtbox_y
+	_head_hurtbox.zone = Hurtbox.ZONE_HEAD
+	_head_hurtbox.collision_layer = config.hurtbox_layer
+
+	_build_hurtbox_debug(body_shape, head_shape)
+
+
+## Optional wireframe-ish overlay so hurtbox tuning can be done by eye.
+func _build_hurtbox_debug(body_shape: CapsuleShape3D, head_shape: BoxShape3D) -> void:
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.albedo_color = Color(0.2, 1.0, 0.4, 0.18)
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+
+	var head_mat := mat.duplicate() as StandardMaterial3D
+	head_mat.albedo_color = Color(1.0, 0.85, 0.2, 0.22)
+
+	var body_mesh := CapsuleMesh.new()
+	body_mesh.radius = body_shape.radius
+	body_mesh.height = body_shape.height
+	_add_debug_mesh(body_mesh, mat, _body_hurtbox_shape.position.y)
+
+	var head_mesh := BoxMesh.new()
+	head_mesh.size = head_shape.size
+	_add_debug_mesh(head_mesh, head_mat, _head_hurtbox_shape.position.y)
+
+	_hurtbox_debug.visible = false
+
+
+func _add_debug_mesh(mesh: Mesh, mat: Material, y: float) -> void:
+	var mi := MeshInstance3D.new()
+	mi.mesh = mesh
+	mi.material_override = mat
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_hurtbox_debug.add_child(mi)
+	mi.position.y = y
+
+
+func set_hurtbox_debug(shown: bool) -> void:
+	_hurtbox_debug.visible = shown
+
+
+## A dead dummy is not shootable, and it stops being shootable IMMEDIATELY.
+##
+## Clearing collision_layer takes effect for the very next ray query, with no
+## deferred frame in between - that gap is what used to let a shot fired the
+## same frame as the kill still resolve against a corpse. The shape disable is
+## deferred because it is not safe to touch mid-physics, and is only a belt to
+## the layer change.
+func _set_hurtboxes_enabled(enabled: bool) -> void:
+	var layer := config.hurtbox_layer if enabled else 0
+	_body_hurtbox.collision_layer = layer
+	_head_hurtbox.collision_layer = layer
+	_body_hurtbox_shape.set_deferred("disabled", not enabled)
+	_head_hurtbox_shape.set_deferred("disabled", not enabled)
+
+
+## Hit resolution asks this before applying anything. A corpse says no, so a
+## corpse produces no damage, no hitmarker and no blood.
+func is_damageable() -> bool:
+	return _alive
 
 
 func _physics_process(delta: float) -> void:
@@ -48,6 +141,8 @@ func _physics_process(delta: float) -> void:
 		_flash = maxf(_flash - delta, 0.0)
 		_material.emission_energy_multiplier = 6.0 * (_flash / config.dummy_flash_time)
 
+	if _death_time > 0.0:
+		_advance_death_throw(delta)
 	if _lean.length_squared() > 0.000001:
 		_lean = _lean.lerp(Vector3.ZERO, 1.0 - exp(-10.0 * delta))
 		_visual.rotation = _lean
@@ -75,11 +170,15 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 
-## The dummy owns its own hitbox layout: the weapon hands back the shape index
-## the trace reported and gets told which zone that was. The head sphere is
-## deliberately generous - this prototype is about feel, not competitive aim.
-func hit_zone(shape_index: int) -> StringName:
-	return ZONE_HEAD if shape_index == _head_shape_index else ZONE_BODY
+## Optional extra the blood system asks for by duck-typing. Reports how far past
+## zero the last hit went, as a fraction of a full health bar.
+## Duck-typed so a multi-hit sweep can scale secondary damage to the victim.
+func max_health() -> float:
+	return config.dummy_max_health
+
+
+func overkill_ratio() -> float:
+	return _overkill
 
 
 ## Duck-typed damage entry point. The weapon only checks has_method(), so there
@@ -93,6 +192,9 @@ func take_damage(
 		return false
 
 	var force := config.dummy_headshot_force if zone == ZONE_HEAD else 1.0
+	# Damage past zero, as a fraction of a full health bar. Blood reads this to
+	# make a wildly overkilling hit look like one.
+	_overkill = maxf(amount - maxf(_health, 0.0), 0.0) / maxf(config.dummy_max_health, 0.001)
 	_health -= amount
 	_flash = config.dummy_flash_time
 	_stagger = config.dummy_stagger_time
@@ -113,66 +215,60 @@ func take_damage(
 	return true
 
 
-## A raycast reports the shape INDEX it hit, which is not the same thing as
-## child order, so resolve it through the shape owners instead of guessing.
-func _shape_index_of(node: CollisionShape3D) -> int:
-	for owner_id in get_shape_owners():
-		if shape_owner_get_owner(owner_id) == node:
-			return shape_owner_get_shape_index(owner_id, 0)
-	return -1
-
-
 func _die(push: Vector3) -> void:
 	_alive = false
-	_visual.visible = false
 	_collider.set_deferred("disabled", true)
-	_head_collider.set_deferred("disabled", true)
+	_set_hurtboxes_enabled(false)
 	velocity = Vector3.ZERO
+
+	# The body is thrown the way it was hit, for a fraction of a second, purely
+	# as presentation. Before this it was hidden on the same frame it died, so a
+	# maul blow sent blood flying in one direction while the target vanished
+	# where it stood - which read as an explosion rather than as an impact.
+	if config.dummy_death_throw_time > 0.0 and push.length_squared() > 0.0001:
+		_death_throw = push.normalized() * config.dummy_death_throw_speed
+		_death_throw.y += config.dummy_death_throw_lift
+		_death_spin = Vector3(
+			randf_range(-1.0, 1.0), randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)
+		) * config.dummy_death_spin
+		_death_time = config.dummy_death_throw_time
+	else:
+		_visual.visible = false
+	# The body is about to be hidden. Its open wounds finish out in world space
+	# instead of vanishing with it, so a kill keeps bleeding for a moment.
+	var blood := BloodSystem.find(get_tree())
+	if blood != null and _reservoir != null:
+		for w in _reservoir.wounds:
+			blood.add_remnant(w, global_position + Vector3.UP * 1.0)
+		_reservoir.wounds.clear()
 	Sfx.play_3d(&"death", global_position, randf_range(0.9, 1.05), -4.0)
-	_spawn_fragments(push)
 	_respawn_after(config.dummy_respawn_delay)
 
 
-## Placeholder break-apart, NOT the gore system. A fixed, small number of short
-## lived rigid bodies that free themselves; nothing accumulates.
-func _spawn_fragments(push: Vector3) -> void:
-	var mesh := BoxMesh.new()
-	mesh.size = Vector3(0.22, 0.22, 0.22)
-	var shape := BoxShape3D.new()
-	shape.size = mesh.size
-	var mat := _build_material()
-	var parent := get_parent()
-
-	for i in config.death_fragments:
-		var frag := RigidBody3D.new()
-		# Own layer, and a mask that only sees the world: fragments never shove
-		# the player or block a shot.
-		frag.collision_layer = 4
-		frag.collision_mask = 1
-		var cs := CollisionShape3D.new()
-		cs.shape = shape
-		var mi := MeshInstance3D.new()
-		mi.mesh = mesh
-		mi.material_override = mat
-		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		frag.add_child(cs)
-		frag.add_child(mi)
-		parent.add_child(frag)
-		frag.global_position = global_position + Vector3(
-			randf_range(-0.3, 0.3), randf_range(0.4, 1.5), randf_range(-0.3, 0.3)
-		)
-		frag.linear_velocity = (
-			push * config.death_fragment_impulse * 0.5
-			+ Vector3(
-				randf_range(-1.0, 1.0), randf_range(0.6, 1.6), randf_range(-1.0, 1.0)
-			) * config.death_fragment_impulse
-		)
-		frag.angular_velocity = Vector3(
-			randf_range(-12.0, 12.0), randf_range(-12.0, 12.0), randf_range(-12.0, 12.0)
-		)
-		_free_after(frag, config.death_fragment_lifetime)
+## Carries the corpse visual along the blow and then retires it. Local to the
+## Visual node, so nothing physical moves and nothing can be hit.
+func _advance_death_throw(delta: float) -> void:
+	_death_time -= delta
+	if _death_time <= 0.0:
+		_visual.visible = false
+		_visual.position = Vector3.ZERO
+		_visual.rotation = Vector3.ZERO
+		_death_throw = Vector3.ZERO
+		return
+	_death_throw.y -= config.dummy_gravity * delta
+	# global_basis.inverse() keeps the throw world-aligned even though the
+	# offset is applied in the body's local space.
+	_visual.position += (global_basis.inverse() * _death_throw) * delta
+	_visual.rotation += _death_spin * delta
+	# Sink away rather than popping out of existence.
+	var t: float = clampf(_death_time / maxf(config.dummy_death_throw_time, 0.001), 0.0, 1.0)
+	_visual.scale = Vector3.ONE * lerpf(0.55, 1.0, t)
 
 
+## Death gore now comes from BloodSystem: the weapon reports the kill and the
+## blood profile decides what it looks like. The old runtime-allocated rigid
+## body fragments are gone, which also removes the only place this scene
+## created nodes while playing.
 func _free_after(node: Node, seconds: float) -> void:
 	await get_tree().create_timer(seconds).timeout
 	if is_instance_valid(node):
@@ -188,10 +284,16 @@ func _respawn_after(seconds: float) -> void:
 	_health = config.dummy_max_health
 	_lean = Vector3.ZERO
 	_visual.rotation = Vector3.ZERO
+	_visual.position = Vector3.ZERO
+	_visual.scale = Vector3.ONE
+	_death_time = 0.0
+	_death_throw = Vector3.ZERO
 	_visual.visible = true
 	_collider.set_deferred("disabled", false)
-	_head_collider.set_deferred("disabled", false)
+	_set_hurtboxes_enabled(true)
 	_alive = true
+	if _reservoir != null:
+		_reservoir.refill()
 	_refresh_tint()
 
 
@@ -210,3 +312,29 @@ func _build_material() -> StandardMaterial3D:
 	mat.emission = Color(1.0, 0.3, 0.25)
 	mat.emission_energy_multiplier = 0.0
 	return mat
+
+
+## Duck-typed: this is how a Hurtbox finds the body's material store.
+func blood_reservoir() -> BloodReservoir:
+	return _reservoir
+
+
+## Immediate respawn, for the Blood Lab reset. Bypasses the timer so the four
+## comparison kills can be repeated without waiting.
+func force_respawn() -> void:
+	global_position = _spawn_position
+	velocity = Vector3.ZERO
+	_health = config.dummy_max_health
+	_lean = Vector3.ZERO
+	_visual.rotation = Vector3.ZERO
+	_visual.position = Vector3.ZERO
+	_visual.scale = Vector3.ONE
+	_death_time = 0.0
+	_death_throw = Vector3.ZERO
+	_visual.visible = true
+	_collider.set_deferred("disabled", false)
+	_set_hurtboxes_enabled(true)
+	_alive = true
+	if _reservoir != null:
+		_reservoir.refill()
+	_refresh_tint()

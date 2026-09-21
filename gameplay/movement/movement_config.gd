@@ -10,10 +10,31 @@ extends Resource
 @export_group("Ground")
 ## Speed the player accelerates to on flat ground with no extra momentum.
 @export var move_speed := 9.0
-## m/s^2 added toward the input direction while grounded.
-@export var ground_acceleration := 55.0
-## m/s^2 bled off when there is no movement input at all.
-@export var ground_deceleration := 45.0
+## m/s^2 added toward the input direction while grounded. MUST stay comfortably
+## above ground_deceleration, because ground friction now runs every grounded
+## tick: if acceleration cannot out-pace it, the player can never reach
+## move_speed at all.
+@export var ground_acceleration := 150.0
+## m/s^2 of ground traction, applied every grounded tick while at or below
+## move_speed - with or without input. This is what removes the "walking on
+## soap" feel: any velocity that is not along the input direction is scrubbed
+## off hard, so turning and stopping are crisp.
+##
+## It is deliberately scoped to normal walking speed. Above move_speed the much
+## gentler momentum_friction takes over instead, and on the tick a jump fires
+## friction is skipped entirely, so bhop and slide momentum are untouched.
+@export var ground_deceleration := 95.0
+## Seconds after LANDING during which traction is suspended while the player is
+## still holding a direction.
+##
+## Walking never triggers it, because walking never lands - so normal ground
+## movement keeps its full traction. A hop in progress does, which is the whole
+## point: building speed from a standstill happens at 0-9 m/s, exactly the band
+## traction governs, and letting 95 m/s^2 chew on every imperfectly timed
+## landing is what broke bunnyhop after the traction pass.
+##
+## Set to 0.0 to get the un-graced behaviour back for comparison.
+@export var landing_traction_grace := 0.2
 ## m/s^2 bled off when moving FASTER than move_speed while still holding input.
 ## This is the bunnyhop timing pressure knob: every physics tick spent standing
 ## on the ground instead of jumping costs this much speed. Raise it to punish
@@ -22,26 +43,43 @@ extends Resource
 ## move_speed multiplier while crouch-walking.
 @export var crouch_speed_multiplier := 0.45
 
-@export_group("Air control")
+@export_group("Air control (steering only - never grants speed)")
 ## Baseline air control, used only while horizontal speed is BELOW move_speed:
 ## step off a ledge from a standstill and you can still fly the jump normally.
 @export var air_acceleration := 16.0
-## Above move_speed the baseline term stops adding and becomes pure redirection:
-## this many degrees per second of speed-PRESERVING turn. It is what keeps fast
-## air movement responsive, and it is incapable of granting speed, so holding a
-## strafe key can never be a substitute for the technique below.
-@export var air_turn_rate := 110.0
+## Degrees per second the velocity may be rotated toward the input direction
+## while airborne. Speed-PRESERVING: this is "how much can I turn", and it is
+## deliberately unable to change "how fast can I go" - that is the job of the
+## strafe block below. Raising it makes the air feel more agile without making
+## anyone faster.
+@export var air_control_turn_rate := 120.0
+## Extra steering granted when the player is NOT holding forward. Lateral-only
+## input buys tighter, more aggressive curves at the cost of longitudinal
+## efficiency (see air_strafe_lateral_efficiency).
+@export var air_control_lateral_bonus := 1.0
 
-@export_group("Air strafe / bunnyhop")
-## The skill term. Only applies while the velocity is nearly perpendicular to
-## the input direction (see air_speed_cap), so it rewards real air-strafe
-## technique instead of holding a key.
-@export var air_strafe_acceleration := 60.0
-## Quake/CS "max wish speed" for the strafe term: speed is only added while the
-## projection of velocity onto the input direction is BELOW this. Small value =
-## you must keep rotating the view to stay in the gain window. This single
-## number is what makes strafing a technique rather than a held key.
-@export var air_speed_cap := 1.1
+@export_group("Air strafe / bunnyhop (speed gain only)")
+## m/s^2 added ALONG THE CURRENT VELOCITY at perfect strafe/turn sync.
+##
+## The model: air-strafe gain is paid for by SYNCHRONISATION between the lateral
+## key and the camera turn, not by the geometry of the velocity vector.
+##
+##     A (left)  + turning left   = valid strafe
+##     D (right) + turning right  = valid strafe
+##     either key with a still camera = nothing
+##     camera turn with no lateral key = nothing
+##
+## Both sides are the same rule, so alternating A and D is exactly as valid as
+## holding one long curve, and neither is a privileged special case.
+@export var air_strafe_acceleration := 3.6
+## Yaw rate, in degrees per second, that counts as fully synchronised. Turning
+## slower than this scales the gain down proportionally; turning faster does not
+## pay more, so mouse-spinning is not a technique.
+@export var air_strafe_sync_yaw_rate := 150.0
+## Gain multiplier when the player holds NO forward input. Below 1.0 on purpose:
+## lateral-only strafing stays viable and keeps momentum, but W + A/D remains
+## the better way to build straight-line speed.
+@export_range(0.0, 1.0) var air_strafe_lateral_efficiency := 0.5
 ## Below this speed the strafe term has full strength.
 @export var air_falloff_start := 14.0
 ## Strafe gain reaches exactly zero here. Not a clamp: it is where the curve
@@ -76,14 +114,26 @@ extends Resource
 @export_group("Dash")
 @export var dash_speed := 20.0
 @export var dash_duration := 0.14
-## Starts counting when the dash ENDS.
-@export var dash_cooldown := 0.50
 ## Horizontal velocity is multiplied by this the instant the dash ends. Below
 ## 1.0 means dashing while already fast is a net loss, so dash stays a
 ## correction / burst tool instead of something to mash on cooldown.
 @export var dash_exit_speed_multiplier := 0.85
-## Dashes allowed per airtime. Refilled on landing. 0 = ground dash only.
-@export var air_dash_limit := 1
+## Dashes allowed per airtime. Refilled on landing. The charge pool below is the
+## real limiter; this is only a safety valve against hovering on air dashes.
+@export var air_dash_limit := 2
+
+@export_group("Dash charges")
+## Dash is a resource. One dash costs one charge, and no charge means no dash.
+@export var dash_max_charges := 2
+## Seconds to refill ONE charge. Charges refill strictly one at a time: a single
+## timer runs, completes a charge, then starts on the next.
+@export var dash_charge_time := 1.35
+## Minimum gap between two dashes, so spending both charges still reads as two
+## separate actions rather than one long blur. Starts when a dash ENDS.
+@export var dash_cooldown := 0.15
+## A normal kill pushes the in-progress charge this many seconds closer to done.
+## It can complete the current charge but never spills into the next one.
+@export var dash_kill_recharge_bonus := 0.7
 
 @export_group("Slide")
 ## Minimum horizontal speed required for crouch to become a slide.
@@ -95,9 +145,20 @@ extends Resource
 @export var slide_entry_speed_multiplier := 1.25
 ## m/s^2 bled off while sliding. Much lower than ground friction.
 @export var slide_friction := 3.0
-## How hard the slide can be steered. Speed-preserving: it rotates the velocity,
-## it never lengthens it.
-@export var slide_steer_acceleration := 9.0
+## Degrees per second the slide heading may be rotated by A / D. This is the
+## whole steering authority, and it is a RATE, not a blend: whatever the input,
+## the trajectory can never swing faster than this, so the direction the slide
+## was entered with keeps dominating. Raise it for looser carving, lower it for
+## a more committed slide. It has no effect on how much speed is kept.
+@export var slide_turn_rate := 55.0
+## Degrees per second the slide is pulled toward where the camera is looking.
+## Much smaller on purpose: it bends the line, it never snaps velocity to the
+## view. Set to 0.0 to take the camera out of the slide entirely.
+@export var slide_camera_turn_rate := 22.0
+## Extra m/s^2 of deceleration while S is held. S is a brake and a cancel; it is
+## deliberately not wired into steering, so it can never spin the slide around
+## and carry the momentum backwards.
+@export var slide_brake_strength := 26.0
 ## m/s^2 gained sliding down a slope.
 @export var slide_slope_acceleration := 18.0
 
@@ -113,11 +174,25 @@ extends Resource
 @export_group("Camera")
 @export var mouse_sensitivity := 0.0022
 @export var pitch_limit_degrees := 89.0
+
+@export_group("FOV")
+## The camera composes its final FOV as
+##     speed component + dash accent + hit pulse
+## clamped to fov_absolute_max, so no two effects can fight or stack away.
 @export var fov_base := 90.0
-@export var fov_max := 108.0
+@export var fov_max := 104.0
 ## Horizontal speed at which the FOV starts widening.
 @export var fov_speed_start := 9.0
 ## Horizontal speed at which the FOV reaches fov_max.
 @export var fov_speed_full := 25.0
-## Higher = FOV snaps faster. Frame-rate independent.
+## Higher = the speed component tracks faster. Frame-rate independent.
 @export var fov_lerp_speed := 6.0
+## Degrees added while dashing, on top of the speed component.
+@export var fov_dash_accent := 5.0
+## Higher = the dash accent fades faster.
+@export var fov_dash_recovery := 4.5
+## Higher = hit pulses fade faster. These need to be quick and clean.
+@export var fov_pulse_recovery := 9.0
+## Hard ceiling on the composed FOV. Nothing gets past this, ever, so stacked
+## accents can never turn into a fisheye.
+@export var fov_absolute_max := 114.0

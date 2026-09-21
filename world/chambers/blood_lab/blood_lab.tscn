@@ -1,0 +1,19 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://world/chambers/blood_lab/blood_lab.gd" id="1_lab"]
+[ext_resource type="Script" path="res://presentation/gore/blood_system.gd" id="2_blood"]
+[ext_resource type="Script" path="res://presentation/gore/blood_profile.gd" id="3_profile"]
+[ext_resource type="Resource" path="res://data/blood/blood_settings.tres" id="4_settings"]
+[ext_resource type="Resource" path="res://data/blood/blood_ballistic.tres" id="5_ballistic"]
+[ext_resource type="Resource" path="res://data/blood/blood_slashing.tres" id="6_slashing"]
+[ext_resource type="Resource" path="res://data/blood/blood_piercing.tres" id="7_piercing"]
+[ext_resource type="Resource" path="res://data/blood/blood_blunt.tres" id="8_blunt"]
+[ext_resource type="Resource" path="res://data/blood/blood_high_energy.tres" id="9_high"]
+
+[node name="BloodLab" type="Node3D"]
+script = ExtResource("1_lab")
+
+[node name="BloodSystem" type="Node3D" parent="."]
+script = ExtResource("2_blood")
+settings = ExtResource("4_settings")
+profiles = Array[ExtResource("3_profile")]([ExtResource("5_ballistic"), ExtResource("6_slashing"), ExtResource("7_piercing"), ExtResource("8_blunt"), ExtResource("9_high")])

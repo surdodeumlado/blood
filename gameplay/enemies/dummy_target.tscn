@@ -1,7 +1,10 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://gameplay/enemies/dummy_target.gd" id="1_dummy"]
 [ext_resource type="Resource" path="res://data/combat/default_combat.tres" id="2_combat"]
+[ext_resource type="Script" path="res://gameplay/combat/hurtbox.gd" id="3_hurtbox"]
+[ext_resource type="Script" path="res://gameplay/combat/blood_reservoir.gd" id="4_reservoir"]
+[ext_resource type="Resource" path="res://data/blood/reservoir_defaults.tres" id="5_resconfig"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_dummy"]
 radius = 0.45
@@ -16,12 +19,12 @@ rings = 4
 [sub_resource type="BoxMesh" id="BoxMesh_dummy_head"]
 size = Vector3(0.5, 0.45, 0.5)
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_dummy_head"]
-radius = 0.48
+[sub_resource type="SphereShape3D" id="SphereShape3D_placeholder"]
+radius = 0.34
 
 [node name="DummyTarget" type="CharacterBody3D"]
-collision_layer = 1
-collision_mask = 1
+collision_layer = 8
+collision_mask = 9
 script = ExtResource("1_dummy")
 config = ExtResource("2_combat")
 
@@ -29,9 +32,34 @@ config = ExtResource("2_combat")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0)
 shape = SubResource("CapsuleShape3D_dummy")
 
-[node name="HeadCollider" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.15, 0)
-shape = SubResource("SphereShape3D_dummy_head")
+[node name="BloodReservoir" type="Node" parent="."]
+script = ExtResource("4_reservoir")
+config = ExtResource("5_resconfig")
+
+[node name="Hurtboxes" type="Node3D" parent="."]
+
+[node name="BodyHurtbox" type="Area3D" parent="Hurtboxes"]
+collision_layer = 2
+collision_mask = 0
+monitoring = false
+script = ExtResource("3_hurtbox")
+zone = &"body"
+
+[node name="Shape" type="CollisionShape3D" parent="Hurtboxes/BodyHurtbox"]
+shape = SubResource("CapsuleShape3D_dummy")
+
+[node name="HeadHurtbox" type="Area3D" parent="Hurtboxes"]
+collision_layer = 2
+collision_mask = 0
+monitoring = false
+script = ExtResource("3_hurtbox")
+zone = &"head"
+
+[node name="Shape" type="CollisionShape3D" parent="Hurtboxes/HeadHurtbox"]
+shape = SubResource("SphereShape3D_placeholder")
+
+[node name="HurtboxDebug" type="Node3D" parent="."]
+visible = false
 
 [node name="Visual" type="Node3D" parent="."]
 

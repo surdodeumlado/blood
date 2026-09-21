@@ -1,6 +1,12 @@
 # MOVEMENT
 
-Prototype 0.2 — THE BOX: KINETIC FEEL.
+Prototype 0.3 — COMBAT/MOVEMENT FEEL TUNING.
+
+> **Bunnyhop, air-strafe and slide are APPROVED and frozen.** The air model in
+> this document is reference game feel for the project. Do not refactor it, do
+> not change the W / A / D relationship, do not chase Counter-Strike or Quake
+> any harder. The smoke test pins the exact numbers (9.00 → 22.93 m/s on a
+> correct strafe run) so any accidental drift fails a check.
 
 ## Philosophy
 
@@ -110,6 +116,39 @@ buffered is itself the timing.
 
 **Tune `jump_buffer_time` first if bhop feels too hard or too free.**
 
+## Ground traction
+
+The 0.2 ground movement felt like walking on soap. The cause was that friction
+only ran when there was **no** input: hold W at 9 m/s, press A, and the forward
+component had nothing scrubbing it, so the velocity swung round in a long lazy
+arc instead of turning.
+
+0.3 moves to the Quake order — **friction first, then acceleration, every
+grounded tick, input or not** — split into two regimes:
+
+| Speed | Friction | Why |
+|---|---|---|
+| at or below `move_speed` | `ground_deceleration` = **95 m/s²** | normal walking, planted and crisp |
+| above `move_speed` | `momentum_friction` = **14 m/s²** | movement tech, momentum survives |
+| a jump fires this tick | **none at all** | the bhop landing pays nothing |
+
+Holding a direction, friction scrubs the whole velocity and acceleration
+immediately rebuilds it along the wish direction, so whatever pointed the old
+way dies fast. Measured: a full stop takes **100 ms** and a 180° reversal takes
+**50 ms** (they were roughly 3× and 6× that before).
+
+`ground_acceleration` had to rise to **150 m/s²** to stay ahead of the new
+friction — with friction running every tick, acceleration that cannot out-pace
+it means the player never reaches `move_speed` at all. The two numbers are
+coupled; if you raise the deceleration, raise the acceleration too.
+
+**None of this touches the tech.** The high-speed path is `momentum_friction`,
+unchanged from 0.2; slide runs its own `slide_friction` and never goes through
+this code at all; and `_ground_physics()` receives a `hopping` flag computed
+*before* it runs, so a buffered jump on the landing tick skips friction
+entirely. The HUD prints which regime ran (`TRACTION` / `MOMENTUM` /
+`HOP (no friction)`) so this is visible while tuning.
+
 ## Soft ceiling
 
 Not a clamp. `soft_ceiling_falloff()` scales term 2's gain:
@@ -147,9 +186,9 @@ gameplay cap**. It sits far above the soft ceiling and reaching it means a bug.
 | Knob | Value | Note |
 |---|---|---|
 | move_speed | 9.0 | base ground speed |
-| ground_acceleration | 55.0 | 0 → 9 m/s in ~0.16 s |
-| ground_deceleration | 45.0 | applied only with no input |
-| momentum_friction | 14.0 | above move_speed with input; the bhop timing pressure |
+| ground_acceleration | 150.0 | must stay above ground_deceleration |
+| ground_deceleration | 95.0 | traction, at or below move_speed, every tick |
+| momentum_friction | 14.0 | above move_speed; the bhop timing pressure |
 | crouch_speed_multiplier | 0.45 | |
 | air_acceleration | 16.0 | only below move_speed |
 | air_turn_rate | 110 °/s | speed-preserving redirection above move_speed |
@@ -162,17 +201,53 @@ gameplay cap**. It sits far above the soft ceiling and reaching it means a bug.
 | safety_speed_limit | 40.0 | safety net, not a cap |
 | jump_velocity / gravity | 8.5 / 24.0 | ~0.71 s airtime |
 | coyote_time / jump_buffer_time | 0.10 / 0.10 | |
-| dash_speed / duration / cooldown | 20.0 / 0.14 s / 0.50 s | cooldown starts at dash end |
+| dash_speed / duration | 20.0 / 0.14 s | |
+| dash_max_charges / dash_charge_time | 2 / 1.35 s | sequential refill |
+| dash_cooldown | 0.15 s | minimum gap between dashes |
+| dash_kill_recharge_bonus | 0.7 s | normal kill; headshot kill grants a full charge |
 | dash_exit_speed_multiplier | 0.85 | dashing while fast is a net loss |
-| air_dash_limit | 1 | refilled on landing |
+| air_dash_limit | 2 | refilled on landing; the charge pool is the real limit |
 | slide_min_speed / slide_end_speed | 7.0 / 4.0 | |
 | slide_entry_speed_multiplier | 1.25 | entry = max(current, 11.25) |
 | slide_friction | 3.0 | vs 45 standing |
 | slide_steer_acceleration | 9.0 | direction only |
 | slide_slope_acceleration | 18.0 | downhill gain |
 | stand / crouch height | 1.8 / 0.9 | capsule radius 0.4 |
-| fov_base → fov_max | 90 → 108 | mapped over 9 → 25 m/s |
+| fov_base → fov_max | 90 → 104 | speed component, mapped over 9 → 25 m/s |
+| fov_dash_accent | +5.0 | decaying accent while dashing |
+| fov_pulse_body / head | +1.0 / +2.5 | hit accent (CombatConfig) |
+| fov_absolute_max | 114.0 | hard ceiling on the composed FOV |
 | mouse_sensitivity | 0.0022 | radians per pixel |
+
+## Dash as a resource
+
+Dash is a **two-charge pool**, not a cooldown. One dash costs one charge; at
+zero charges there is no dash.
+
+| Knob | Value |
+|---|---|
+| `dash_max_charges` | 2 |
+| `dash_charge_time` | 1.35 s per charge |
+| `dash_cooldown` | 0.15 s minimum gap between two dashes |
+| `dash_kill_recharge_bonus` | 0.7 s |
+
+Refill is **strictly sequential**: one accumulator fills, completes a charge,
+resets and starts on the next. Two charges can never fill in parallel. It is
+delta-driven, so the refill rate does not care about the tick rate.
+
+### Combat pays for mobility
+
+| Event | Reward |
+|---|---|
+| normal **kill** | the in-progress charge jumps 0.7 s closer to done |
+| **headshot kill** | a whole charge back, immediately |
+
+Both are clamped at `dash_max_charges`, and the normal-kill bonus is capped at
+one charge time so it can finish the current charge but never spill into the
+next.
+
+Both are gated on the **kill**, never on the hit. A future enemy tough enough to
+survive headshots must not become an infinite dash farm.
 
 ## Dash / slide / bhop interaction
 

@@ -7,14 +7,17 @@ extends CanvasLayer
 
 @onready var _label: Label = $Panel/Label
 @onready var crosshair: Crosshair = $Crosshair
+@onready var weapon_selector: WeaponSelector = $WeaponSelector
 
 var _movement: MovementController
-var _blaster: TestBlaster
+var _weapons: WeaponRack
+var _camera: FirstPersonCamera
 
 
-func bind(movement: MovementController, blaster: TestBlaster) -> void:
+func bind(movement: MovementController, weapons: WeaponRack, camera: FirstPersonCamera) -> void:
 	_movement = movement
-	_blaster = blaster
+	_weapons = weapons
+	_camera = camera
 
 
 func _process(_delta: float) -> void:
@@ -38,20 +41,44 @@ func _process(_delta: float) -> void:
 		"SPEED        %6.2f m/s" % speed,
 		"GROUNDED     %s" % ("YES" if grounded else "NO (AIRBORNE)"),
 		"STATE        %s" % _movement.state_name(),
+		"TRACTION     %s" % _movement.traction_state,
 		"",
 		"BHOP CHAIN   %d" % _movement.bhop_chain,
 		"LAST HOP     %.0f ms on ground" % (_movement.last_hop_ground_time * 1000.0),
 		"AIR STRAFE   %s" % strafe,
 		"SOFT CEIL    %.1f m/s   (gain x%.2f)" % [cfg.air_soft_ceiling, falloff],
 		"",
-		"DASH         %s" % _dash_text(),
-		"WEAPON       %s" % ("READY" if _blaster.ready_to_fire() else "CYCLING"),
+		"DASH         %s" % _dash_meter(),
+		"RECHARGE     %s" % _recharge_text(),
+		"WEAPON       %s" % _weapon_text(),
+		"FOV          %.1f" % _camera.current_fov(),
 		"",
-		"LMB fire (semi-auto)   SHIFT dash   CTRL crouch/slide   ESC mouse",
+		"LMB attack   1-4 weapon   SHIFT dash   CTRL crouch/slide   F1 hurtboxes",
 	])
 
 
-func _dash_text() -> String:
-	if _movement.dash_ready():
-		return "READY"
-	return "COOLDOWN %.2fs" % _movement.dash_cooldown_left()
+## Which BloodProfile is being tested, at a glance.
+func _weapon_text() -> String:
+	var weapon := _weapons.current()
+	if weapon == null:
+		return "-"
+	return "[%d] %s  (%s)  %s" % [
+		_weapons.current_index + 1,
+		weapon.display_name,
+		BloodTypes.DamageType.keys()[int(weapon.damage_type)],
+		"READY" if weapon.ready_to_attack() else "CYCLING",
+	]
+
+
+## DASH [#][ ] - one block per charge, filled if available.
+func _dash_meter() -> String:
+	var out := ""
+	for i in _movement.config.dash_max_charges:
+		out += "[#]" if i < _movement.dash_charges else "[ ]"
+	return out
+
+
+func _recharge_text() -> String:
+	if _movement.dash_charges >= _movement.config.dash_max_charges:
+		return "full"
+	return "%3d%% -> next charge" % int(_movement.dash_recharge_progress() * 100.0)

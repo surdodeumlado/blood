@@ -1,0 +1,80 @@
+[gd_resource type="Resource" script_class="BloodProfile" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://presentation/gore/blood_profile.gd" id="1_profile"]
+
+[resource]
+script = ExtResource("1_profile")
+damage_type = 0
+burst_amount = 26
+burst_scale = 0.075
+streak_stretch = 3.0
+particle_speed_min = 6.0
+particle_speed_max = 16.0
+particle_lifetime = 0.7
+directional_bias = 0.88
+radial_scatter_fraction = 0.25
+velocity_variance = 0.45
+lateral_bias = 0.0
+
+
+env_splat_chance = 1.0
+env_splat_count = 7
+env_splat_size_min = 0.35
+env_splat_size_max = 1.15
+env_splat_distance = 5.0
+env_streak_ratio = 1.8
+env_splat_lifetime = 0.0
+chunk_on_kill_only = true
+chunk_count = 8
+chunk_size_min = 0.055
+chunk_size_max = 0.13
+chunk_speed_min = 2.5
+chunk_speed_max = 7.5
+chunk_bounce = 0.28
+chunk_origin_spread = 0.35
+headshot_multiplier = 2.4
+kill_multiplier = 2.1
+limb_multiplier = 0.7
+combined_event_falloff = 0.5
+energy_influence = 1.0
+overkill_influence = 0.6
+color = Color(0.45, 0.015, 0.03, 1)
+env_color = Color(0.26, 0.01, 0.02, 1)
+spread_angle = 55.0
+spread_concentration = 1.3
+lateral_flatten = 1.0
+chunk_spread_angle = 125.0
+chunk_elevation_min = 10.0
+chunk_elevation_max = 72.0
+droplet_count = 16
+droplet_spread_angle = 80.0
+droplet_elevation_min = -8.0
+droplet_elevation_max = 58.0
+droplet_speed_min = 5.0
+droplet_speed_max = 15.0
+droplet_size = 0.045
+droplet_splat_size = 0.55
+droplet_medium_fraction = 0.26
+droplet_large_fraction = 0.05
+back_fraction = 0.22
+back_spread_angle = 75.0
+back_speed_scale = 0.55
+back_size_scale = 1.4
+micro_weight = 1.3
+small_weight = 1.0
+medium_weight = 0.9
+grain_weight = 0.5
+chunk_weight = 0.5
+micro_speed = 9.0
+small_speed = 10.0
+medium_speed = 14.0
+large_speed = 6.0
+micro_size = 0.026
+small_size = 0.05
+medium_size = 0.07
+grain_size = 0.045
+chunk_size = 0.1
+stain_shape_weights = PackedFloat32Array(0.34, 0.24, 0.08, 0.2, 0.1, 0.04, 0.0)
+stain_scale = 0.9
+direct_accent_rays = 4
+direct_accent_distance = 6.0

@@ -1,8 +1,17 @@
-[gd_scene load_steps=30 format=3]
+[gd_scene load_steps=39 format=3]
 
 [ext_resource type="PackedScene" path="res://gameplay/player/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://world/chambers/prototype/floor_grid.gd" id="2_grid"]
 [ext_resource type="PackedScene" path="res://gameplay/enemies/dummy_target.tscn" id="3_dummy"]
+[ext_resource type="Script" path="res://presentation/gore/blood_system.gd" id="4_blood"]
+[ext_resource type="Script" path="res://presentation/gore/blood_profile.gd" id="5_profile"]
+[ext_resource type="Resource" path="res://data/blood/blood_settings.tres" id="6_settings"]
+[ext_resource type="Resource" path="res://data/blood/blood_ballistic.tres" id="7_ballistic"]
+[ext_resource type="Resource" path="res://data/blood/blood_slashing.tres" id="8_slashing"]
+[ext_resource type="Resource" path="res://data/blood/blood_piercing.tres" id="9_piercing"]
+[ext_resource type="Resource" path="res://data/blood/blood_blunt.tres" id="10_blunt"]
+[ext_resource type="Resource" path="res://data/blood/blood_high_energy.tres" id="11_high"]
+[ext_resource type="Resource" path="res://data/blood/reservoir_defaults.tres" id="12_reservoir"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMaterial_box"]
 sky_top_color = Color(0.16, 0.1, 0.14, 1)
@@ -293,6 +302,12 @@ material_override = SubResource("Material_wall")
 [node name="Shape" type="CollisionShape3D" parent="Geometry/CorridorWallB"]
 shape = SubResource("Shape_corridor_wall")
 
+[node name="BloodSystem" type="Node3D" parent="."]
+script = ExtResource("4_blood")
+settings = ExtResource("6_settings")
+profiles = Array[ExtResource("5_profile")]([ExtResource("7_ballistic"), ExtResource("8_slashing"), ExtResource("9_piercing"), ExtResource("10_blunt"), ExtResource("11_high")])
+fallback_reservoir = ExtResource("12_reservoir")
+
 [node name="Targets" type="Node3D" parent="."]
 
 [node name="DummyFar" parent="Targets" instance=ExtResource("3_dummy")]
@@ -306,6 +321,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 1.5, -20)
 
 [node name="DummyPillars" parent="Targets" instance=ExtResource("3_dummy")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 6)
+
+[node name="DummyCluster1" parent="Targets" instance=ExtResource("3_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 4)
+
+[node name="DummyCluster2" parent="Targets" instance=ExtResource("3_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 6)
+
+[node name="DummyCluster3" parent="Targets" instance=ExtResource("3_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, 7)
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 14)

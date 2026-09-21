@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=27 format=3]
 
 [ext_resource type="Script" path="res://gameplay/player/player.gd" id="1_player"]
 [ext_resource type="Script" path="res://gameplay/movement/movement_controller.gd" id="2_movement"]
@@ -9,6 +9,42 @@
 [ext_resource type="Resource" path="res://data/combat/default_combat.tres" id="7_combat"]
 [ext_resource type="Script" path="res://presentation/fx/impact_fx.gd" id="8_fx"]
 [ext_resource type="Script" path="res://presentation/ui/crosshair.gd" id="9_crosshair"]
+[ext_resource type="Script" path="res://gameplay/weapons/weapon_rack.gd" id="10_rack"]
+[ext_resource type="Script" path="res://gameplay/weapons/melee_weapon.gd" id="11_melee"]
+[ext_resource type="Script" path="res://gameplay/weapons/grenade_launcher.gd" id="12_bomb"]
+[ext_resource type="Script" path="res://presentation/ui/weapon_selector.gd" id="13_selector"]
+
+[sub_resource type="StandardMaterial3D" id="Material_blade"]
+albedo_color = Color(0.72, 0.74, 0.8, 1)
+metallic = 0.7
+roughness = 0.25
+
+[sub_resource type="StandardMaterial3D" id="Material_haft"]
+albedo_color = Color(0.25, 0.16, 0.1, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="Material_bomb"]
+albedo_color = Color(0.13, 0.13, 0.15, 1)
+roughness = 0.5
+
+[sub_resource type="BoxMesh" id="BoxMesh_blade"]
+material = SubResource("Material_blade")
+size = Vector3(0.045, 0.28, 0.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_haft"]
+material = SubResource("Material_haft")
+size = Vector3(0.05, 0.05, 0.44)
+
+[sub_resource type="BoxMesh" id="BoxMesh_hammer_head"]
+material = SubResource("Material_blade")
+size = Vector3(0.26, 0.24, 0.22)
+
+[sub_resource type="SphereMesh" id="SphereMesh_bomb"]
+material = SubResource("Material_bomb")
+radius = 0.11
+height = 0.22
+radial_segments = 12
+rings = 6
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
 radius = 0.4
@@ -41,8 +77,8 @@ radial_segments = 8
 rings = 4
 
 [node name="Player" type="CharacterBody3D"]
-collision_layer = 1
-collision_mask = 1
+collision_layer = 8
+collision_mask = 9
 floor_max_angle = 0.959931
 floor_snap_length = 0.3
 script = ExtResource("1_player")
@@ -61,38 +97,138 @@ near = 0.05
 far = 500.0
 script = ExtResource("4_camera")
 
-[node name="Blaster" type="Node3D" parent="Head/Camera"]
-script = ExtResource("6_blaster")
+[node name="Weapons" type="Node3D" parent="Head/Camera"]
+script = ExtResource("10_rack")
 config = ExtResource("7_combat")
 
-[node name="Rig" type="Node3D" parent="Head/Camera/Blaster"]
+[node name="HandCannon" type="Node3D" parent="Head/Camera/Weapons"]
+script = ExtResource("6_blaster")
+display_name = "HAND CANNON"
+damage_type = 0
+impact_energy = 1.45
+
+[node name="Rig" type="Node3D" parent="Head/Camera/Weapons/HandCannon"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.26, -0.2, -0.3)
 
-[node name="Body" type="MeshInstance3D" parent="Head/Camera/Blaster/Rig"]
+[node name="Body" type="MeshInstance3D" parent="Head/Camera/Weapons/HandCannon/Rig"]
 mesh = SubResource("BoxMesh_gun")
 cast_shadow = 0
 
-[node name="Barrel" type="MeshInstance3D" parent="Head/Camera/Blaster/Rig"]
+[node name="Barrel" type="MeshInstance3D" parent="Head/Camera/Weapons/HandCannon/Rig"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, -0.17)
 mesh = SubResource("BoxMesh_barrel")
 cast_shadow = 0
 
-[node name="Muzzle" type="Node3D" parent="Head/Camera/Blaster/Rig"]
+[node name="Muzzle" type="Node3D" parent="Head/Camera/Weapons/HandCannon/Rig"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, -0.26)
 
-[node name="Flash" type="MeshInstance3D" parent="Head/Camera/Blaster/Rig/Muzzle"]
+[node name="Flash" type="MeshInstance3D" parent="Head/Camera/Weapons/HandCannon/Rig/Muzzle"]
 mesh = SubResource("SphereMesh_flash")
 cast_shadow = 0
 
-[node name="Light" type="OmniLight3D" parent="Head/Camera/Blaster/Rig/Muzzle"]
+[node name="Light" type="OmniLight3D" parent="Head/Camera/Weapons/HandCannon/Rig/Muzzle"]
 light_color = Color(1, 0.84, 0.55, 1)
 light_energy = 7.0
 shadow_enabled = false
 omni_range = 7.0
 
-[node name="ImpactFx" type="Node3D" parent="Head/Camera/Blaster"]
+[node name="ImpactFx" type="Node3D" parent="Head/Camera/Weapons/HandCannon"]
 script = ExtResource("8_fx")
 config = ExtResource("7_combat")
+
+[node name="TwinDaggers" type="Node3D" parent="Head/Camera/Weapons"]
+script = ExtResource("11_melee")
+display_name = "TWIN DAGGERS"
+damage_type = 1
+impact_energy = 1.25
+reach = 2.0
+radius = 0.95
+swing_time = 0.26
+damage_body = 50.0
+damage_head = 50.0
+secondary_health_fraction = 0.5
+swing_arc = 95.0
+alternating = true
+swing_travel = 0.3
+windup_travel = 0.08
+contact_at = 0.3
+blood_load_per_hit = 0.7
+castoff_droplets = 6
+
+[node name="Rig" type="Node3D" parent="Head/Camera/Weapons/TwinDaggers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -0.24, -0.34)
+
+[node name="Blade" type="MeshInstance3D" parent="Head/Camera/Weapons/TwinDaggers/Rig"]
+mesh = SubResource("BoxMesh_blade")
+cast_shadow = 0
+
+[node name="Haft" type="MeshInstance3D" parent="Head/Camera/Weapons/TwinDaggers/Rig"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.14, 0.2)
+mesh = SubResource("BoxMesh_haft")
+cast_shadow = 0
+
+[node name="RigAlt" type="Node3D" parent="Head/Camera/Weapons/TwinDaggers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, -0.24, -0.34)
+
+[node name="Blade" type="MeshInstance3D" parent="Head/Camera/Weapons/TwinDaggers/RigAlt"]
+mesh = SubResource("BoxMesh_blade")
+cast_shadow = 0
+
+[node name="Haft" type="MeshInstance3D" parent="Head/Camera/Weapons/TwinDaggers/RigAlt"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.14, 0.2)
+mesh = SubResource("BoxMesh_haft")
+cast_shadow = 0
+
+[node name="HeavyBlunt" type="Node3D" parent="Head/Camera/Weapons"]
+script = ExtResource("11_melee")
+display_name = "MAUL"
+damage_type = 3
+impact_energy = 2.1
+reach = 1.9
+radius = 1.05
+swing_time = 0.72
+damage_body = 200.0
+damage_head = 200.0
+secondary_health_fraction = 0.5
+knockback_scale = 2.6
+swing_arc = 150.0
+alternating = true
+swing_travel = 0.6
+windup_travel = 0.22
+contact_at = 0.34
+blood_load_per_hit = 0.8
+castoff_droplets = 9
+
+[node name="Rig" type="Node3D" parent="Head/Camera/Weapons/HeavyBlunt"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -0.26, -0.3)
+
+[node name="Haft" type="MeshInstance3D" parent="Head/Camera/Weapons/HeavyBlunt/Rig"]
+mesh = SubResource("BoxMesh_haft")
+cast_shadow = 0
+
+[node name="Head" type="MeshInstance3D" parent="Head/Camera/Weapons/HeavyBlunt/Rig"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.26)
+mesh = SubResource("BoxMesh_hammer_head")
+cast_shadow = 0
+
+[node name="GrenadeLauncher" type="Node3D" parent="Head/Camera/Weapons"]
+script = ExtResource("12_bomb")
+display_name = "GRENADE LAUNCHER"
+damage_type = 4
+impact_energy = 2.4
+
+[node name="Rig" type="Node3D" parent="Head/Camera/Weapons/GrenadeLauncher"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.28, -0.24, -0.34)
+
+[node name="Mesh" type="MeshInstance3D" parent="Head/Camera/Weapons/GrenadeLauncher/Rig"]
+mesh = SubResource("SphereMesh_bomb")
+cast_shadow = 0
+
+[node name="Projectile" type="Node3D" parent="Head/Camera/Weapons/GrenadeLauncher"]
+
+[node name="Mesh" type="MeshInstance3D" parent="Head/Camera/Weapons/GrenadeLauncher/Projectile"]
+mesh = SubResource("SphereMesh_bomb")
+cast_shadow = 0
 
 [node name="Movement" type="Node" parent="."]
 script = ExtResource("2_movement")
@@ -116,6 +252,15 @@ layout_mode = 2
 mouse_filter = 2
 theme_override_font_sizes/font_size = 13
 text = "FPS"
+
+[node name="WeaponSelector" type="Control" parent="DebugHud"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("13_selector")
 
 [node name="Crosshair" type="Control" parent="DebugHud"]
 anchors_preset = 15

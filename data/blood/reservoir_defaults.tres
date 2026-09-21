@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="ReservoirConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://gameplay/combat/reservoir_config.gd" id="1_reservoir"]
+
+[resource]
+script = ExtResource("1_reservoir")
+max_blood = 1.0
+max_tissue = 1.0
+death_release_allowance = 0.35
+hit_blood_fraction = 0.13
+head_multiplier = 2.4
+limb_multiplier = 0.65
+hit_tissue_ratio = 0.12
+kill_blood_fraction = 0.78
+kill_tissue_ratio = 0.55
+kill_head_multiplier = 1.55
+overkill_influence = 0.9
+energy_influence = 0.8
+ballistic_scale = 1.0
+slashing_scale = 1.15
+piercing_scale = 0.6
+blunt_scale = 1.85
+high_energy_scale = 2.6
+wound_severity_ballistic = 0.35
+wound_severity_slashing = 0.85
+wound_severity_piercing = 0.5
+wound_severity_blunt = 0.4
+wound_severity_high_energy = 0.6
+wound_reserve = 0.22
+wound_lifetime = 9.0
+wound_drip_interval = 0.22
+max_wounds = 4
+remnant_severity = 0.9
+remnant_lifetime = 3.5
+remnant_reserve = 0.16

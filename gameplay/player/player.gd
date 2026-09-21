@@ -13,12 +13,13 @@ const LANDING_SOUND_MIN_SPEED := 3.0
 @onready var _collider: CollisionShape3D = $Collider
 @onready var _head: Node3D = $Head
 @onready var _camera: FirstPersonCamera = $Head/Camera
-@onready var _blaster: TestBlaster = $Head/Camera/Blaster
+@onready var _weapons: WeaponRack = $Head/Camera/Weapons
 @onready var _movement: MovementController = $Movement
 @onready var _hud: DebugHud = $DebugHud
 @onready var _slide_audio: AudioStreamPlayer = $SlideAudio
 
 var _spawn_transform: Transform3D
+var _hurtbox_debug := false
 
 
 func _ready() -> void:
@@ -28,11 +29,13 @@ func _ready() -> void:
 	_movement.setup(self, _collider, _head)
 
 	_camera.setup(_movement.config, self)
-	_camera.set_recoil_recovery(_blaster.config.recoil_recovery)
-	_blaster.setup(_camera, self)
-	_blaster.hit_confirmed.connect(_on_hit_confirmed)
+	_camera.set_recoil_recovery(_weapons.config.recoil_recovery)
+	_weapons.setup(_camera, self)
+	_weapons.hit_confirmed.connect(_on_hit_confirmed)
+	_weapons.enemy_killed.connect(_on_enemy_killed)
+	_weapons.weapon_changed.connect(_on_weapon_changed)
 
-	_hud.bind(_movement, _blaster)
+	_hud.bind(_movement, _weapons, _camera)
 	_movement.jumped.connect(_on_jumped)
 	_movement.landed.connect(_on_landed)
 	_movement.dashed.connect(_on_dashed)
@@ -48,6 +51,17 @@ func _unhandled_input(event: InputEvent) -> void:
 		_camera.look(event.relative)
 	elif event.is_action_pressed("pause"):
 		_capture_mouse(not _mouse_captured())
+	elif _mouse_captured() and _weapons.handle_input(event):
+		pass
+	elif event.is_action_pressed("debug_blood"):
+		var blood := BloodSystem.find(get_tree())
+		if blood != null:
+			print("[blood] pattern debug %s" % ("ON" if blood.toggle_debug_patterns() else "OFF"))
+	elif event.is_action_pressed("debug_hurtboxes"):
+		_hurtbox_debug = not _hurtbox_debug
+		get_tree().call_group(
+			DummyTarget.DEBUG_GROUP, "set_hurtbox_debug", _hurtbox_debug
+		)
 	elif event is InputEventMouseButton and event.pressed and not _mouse_captured():
 		_capture_mouse(true)
 
@@ -57,7 +71,7 @@ func _process(delta: float) -> void:
 	_camera.update(_movement.horizontal_speed(), delta)
 	# Semi-auto: one press, one shot. Holding the button does nothing.
 	if _mouse_captured() and Input.is_action_just_pressed("primary_action"):
-		_blaster.try_fire()
+		_weapons.try_attack()
 	if _slide_audio.playing:
 		_slide_audio.pitch_scale = clampf(_movement.horizontal_speed() / 12.0, 0.75, 1.7)
 
@@ -102,6 +116,7 @@ func _on_landed(impact_speed: float) -> void:
 
 func _on_dashed() -> void:
 	Sfx.play_2d(&"dash", randf_range(0.96, 1.04), -9.0)
+	_camera.accent_dash_fov()
 
 
 func _on_slide_started() -> void:
@@ -112,8 +127,25 @@ func _on_slide_ended() -> void:
 	_slide_audio.stop()
 
 
+## The selector pops up on every switch and fades out on its own.
+func _on_weapon_changed(_weapon: Weapon) -> void:
+	var names := PackedStringArray()
+	for w in _weapons.weapons:
+		names.append(w.display_name)
+	_hud.weapon_selector.show_weapons(names, _weapons.current_index)
+
+
 func _on_hit_confirmed(zone: StringName) -> void:
-	_hud.crosshair.flash(zone == TestBlaster.ZONE_HEAD)
+	_hud.crosshair.flash(zone == Weapon.ZONE_HEAD)
+
+
+## Precision and aggression buy mobility. Gated on the KILL, never on the hit,
+## so a future enemy that survives headshots cannot be farmed for dashes.
+func _on_enemy_killed(zone: StringName) -> void:
+	if zone == Weapon.ZONE_HEAD:
+		_movement.reward_headshot_kill()
+	else:
+		_movement.reward_kill()
 
 
 # --------------------------------------------------------------------------
