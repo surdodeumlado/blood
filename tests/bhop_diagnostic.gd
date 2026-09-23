@@ -144,11 +144,11 @@ func _run() -> void:
 	# The permanent baseline. Every line here is a target from the design brief,
 	# so a future change that breaks one of them shows up immediately.
 	print("")
-	print("=== BHOP BASELINE  (strafe accel %.1f, sync rate %.0f deg/s, lateral eff %.2f,"
-		% [config.air_strafe_acceleration, config.air_strafe_sync_yaw_rate,
-			config.air_strafe_lateral_efficiency])
-	print("     air control %.0f deg/s, lateral bonus %.2f) ==="
-		% [config.air_control_turn_rate, config.air_control_lateral_bonus])
+	print("=== BHOP BASELINE  (air_accelerate %.1f /s, air_wish_speed_cap %.2f m/s,"
+		% [config.air_accelerate, config.air_wish_speed_cap])
+	print("     soft cap %.0f-%.0f m/s, min gain x%.2f) ==="
+		% [config.bhop_soft_cap_start, config.bhop_soft_cap_end,
+			config.bhop_soft_cap_min_gain])
 	print("  start speed                                 : %5.2f m/s" % config.move_speed)
 	for turn in [45.0, 70.0, 110.0]:
 		var same: float = await _finite_turn(6, turn, true, false)
@@ -160,12 +160,20 @@ func _run() -> void:
 	print("  long chain, 20 hops alternating             : %5.2f m/s" % long_chain)
 	var ceiling: float = await _human(1400, 1, 150.0, true, 0)
 	print("  sustained perfect strafe (soft cap probe)   : %5.2f m/s" % ceiling)
+	# THESE THREE ARE NO LONGER "MUST BE ZERO".
+	#
+	# They were the three halves of the old camera-synchronisation rule, and
+	# under Source vector acceleration two of them are SUPPOSED to pay a little:
+	# a lateral key adds an orthogonal component whatever the mouse is doing.
+	# They are kept as measurements because the size of that payment is worth
+	# watching - it should stay small enough that mouse-less strafing is not a
+	# technique - but a non-zero number here is now correct, not a regression.
 	var cheat: float = await _no_turn_hold(300)
-	print("  HOLD A, NO CAMERA TURN (must be ~0)         : %+5.2f m/s gained" % cheat)
+	print("  HOLD A, NO CAMERA TURN (small is fine)      : %+5.2f m/s gained" % cheat)
 	var turn_only: float = await _turn_no_key(300)
-	print("  TURN CAMERA, NO LATERAL KEY (must be ~0)    : %+5.2f m/s gained" % turn_only)
+	print("  TURN CAMERA, NO LATERAL KEY (W-strafing, real)  : %+5.2f m/s gained" % turn_only)
 	var wrong: float = await _wrong_way(300)
-	print("  A + turning RIGHT (wrong way, must be ~0)   : %+5.2f m/s gained" % wrong)
+	print("  A + turning RIGHT (small is fine)           : %+5.2f m/s gained" % wrong)
 	var carve: float = await _ground_carve(400)
 	print("  GROUND CARVING, never jumps (must be ~0)    : %+5.2f m/s gained" % carve)
 
@@ -195,12 +203,16 @@ func _ground_carve(ticks: int) -> float:
 	get_tree().quit()
 
 
-## Camera sweeping but no strafe key: must not pay.
+## Camera sweeping with no strafe key. Under the old rule this paid nothing. It
+## now pays properly, and that is correct: rotating the view rotates the wish
+## direction, so W ends up across the velocity and accelerates it. This is
+## W-strafing, a real Source technique, not a hole in the model.
 func _turn_no_key(ticks: int) -> float:
 	return await _cheat_probe(ticks, Vector2(0, 1), 150.0)
 
 
-## Holding A while turning the wrong way: must not pay.
+## Holding A while turning the wrong way. No longer a cheat probe: the wish
+## direction simply stops being useful, so the gain falls off on its own.
 func _wrong_way(ticks: int) -> float:
 	return await _cheat_probe(ticks, Vector2(-1, 1).normalized(), -150.0)
 
@@ -223,8 +235,10 @@ func _cheat_probe(ticks: int, input: Vector2, turn_deg: float) -> float:
 	return peak - before
 
 
-## The approved invariant that must NOT break: holding a strafe key with the
-## view locked is worth almost nothing. Returns the speed gained.
+## Holding a strafe key with the view locked. Under the old rule this was zero
+## by construction; under Source math it pays one capped tick of orthogonal
+## acceleration and then stops, so it should be small but need not be zero.
+## Returns the speed gained.
 func _no_turn_hold(ticks: int) -> float:
 	await _reset()
 	movement.input_dir = Vector2(0, 1)

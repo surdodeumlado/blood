@@ -9,13 +9,22 @@ extends MultiMeshInstance3D
 @export var spacing := 8.0
 @export var line_width := 0.16
 @export var color := Color(0.5, 0.53, 0.6)
-## Sits just above the floor surface so nothing z-fights.
-@export var height := 0.015
+## Sits just above the floor surface so nothing z-fights - but BELOW every blood
+## layer, which is the whole point of how low this is.
+##
+## It used to be a 10 mm tall box at 15 mm, occupying y 0.010 to 0.020. Blood
+## detail sits at BloodSettings.surface_offset (12 mm) and soaked bases at 4 mm,
+## so these opaque strips ran straight through the blood layer and hid it. The
+## grid is diagnostic decoration; it must never occlude the thing being
+## diagnosed. Collision is untouched - this geometry has none.
+@export var height := 0.002
+## Deliberately almost flat, so there is no side face to stand proud of a stain.
+@export var thickness := 0.0006
 
 
 func _ready() -> void:
 	var mesh := BoxMesh.new()
-	mesh.size = Vector3(line_width, 0.01, extent * 2.0)
+	mesh.size = Vector3(line_width, thickness, extent * 2.0)
 
 	var mat := StandardMaterial3D.new()
 	mat.albedo_color = color

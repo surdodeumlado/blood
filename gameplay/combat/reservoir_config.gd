@@ -19,6 +19,8 @@ extends Resource
 @export_group("Non-lethal draw")
 ## Fraction of REMAINING blood a normal wounding hit takes.
 @export_range(0.0, 1.0) var hit_blood_fraction := 0.13
+## A surviving hit may be violent without consuming the entire living stock.
+@export_range(0.0, 0.95) var max_nonlethal_fraction := 0.65
 ## Multiplier when the wound is in the head.
 @export var head_multiplier := 2.4
 ## Multiplier for limbs. Below 1: less meat.

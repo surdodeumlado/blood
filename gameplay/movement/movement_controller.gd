@@ -5,10 +5,18 @@ extends Node
 ## the player fills the input fields once per physics tick and calls step().
 ## Everything is frame-rate independent and runs in _physics_process.
 ##
-## Air model, in two deliberately separate terms (see docs/MOVEMENT.md):
-##   1. air_acceleration  - baseline control, can never exceed move_speed.
-##   2. air_strafe_*      - the skill term, gated by air_speed_cap.
-## Term 1 is why walking is enough. Term 2 is why mastery dominates.
+## AIR MODEL: Source CGameMovement, not a heuristic (see docs/MOVEMENT.md).
+##
+## ONE term, _air_accelerate, derived from Source SDK 2013's AirAccelerate. It
+## adds acceleration along the wish direction and nothing else: it never rotates
+## the velocity, never damps it, never reads the mouse and has no idea whether
+## the key held is W or D. Turning and gaining speed are the same act, which is
+## why there is no longer a steering term and a gain term to keep in balance.
+##
+## This replaced a model with a 120 deg/s turn-rate cap and a separate
+## camera-sync gain rule. The lab measured that model turning exactly 86 degrees
+## per jump at 12, 16, 20 AND 24 m/s, with the camera making no difference -
+## which is what "tight curves feel horrible" was.
 
 signal jumped(hop_chain: int)
 signal landed(impact_speed: float)
@@ -39,9 +47,21 @@ var state: State = State.GROUND
 # --- Readouts for the debug HUD. ---
 var bhop_chain := 0            ## consecutive clean hops
 var last_hop_ground_time := 0.0  ## seconds spent grounded before the last jump
-var strafe_gain := 0.0         ## m/s the strafe term added last tick
 var traction_state: StringName = &"AIR"  ## which friction regime ran last tick
 var dash_charges := 0
+
+## AIRACCELERATE READOUT, one tick behind nothing: these are written by
+## _air_accelerate every airborne tick and read by the debug HUD and the
+## movement lab. They exist so air feel can be tuned by looking at the actual
+## terms of the equation instead of guessing from the speed number.
+var air_wish_speed := 0.0          ## |wish velocity|, after the move_speed clamp
+var air_wish_speed_capped := 0.0   ## min(above, air_wish_speed_cap) - Source's wishspd
+var air_current_speed := 0.0       ## velocity . wish_dir, the PROJECTION
+var air_add_speed := 0.0           ## how much room is left along wish_dir
+var air_accel_applied := 0.0       ## m/s actually added this tick
+var air_wish_angle_deg := 0.0      ## angle between velocity and wish_dir
+var soft_cap_gain := 1.0           ## fraction of a speed increase let through
+var collided_last_tick := false    ## so collision loss is never read as air loss
 
 var _body: CharacterBody3D
 var _collider: CollisionShape3D
@@ -61,8 +81,13 @@ var _dash_speed := 0.0
 var _air_dashes := 0
 var _dash_recharge := 0.0
 var _landing_grace := 0.0
-## Signed yaw rate in rad/s, sampled from the body each tick. This is the
-## camera-turn half of the strafe synchronisation rule.
+## Signed yaw rate in rad/s, sampled from the body each tick. TELEMETRY ONLY.
+##
+## It used to be half of the strafe rule: gain was paid out for turning the
+## mouse in the same direction as the held key. Nothing reads it for physics any
+## more, and nothing should - section 28 is explicit that the mouse must reach
+## movement only by moving the camera, which moves the wish direction. It stays
+## because it is genuinely useful on the debug HUD while tuning.
 var _yaw_rate := 0.0
 var _prev_yaw := 0.0
 
@@ -106,7 +131,6 @@ func step(delta: float) -> void:
 	if wants_dash and _can_dash(grounded):
 		_start_dash(grounded)
 
-	strafe_gain = 0.0
 	if state == State.DASH:
 		_dash_physics()
 	else:
@@ -129,6 +153,10 @@ func step(delta: float) -> void:
 
 	var fall_speed := -_body.velocity.y
 	_body.move_and_slide()
+	# Section 16: geometry is allowed to remove speed, steering is not. Recording
+	# it here is what lets the HUD and the lab tell the two apart instead of
+	# blaming the air model for a wall.
+	collided_last_tick = _body.get_slide_collision_count() > 0
 	_detect_landing(fall_speed)
 
 
@@ -156,14 +184,16 @@ func dash_ready() -> bool:
 	return dash_charges > 0 and _dash_cooldown <= 0.0
 
 
-## 1.0 = strafing gains full strength, 0.0 = at or past the soft ceiling.
-func soft_ceiling_falloff(speed: float) -> float:
-	if speed <= config.air_falloff_start:
+## How much of a would-be SPEED INCREASE the soft cap lets through at `speed`.
+## 1.0 below the cap region, bhop_soft_cap_min_gain at and above the top of it.
+## Smoothstep so there is no edge the player can feel.
+func soft_cap_gain_scale(speed: float) -> float:
+	if speed <= config.bhop_soft_cap_start:
 		return 1.0
-	if speed >= config.air_soft_ceiling:
-		return 0.0
-	var t := inverse_lerp(config.air_falloff_start, config.air_soft_ceiling, speed)
-	return pow(1.0 - t, config.air_falloff_exponent)
+	if speed >= config.bhop_soft_cap_end:
+		return config.bhop_soft_cap_min_gain
+	var t := smoothstep(config.bhop_soft_cap_start, config.bhop_soft_cap_end, speed)
+	return lerpf(1.0, config.bhop_soft_cap_min_gain, t)
 
 
 # --------------------------------------------------------------------------
@@ -315,20 +345,95 @@ func _ground_physics(delta: float, hopping: bool) -> void:
 		_set_horizontal(after * (ceiling / speed))
 
 
+## SOURCE CGameMovement::AirMove.
+##
+## Build a wish VELOCITY from the view basis and the movement keys, flatten it,
+## split it into a direction and a speed, clamp the speed to the player's normal
+## maximum, and hand both to AirAccelerate. That is the whole of it.
+##
+## What is deliberately absent: any rotation of the existing velocity, any
+## damping, any reading of the mouse, any distinction between W and A/D, and any
+## rule about whether the camera is turning. The velocity changes heading ONLY
+## because acceleration is added in the wish direction and the vectors sum.
 func _air_physics(delta: float) -> void:
-	var wish_dir := _wish_dir()
-	if wish_dir == Vector3.ZERO:
+	var wish := _wish_velocity()
+	var wish_speed := wish.length()
+	if wish_speed < 0.0001:
+		air_wish_speed = 0.0
+		air_add_speed = 0.0
+		air_accel_applied = 0.0
 		return
-	# Steering. Below move_speed it accelerates normally, so the air feels
-	# ordinary at ordinary speeds. Above move_speed it degrades into pure
-	# speed-preserving redirection. Either way it decides how much the player can
-	# TURN and has no say in how fast they go.
-	if horizontal_speed() <= config.move_speed:
-		_accelerate(delta, wish_dir, config.move_speed, config.air_acceleration)
-	else:
-		_air_redirect(delta, wish_dir)
-	# Speed gain, on a completely separate rule.
-	_air_strafe(delta)
+	var wish_dir := wish / wish_speed
+	# Source clamps the wish speed to the player's maximum before accelerating.
+	# Godot's get_vector() already normalises the stick, so a diagonal asks for
+	# exactly the same speed as a single key - which is what the clamp is for.
+	wish_speed = minf(wish_speed, config.move_speed)
+	_air_accelerate(delta, wish_dir, wish_speed)
+
+
+## SOURCE CGameMovement::AirAccelerate.
+##
+##     wishspd      = min(wish_speed, air_wish_speed_cap)
+##     current      = velocity . wish_dir              <- a PROJECTION
+##     add_speed    = wishspd - current
+##     accel_speed  = min(air_accelerate * wish_speed * dt, add_speed)
+##     velocity    += wish_dir * accel_speed
+##
+## The asymmetry on the third line is the load-bearing part and is easy to
+## "clean up" by mistake: the acceleration term uses the UNCAPPED wish speed,
+## while the budget it is clamped against uses the CAPPED one. Replacing
+## wish_speed with wishspd there is the classic mis-port, and it is what turns
+## air strafing into a slow, mushy drift.
+##
+## Why this gives speed: `current` is a projection, not a magnitude. Moving fast
+## forwards while wishing sideways makes it near zero, so the full add_speed is
+## still available - and a vector added at ninety degrees to a velocity
+## lengthens it. Nothing here multiplies anything.
+func _air_accelerate(delta: float, wish_dir: Vector3, wish_speed: float) -> void:
+	var vel := _horizontal(_body.velocity)
+	var wishspd := minf(wish_speed, config.air_wish_speed_cap)
+	var current := vel.dot(wish_dir)
+	var add_speed := wishspd - current
+
+	air_wish_speed = wish_speed
+	air_wish_speed_capped = wishspd
+	air_current_speed = current
+	air_add_speed = add_speed
+	air_accel_applied = 0.0
+	air_wish_angle_deg = rad_to_deg(
+		Vector2(vel.x, vel.z).angle_to(Vector2(wish_dir.x, wish_dir.z))
+	) if vel.length_squared() > 0.0001 else 0.0
+
+	if add_speed <= 0.0:
+		return
+	var accel_speed := minf(config.air_accelerate * wish_speed * delta, add_speed)
+	air_accel_applied = accel_speed
+
+	var accelerated := vel + wish_dir * accel_speed
+	_set_horizontal(_apply_soft_cap(vel, accelerated))
+
+
+## THE SOFT CAP, and the reason it is written this awkwardly.
+##
+## It scales the SPEED INCREASE, not the velocity. The accelerated vector keeps
+## its heading exactly, and its length is walked back toward the length it had
+## before - never past it.
+##
+## Consequences, all of which the brief asks for by name:
+##   - steering authority at 26 m/s is identical to steering at 16 m/s, because
+##     only the surplus length is touched and never the direction;
+##   - an acceleration that SLOWS the player (wishing backwards) is left alone,
+##     because there is no surplus to scale;
+##   - momentum already earned is never reduced, so there is nothing here that
+##     can make a tight turn cost speed.
+func _apply_soft_cap(before: Vector3, after: Vector3) -> Vector3:
+	var was := before.length()
+	var now := after.length()
+	soft_cap_gain = soft_cap_gain_scale(was)
+	if now <= was or now < 0.0001:
+		return after
+	var allowed := was + (now - was) * soft_cap_gain
+	return after * (allowed / now)
 
 
 ## Quake-order friction: it runs BEFORE acceleration and, at walking speed, it
@@ -385,69 +490,6 @@ func _accelerate(delta: float, wish_dir: Vector3, wish_speed: float, accel: floa
 	if add_speed <= 0.0:
 		return
 	_set_horizontal(vel + wish_dir * minf(accel * delta, add_speed))
-
-
-## Speed-preserving turn toward the input direction. Rotates the velocity; never
-## lengthens it. This is STEERING, and it is the only thing air_control_turn_rate
-## governs - it can no longer accidentally decide how fast anyone goes, because
-## the gain term below does not care about the angle between velocity and wish.
-func _air_redirect(delta: float, wish_dir: Vector3) -> void:
-	var vel := _horizontal(_body.velocity)
-	if vel.length_squared() < 0.0001:
-		return
-	# Lateral-only input buys sharper turns; that is the trade for gaining less.
-	var lateral := absf(input_dir.x)
-	var forward := maxf(input_dir.y, 0.0)
-	var bonus: float = lerpf(1.0, config.air_control_lateral_bonus, clampf(lateral - forward, 0.0, 1.0))
-	var current := Vector2(vel.x, vel.z)
-	var target := Vector2(wish_dir.x, wish_dir.z)
-	var max_turn := deg_to_rad(config.air_control_turn_rate * bonus) * delta
-	var turned := current.rotated(clampf(current.angle_to(target), -max_turn, max_turn))
-	_set_horizontal(Vector3(turned.x, 0.0, turned.y))
-
-
-## Air-strafe speed gain, paid for by strafe/turn SYNCHRONISATION.
-##
-##     sync = -input_dir.x * yaw_rate
-##
-## Turning left is a rising yaw and A is input_dir.x = -1, so A-with-a-left-turn
-## gives a positive product; D-with-a-right-turn gives the same positive product
-## from the opposite signs. One rule, perfectly symmetric, so alternating sides
-## and holding one long curve are equally legitimate and neither is special-cased.
-##
-## The gain is added ALONG THE CURRENT VELOCITY rather than along the wish
-## direction. That is the whole point of the redesign: speed and direction are
-## now independent, so steering can be as generous as it likes without closing
-## the window that pays for speed.
-##
-## Consequences that fall straight out of the maths, with nothing hardcoded:
-##   - lateral key held, camera still  -> yaw_rate 0 -> zero gain
-##   - camera turned, no lateral key   -> input_dir.x 0 -> zero gain
-##   - turning the wrong way for the key -> negative product -> zero gain
-##   - W alone, however fast           -> zero gain
-func _air_strafe(delta: float) -> void:
-	var vel := _horizontal(_body.velocity)
-	var speed := vel.length()
-	if speed < 0.01 or is_zero_approx(input_dir.x):
-		return
-
-	var sync := -input_dir.x * _yaw_rate
-	if sync <= 0.0:
-		return
-	sync = minf(sync / deg_to_rad(config.air_strafe_sync_yaw_rate), 1.0)
-
-	# Holding forward is the efficient way to build straight-line speed; pure
-	# lateral input trades some of that for the sharper steering it gets above.
-	var efficiency: float = lerpf(
-		config.air_strafe_lateral_efficiency, 1.0, clampf(input_dir.y, 0.0, 1.0)
-	)
-
-	var gain := config.air_strafe_acceleration * sync * efficiency * delta
-	gain *= soft_ceiling_falloff(speed)
-	if gain <= 0.0:
-		return
-	_set_horizontal(vel * ((speed + gain) / speed))
-	strafe_gain = gain
 
 
 # --------------------------------------------------------------------------
@@ -638,31 +680,49 @@ func _slide_physics(delta: float) -> void:
 # Helpers
 # --------------------------------------------------------------------------
 
-func _apply_limits(delta: float) -> void:
+## No horizontal air damping lives here any more.
+##
+## There used to be an overspeed_drag that bled anything above the soft ceiling
+## back down at 6 m/s^2. It was measurably taking 30 m/s to 25.7 over a single
+## jump with no input at all, which is exactly the "steering mysteriously
+## deleted my speed" complaint wearing a different hat. The soft cap now bends
+## the GAIN instead, so speed the player has earned is theirs until geometry or
+## the ground takes it.
+func _apply_limits(_delta: float) -> void:
 	var vel := _horizontal(_body.velocity)
 	var speed := vel.length()
 
-	# Above the soft ceiling in the air (a dash got you there, or a slope), bleed
-	# back down to it gently rather than clamping.
-	if speed > config.air_soft_ceiling and state != State.DASH and not _body.is_on_floor():
-		speed = maxf(speed - config.overspeed_drag * delta, config.air_soft_ceiling)
-		vel = vel.normalized() * speed
-		_set_horizontal(vel)
-
-	# Safety net only. Sits far above the soft ceiling; hitting it means a bug.
+	# Safety net only. Sits far above the soft cap; hitting it means a bug.
 	if speed > config.safety_speed_limit:
 		_set_horizontal(vel * (config.safety_speed_limit / speed))
 
 	_body.velocity.y = maxf(_body.velocity.y, -config.max_fall_speed)
 
 
-func _wish_dir() -> Vector3:
+## Source's wish VELOCITY: the view basis flattened, scaled by the keys, at walk
+## speed. AirMove wants the length as well as the direction, so this is the
+## primary form and _wish_dir() is the normalised view of it.
+##
+## The vertical component is dropped BEFORE normalising, which is why looking at
+## the sky does not shorten the wish vector or bend it upwards. Pitch has no
+## effect on movement at all, in the air or on the ground.
+func _wish_velocity() -> Vector3:
 	if input_dir == Vector2.ZERO:
 		return Vector3.ZERO
 	var basis := _body.global_transform.basis
-	var dir := basis.x * input_dir.x - basis.z * input_dir.y
-	dir.y = 0.0
-	return dir.normalized() if dir.length_squared() > 0.0001 else Vector3.ZERO
+	var forward := -basis.z
+	var right := basis.x
+	forward.y = 0.0
+	right.y = 0.0
+	if forward.length_squared() < 0.0001 or right.length_squared() < 0.0001:
+		return Vector3.ZERO
+	var wish := right.normalized() * input_dir.x + forward.normalized() * input_dir.y
+	return wish * config.move_speed
+
+
+func _wish_dir() -> Vector3:
+	var wish := _wish_velocity()
+	return wish.normalized() if wish.length_squared() > 0.0001 else Vector3.ZERO
 
 
 func _forward() -> Vector3:

@@ -52,8 +52,20 @@ var world_anchor := Vector3.ZERO
 ## Where a falling remnant comes to rest, and how fast it is currently sinking.
 var rest_y := -INF
 var fall_speed := 0.0
-## How long a remnant is allowed to last once detached.
+## How long a remnant is allowed to last once detached, and how much material
+## it may spend doing it. BOTH come from ReservoirConfig now - they used to be a
+## hardcoded 3.5 here while the config values sat unread, which is why tuning
+## them did nothing.
 var remnant_lifetime := 3.5
+## Absolute ceiling on a remnant's age, independent of every other rule. This is
+## the last line of defence against a wound that bleeds forever because some
+## other number was mis-set.
+var hard_deadline := 0.0
+var owner_generation := 0
+var death_id := 0
+var transferred_mass := 0.0
+var last_valid_surface: Dictionary = {}
+var last_valid_position := Vector3.ZERO
 
 
 static func open(
@@ -84,6 +96,10 @@ static func open(
 func alive() -> bool:
 	if state == State.EXHAUSTED:
 		return false
+	# A remnant dies at its deadline whatever else is true. Belt and braces: if
+	# any other rule were ever mis-tuned, this still terminates it.
+	if state == State.WORLD_REMNANT and hard_deadline > 0.0 and age >= hard_deadline:
+		return false
 	return age < lifetime and remaining > 0.0
 
 
@@ -99,6 +115,9 @@ func tick(delta: float) -> float:
 	if not alive():
 		return 0.0
 	age += delta
+	if not alive():
+		exhaust()
+		return 0.0
 	since_drip += delta
 	if since_drip < drip_interval:
 		return 0.0
@@ -112,7 +131,8 @@ func tick(delta: float) -> float:
 	amount *= lerpf(1.6, 0.5, clampf(age / maxf(lifetime, 0.001), 0.0, 1.0))
 	amount = minf(amount, remaining)
 	remaining -= amount
-	if remaining <= 0.0 or age >= lifetime:
+	var past_deadline := hard_deadline > 0.0 and age >= hard_deadline
+	if remaining <= 0.0 or age >= lifetime or past_deadline:
 		state = State.EXHAUSTED
 	return amount
 
@@ -123,16 +143,33 @@ func tick(delta: float) -> float:
 ##
 ## `floor_y` is where the remnant settles. The caller does the downward ray, so
 ## this stays free of scene queries.
-func detach(at: Vector3, floor_y := -INF) -> void:
+func detach(at: Vector3, floor_y := -INF, budget := -1.0, life := -1.0) -> void:
+	if state != State.ATTACHED_LIVING:
+		return
 	state = State.WORLD_REMNANT
 	detached = true
 	world_anchor = at
+	last_valid_position = at
 	rest_y = floor_y
-	# A remnant is the last of the bleeding, not a second wound: it releases
-	# what it has faster and over a shorter window.
+	if life > 0.0:
+		remnant_lifetime = life
+
+	# THE FIX FOR POST-MORTEM GUSHING.
+	#
+	# This used to shorten the CLOCK and leave `remaining` untouched, so a
+	# remnant pushed the wound's whole reserve out through a shorter window with
+	# a faster drip - it bled HARDER after death than the living wound did.
+	# The mass is now capped as well as the time, so a remnant is a small, finite
+	# last release and cannot outlive its budget.
+	if budget >= 0.0:
+		remaining = minf(remaining, budget)
+	transferred_mass = remaining
 	lifetime = minf(lifetime, remnant_lifetime)
 	age = 0.0
-	drip_interval = maxf(drip_interval * 0.6, 0.06)
+	hard_deadline = remnant_lifetime
+	# Slightly faster than the living wound, but it now has far less to give, so
+	# this reads as the last of it running out rather than as a second wound.
+	drip_interval = maxf(drip_interval * 0.75, 0.08)
 
 
 ## Remnants fall. Called once per tick by the owner while WORLD_REMNANT, so the

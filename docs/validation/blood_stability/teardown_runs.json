@@ -1,0 +1,56 @@
+[
+    {
+        "run":  "stability_headless",
+        "mode":  "headless",
+        "verbose":  false,
+        "exit_code":  -1073741819,
+        "assertions_failed":  0,
+        "full_process_pass":  false,
+        "log":  "logs/verified_stability_headless.log"
+    },
+    {
+        "run":  "material",
+        "mode":  "headless",
+        "verbose":  false,
+        "exit_code":  -1073741819,
+        "assertions_failed":  0,
+        "full_process_pass":  false,
+        "log":  "logs/verified_material.log"
+    },
+    {
+        "run":  "stability_native",
+        "mode":  "native Compatibility",
+        "verbose":  false,
+        "exit_code":  0,
+        "assertions_failed":  0,
+        "full_process_pass":  true,
+        "log":  "logs/verified_stability_native.log"
+    },
+    {
+        "run":  "stability_repeat",
+        "mode":  "headless",
+        "verbose":  false,
+        "exit_code":  -1073741819,
+        "assertions_failed":  0,
+        "full_process_pass":  false,
+        "log":  "logs/verified_stability_repeat.log"
+    },
+    {
+        "run":  "stability_verbose",
+        "mode":  "headless",
+        "verbose":  true,
+        "exit_code":  0,
+        "assertions_failed":  0,
+        "full_process_pass":  true,
+        "log":  "logs/release_stability.log"
+    },
+    {
+        "run":  "material_verbose",
+        "mode":  "headless",
+        "verbose":  true,
+        "exit_code":  0,
+        "assertions_failed":  0,
+        "full_process_pass":  true,
+        "log":  "logs/release_material.log"
+    }
+]

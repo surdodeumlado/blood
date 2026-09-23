@@ -1,5 +1,11 @@
 # BLOOD
 
+The current material pass is documented in [BLOOD_PHYSICS_RESEARCH.md](BLOOD_PHYSICS_RESEARCH.md)
+and [BLOOD_PHYSICS_IMPLEMENTATION.md](BLOOD_PHYSICS_IMPLEMENTATION.md). Those documents
+supersede the older airborne size/drag descriptions below. Liquid SMALL and MEDIUM
+now use physical equivalent diameters, swept collision and bounded sphere instances;
+only MICRO mist is cosmetic. The surface atlas fixes from Phase 2.3 are retained.
+
 Prototype 0.4 — foundation only. The hand cannon is the first consumer, not the
 design target.
 
@@ -535,6 +541,273 @@ vanished on the spot. It now carries the corpse visual along the blow for
 `dummy_death_throw_time` before retiring it. Purely presentational: hurtboxes
 and the collider are already disabled when it starts, and setting the time to 0
 removes it entirely.
+
+## Phase 2.2: wall behaviour and remnant termination
+
+Phase 2.1 made the mass accounting honest. The playtest said the aftermath was
+still too weak, walls read as stickers, and remnants kept spurting after the
+corpse was gone.
+
+### Deposition payoff
+
+`stain_area_per_mass` went 2.6 -> 7.2, and total stain area is linear in it
+(`area = mass * k`), so a major kill leaves roughly three times the mark it did.
+The representative mass distribution was skewed much harder as well: the fat
+fraction now carries 9-18x a fine droplet's share rather than 5-9x. Combined
+with a dedicated `cluster_mass_threshold`, a heavy packet now breaks up into a
+cluster of marks instead of landing as one dot - the "cool in the air,
+underwhelming on the ground" complaint.
+
+Measured, one major kill, total stain area:
+
+| Family | Phase 2.1 | Phase 2.2 |
+|---|---|---|
+| BALLISTIC | 3.1 m² | **17.1 m²** |
+| BLUNT | 6.5 m² | **25.6 m²** |
+| HIGH_ENERGY | 7.3 m² | **27.9 m²** |
+
+### A wall is not a floor rotated 90 degrees
+
+On a floor, material arrives from above and pools. On a wall it arrives ACROSS
+the surface and smears, by an amount that depends on the angle it came in at.
+One shared elongation rule for both is what made wall blood read as a decal
+pasted vertically.
+
+```
+_is_wall(normal)     |n · UP| < wall_normal_threshold
+
+glancing  (incidence < wall_glancing_incidence)
+    elongation up to wall_streak_ratio (4.5), shape forced to STREAK/ELONGATED
+head-on
+    compact: the profile's own ratio, scaled by wall_compact_scale
+```
+
+Measured at the same glancing angle: **3.57** elongation on a wall, **1.80** on
+a floor; head-on on a wall, **1.00**.
+
+### Wall runoff
+
+A heavy enough wall deposit starts to RUN. `_step_runoff` walks a small fixed
+pool of rivulets down the surface they were born on, laying one narrow streak
+every `runoff_step` metres and spending mass as it goes. Not a fluid sim: a
+handful of positions per frame, one short ray each time a mark is laid to check
+the wall is still there.
+
+```
+trigger    deposited mass >= runoff_mass_threshold, on a wall, pool free
+budget     runoff_mass_share of that deposit, CARVED OUT of the stain
+travel     down, projected onto the surface, with slight wander
+marks      a narrow dark streak every runoff_step metres
+ends       budget spent, or runoff_lifetime, or it runs off the edge
+terminal   whatever is left drops to the floor below
+caps       max_runoff concurrent, arena-wide
+```
+
+**Running blood is never free blood.** The rivulet's budget is subtracted from
+the stain that spawned it and booked back as it lays streaks and drops its
+remainder. Measured: 0.600 mass placed on a wall, 0.330 of it ran, and the world
+ended up holding **exactly 0.600**.
+
+### Remnant termination
+
+Three real defects, not tuning:
+
+1. **`ReservoirConfig.remnant_lifetime` and `remnant_reserve` were dead config.**
+   `Wound` carried its own hardcoded 3.5 s and nothing ever read the reserve, so
+   tuning the designer-facing knobs did nothing.
+2. **`detach()` capped the CLOCK but not the MASS.** It shortened the lifetime
+   and sped the drip up, then pushed the wound's entire remaining reserve
+   through that shorter window - so a remnant bled *harder* after death than the
+   living wound had.
+3. **A kill's wound was ticked twice.** `apply_hit` left it in
+   `reservoir.wounds` *and* handed it to `_remnants`, so both loops dripped the
+   same wound, at double rate, drawing double mass.
+
+Now `detach(at, floor_y, budget, life)` caps `remaining` to the budget, takes
+its clock from `BloodSettings.remnant_lifetime`, and sets a `hard_deadline` that
+`alive()` enforces independently of every other rule. `release_wound()` and
+`take_all_wounds()` make the hand-over explicit so nothing is owned twice, and
+`max_remnants` caps how many can bleed at once.
+
+Measured: a wound carrying 0.2150 was capped to its 0.1600 budget, ran for
+**1.92 s** against a 1.90 s target, released 0.1552 of 0.1600, and retired.
+
+## Phase 2.3: rendered stain correctness
+
+Phase 2.2's telemetry reported large contamination while the arena still looked
+clean. Two rendering defects explained the whole gap.
+
+### Defect 1: every stain rendered the same atlas cell
+
+The stain layer used a `StandardMaterial3D` with `uv1_scale` set to one cell and
+wrote the wanted cell into per-instance custom data. **Nothing consumed that
+data.** `StandardMaterial3D` has no per-instance UV offset, so all 3200 stains
+sampled cell (0,0) - `TINY_DROP` - whatever shape the system had chosen. Every
+streak, pool, cluster and soaked base was a small round dot.
+
+Fixed with `presentation/gore/blood_stain.gdshader`, a ShaderMaterial that reads
+`INSTANCE_CUSTOM.xy` as the atlas column and row:
+
+```glsl
+void vertex() {
+    vec2 cell = vec2(INSTANCE_CUSTOM.x, INSTANCE_CUSTOM.y);
+    atlas_uv = (UV * (1.0 - inset * 2.0) + inset + cell) / atlas_cells;
+}
+```
+
+Unshaded, one texture fetch, no depth write - Compatibility safe, no compute,
+no storage buffers. One material for all seven shapes.
+
+### Defect 2: the radius/diameter contract
+
+`_stain_radius()` returns a RADIUS. A `QuadMesh` of size 1x1 spans -0.5..+0.5,
+so scaling its basis axes by N makes it N wide. The code scaled by the radius,
+so every stain rendered at **half** its intended diameter.
+
+Then the atlas made it smaller again: the ink inside a cell fills only part of
+it. Both factors are now applied in one place.
+
+```
+THE DIMENSION CONTRACT
+
+    _stain_radius(mass)              -> RADIUS, metres
+    quad_for_visible_diameter(d, s)  -> full QUAD WIDTH, metres
+    Basis.x / Basis.y scale          -> full WIDTH, never half-width
+
+    quad = diameter / atlas_occupancy(shape)
+```
+
+Compounded, a requested 20 cm mark used to render as **3.3 cm of visible ink**:
+quad 0.10 m (radius not diameter) x 0.33 occupancy.
+
+### Atlas occupancy is MEASURED, not assumed
+
+The atlas is generated procedurally, so `_measure_atlas()` scans the pixels it
+just drew and records each cell's ink extent and fill. Independently measured:
+
+| Variant | ink extent | fill | quad for 20 cm ink |
+|---|---|---|---|
+| TINY_DROP | 0.33 x 0.33 | 0.085 | 0.610 m |
+| MEDIUM_ROUND | 0.64 x 0.64 | 0.334 | 0.312 m |
+| LARGE_IRREGULAR | 0.70 x 0.78 | 0.387 | 0.284 m |
+| ELONGATED | 0.97 x 0.38 | 0.249 | 0.206 m |
+| STREAK | 0.98 x 0.25 | 0.138 | 0.203 m |
+| CLUSTER | 0.73 x 0.78 | 0.246 | 0.272 m |
+| POOLED | 0.92 x 0.91 | 0.633 | 0.217 m |
+
+The measured TINY_DROP fill of **0.085** matches the independent audit's 8.5%
+exactly, which is the check that the calibration reads the real texture.
+
+### Size distribution, by FINAL VISIBLE width
+
+The audit found 90-93% of rendered marks under 5 cm. Measured now, per major
+kill:
+
+| Family | marks | median | p90 | <5 cm |
+|---|---|---|---|---|
+| BALLISTIC | 833 | 0.121 m | 0.242 m | **11%** |
+| BLUNT | 1587 | 0.129 m | 0.384 m | **11%** |
+| HIGH_ENERGY | 1756 | 0.143 m | 0.291 m | **6%** |
+
+### Coverage telemetry is a union, not a sum
+
+`sum(PI r^2)` counts the same square metre once per overlapping mark, which is
+how a visibly clean room reported hundreds of square metres. The ledger now
+reports both: `nominal_summed_area` (kept, clearly named) and
+`approx_unique_visible_coverage`, a union over a coarse grid. Sixty marks
+stacked on one point: nominal **36.06 m2**, unique **3.06 m2**. The same sixty
+spread out: **64.83 m2**.
+
+### Other rendering fixes
+
+**Coarse fallback stacking.** When a directional probe found no geometry it fell
+straight down from the event origin - every time, so nine of twelve probes
+stacked on one spot. The fallback now drops from a point ALONG the trajectory
+the probe was already travelling, keeping the family's geometry, and retains the
+horizontal component so the mark still points the way the material was going.
+
+**Soaked bases** now use the POOLED mask (they were giant TINY_DROP dots) and
+are clamped by `soak_base_max_radius`: raising `stain_area_per_mass` had pushed
+them past 4 m across.
+
+**Runoff continuity.** Segments were independent blobs ~3.5 cm long with ~10 cm
+gaps - a dotted line. Each segment now spans FROM the previous mark TO the
+current one and overreaches by `runoff_overlap`, so the rivulet reads as
+continuous. Measured segment length 0.274 m against a 0.090 m step.
+
+**Floor grid occlusion.** THE_BOX's grid was a 10 mm tall box at 15 mm, spanning
+y 0.010-0.020 - straight through the blood layer (detail at 12 mm, soaked bases
+at 4 mm). It is now 0.6 mm tall at 2 mm, below every blood layer. Collision is
+untouched; the grid has none.
+
+### Dimension names are explicit now
+
+`_place_stain` takes `radius_m` and builds `quad_m`, and the contract is stated
+at the function itself rather than only in a doc:
+
+```
+radius_m   HALF the mark's visible width, metres. What _stain_radius returns.
+quad_m     the FULL quad width/height, metres, after occupancy is divided out.
+mass       represented material, NOT a dimension.
+```
+
+Mixing those three is precisely how the render bug happened, so the names no
+longer allow it.
+
+### Wall impact shape follows the angle
+
+A glancing wall hit picks STREAK or ELONGATED; a near-normal one picks
+LARGE_IRREGULAR or MEDIUM_ROUND. Left to the family's own shape weights, a
+straight-on wall hit could roll a streak, which reads as a glancing impact and
+contradicts what actually happened.
+
+### Runoff hierarchy
+
+A rivulet is thick where it leaves the impact splat and narrows as it spends
+itself (`runoff_taper_min`), and occasionally sheds a drop beside the streak
+(`runoff_drop_chance`) - both paid for out of its own budget. A uniform ribbon
+reads as a drawn line; a tapering one with the odd drop reads as running blood.
+
+### Coverage is an ellipse on the surface plane
+
+The union grid originally stamped a SQUARE of the longest side on the XZ plane.
+That inflated every elongated mark by the ratio of its axes and put wall stains
+in the wrong plane entirely - so "unique coverage" came out at 36.8 m2 against a
+25.6 m2 nominal sum, which is impossible for a union of the same marks. It now
+stamps an ellipse in the two axes the surface actually spans:
+
+| Family | stains | nominal | UNIQUE |
+|---|---|---|---|
+| BALLISTIC | 872 | 25.6 m2 | 5.8 m2 |
+| BLUNT | 1645 | 72.2 m2 | 39.2 m2 |
+| HIGH_ENERGY | 1715 | 54.1 m2 | 23.4 m2 |
+
+### Screen-space readability
+
+`BloodSystem.screen_pixels_for(width_m, distance_m, fov, height_px)` converts a
+world width into the pixels it covers, so readability is argued from numbers:
+
+```
+px = width_m * screen_height_px / (2 * distance_m * tan(fov / 2))
+```
+
+At 1080p / 90 degrees, median marks measure 12-19 px when you walk up to them
+(4 m) and 4-6 px at a 12 m fighting range; p90 marks are 10-24 px at 12 m. Fine
+micro spatter stays small on purpose.
+
+### What headless cannot check
+
+Per-instance MultiMesh data lives in the RenderingServer, and `--headless` uses
+the DUMMY server, which stores none of it: `set_instance_transform` succeeds and
+`get_instance_transform` then returns identity. A headless test therefore cannot
+read back what it wrote.
+
+`BloodMultiMeshLayer.begin_recording()` mirrors the exact Transform3D and custom
+data handed to the rendering API, which is as far as a headless test can
+honestly follow the value. **The pixels are checked by eye** in
+`tests/blood_render_fixture.tscn`, which runs windowed: every variant at one
+quad size in the top row, and requested footprints of 5/10/20/40/80 cm beside
+white rulers of exactly that length in the bottom row.
 
 ## Developer tools
 

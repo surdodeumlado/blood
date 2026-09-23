@@ -1,0 +1,124 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+TextServer: Added interface "Dummy"
+TextServer: Added interface "ICU / HarfBuzz / Graphite (Built-in)"
+Using "default" pen tablet driver...
+
+TextServer: Primary interface set to: "ICU / HarfBuzz / Graphite (Built-in)".
+CORE API HASH: 2004498165
+EDITOR API HASH: 1696660745
+SceneTreeFTI: traversal method DEFAULT
+Loading resource: res://core/autoload/sfx.gd remapped: res://core/autoload/sfx.gd
+Completed load for: 'res://core/autoload/sfx.gd' remapped 'res://core/autoload/sfx.gd' at thread -1
+ERROR: Failed to read the root certificate store.
+   at: get_system_ca_certificates (platform/windows/os_windows.cpp:2582)
+Loaded builtin CA certificates
+Loading resource: res://tests/blood_material_test.tscn remapped: res://tests/blood_material_test.tscn
+Loading resource: res://tests/blood_material_test.gd remapped: res://tests/blood_material_test.gd
+Loading resource: res://data/blood/surfaces/smooth.tres remapped: res://data/blood/surfaces/smooth.tres
+Loading resource: res://presentation/gore/blood_surface_response.gd remapped: res://presentation/gore/blood_surface_response.gd
+Completed load for: 'res://presentation/gore/blood_surface_response.gd' remapped 'res://presentation/gore/blood_surface_response.gd' at thread -1
+Completed load for: 'res://data/blood/surfaces/smooth.tres' remapped 'res://data/blood/surfaces/smooth.tres' at thread -1
+Loading resource: res://data/blood/surfaces/rough.tres remapped: res://data/blood/surfaces/rough.tres
+Completed load for: 'res://data/blood/surfaces/rough.tres' remapped 'res://data/blood/surfaces/rough.tres' at thread -1
+Loading resource: res://data/blood/surfaces/porous.tres remapped: res://data/blood/surfaces/porous.tres
+Completed load for: 'res://data/blood/surfaces/porous.tres' remapped 'res://data/blood/surfaces/porous.tres' at thread -1
+Loading resource: res://data/blood/blood_ballistic.tres remapped: res://data/blood/blood_ballistic.tres
+Loading resource: res://presentation/gore/blood_profile.gd remapped: res://presentation/gore/blood_profile.gd
+Completed load for: 'res://presentation/gore/blood_profile.gd' remapped 'res://presentation/gore/blood_profile.gd' at thread -1
+Completed load for: 'res://data/blood/blood_ballistic.tres' remapped 'res://data/blood/blood_ballistic.tres' at thread -1
+Loading resource: res://data/blood/blood_physics.tres remapped: res://data/blood/blood_physics.tres
+Loading resource: res://presentation/gore/blood_physics_settings.gd remapped: res://presentation/gore/blood_physics_settings.gd
+Completed load for: 'res://presentation/gore/blood_physics_settings.gd' remapped 'res://presentation/gore/blood_physics_settings.gd' at thread -1
+Completed load for: 'res://data/blood/blood_physics.tres' remapped 'res://data/blood/blood_physics.tres' at thread -1
+Loading resource: res://data/blood/blood_stability.tres remapped: res://data/blood/blood_stability.tres
+Loading resource: res://presentation/gore/blood_stability_settings.gd remapped: res://presentation/gore/blood_stability_settings.gd
+Completed load for: 'res://presentation/gore/blood_stability_settings.gd' remapped 'res://presentation/gore/blood_stability_settings.gd' at thread -1
+Completed load for: 'res://data/blood/blood_stability.tres' remapped 'res://data/blood/blood_stability.tres' at thread -1
+Completed load for: 'res://tests/blood_material_test.gd' remapped 'res://tests/blood_material_test.gd' at thread -1
+Completed load for: 'res://tests/blood_material_test.tscn' remapped 'res://tests/blood_material_test.tscn' at thread -1
+Loading resource: res://data/blood/blood_settings.tres remapped: res://data/blood/blood_settings.tres
+Completed load for: 'res://data/blood/blood_settings.tres' remapped 'res://data/blood/blood_settings.tres' at thread -1
+Loading resource: res://data/blood/blood_slashing.tres remapped: res://data/blood/blood_slashing.tres
+Completed load for: 'res://data/blood/blood_slashing.tres' remapped 'res://data/blood/blood_slashing.tres' at thread -1
+Loading resource: res://data/blood/blood_piercing.tres remapped: res://data/blood/blood_piercing.tres
+Completed load for: 'res://data/blood/blood_piercing.tres' remapped 'res://data/blood/blood_piercing.tres' at thread -1
+Loading resource: res://data/blood/blood_blunt.tres remapped: res://data/blood/blood_blunt.tres
+Completed load for: 'res://data/blood/blood_blunt.tres' remapped 'res://data/blood/blood_blunt.tres' at thread -1
+Loading resource: res://data/blood/blood_high_energy.tres remapped: res://data/blood/blood_high_energy.tres
+Completed load for: 'res://data/blood/blood_high_energy.tres' remapped 'res://data/blood/blood_high_energy.tres' at thread -1
+Loading resource: res://data/blood/reservoir_defaults.tres remapped: res://data/blood/reservoir_defaults.tres
+Completed load for: 'res://data/blood/reservoir_defaults.tres' remapped 'res://data/blood/reservoir_defaults.tres' at thread -1
+Loading resource: res://presentation/gore/blood_liquid.gdshader remapped: res://presentation/gore/blood_liquid.gdshader
+Completed load for: 'res://presentation/gore/blood_liquid.gdshader' remapped 'res://presentation/gore/blood_liquid.gdshader' at thread -1
+Loading resource: res://presentation/gore/blood_stain.gdshader remapped: res://presentation/gore/blood_stain.gdshader
+Completed load for: 'res://presentation/gore/blood_stain.gdshader' remapped 'res://presentation/gore/blood_stain.gdshader' at thread -1
+PASS smaller drops lose launch momentum faster
+PASS drag never reverses velocity
+PASS both physical liquid layers use spheres
+PASS liquid longest axis obeys cap at d=0.08 mm
+PASS liquid longest axis obeys cap at d=0.50 mm
+PASS liquid longest axis obeys cap at d=1.50 mm
+PASS liquid longest axis obeys cap at d=3.00 mm
+PASS liquid longest axis obeys cap at d=8.00 mm
+PASS blood uses configured world gravity; player settings untouched
+PASS render exaggeration leaves real flight, physical diameter and parcel mass unchanged
+PASS render exaggeration leaves swept collision and impact response unchanged
+PASS stain visual gain leaves deposited and wet mass unchanged
+PASS arcade settings enlarge liquid and final stain geometry
+PASS grazing incidence progressively elongates stains
+PASS 15 degree impact remains bounded
+PASS three material responses affect spread
+PASS impact satellites conserve parent mass
+PASS porous surface transfers wet material to absorbed stock
+PASS slow swept collision has a causal drop-to-stain record
+PASS aerodynamic breakup occurs and respects generation bound
+PASS breakup conserves represented parcel mass
+PASS breakup conserves equivalent droplet volume
+PASS short-lived ligaments fragment or collapse
+PASS same heavy load runs after bounded delay on smooth and rough walls; porous absorbs
+PASS runoff terminates within its bound
+PASS inclined runoff follows tangential gravity
+PASS blade load is carved from the contact withdrawal, never added blood
+PASS equal cast-off load responds to angular motion and release threshold
+Loading resource: res://gameplay/player/player.tscn remapped: res://gameplay/player/player.tscn
+Loading resource: res://gameplay/player/player.gd remapped: res://gameplay/player/player.gd
+Completed load for: 'res://gameplay/player/player.gd' remapped 'res://gameplay/player/player.gd' at thread -1
+Loading resource: res://data/movement/default_movement.tres remapped: res://data/movement/default_movement.tres
+Completed load for: 'res://data/movement/default_movement.tres' remapped 'res://data/movement/default_movement.tres' at thread -1
+Loading resource: res://gameplay/weapons/test_blaster.gd remapped: res://gameplay/weapons/test_blaster.gd
+Completed load for: 'res://gameplay/weapons/test_blaster.gd' remapped 'res://gameplay/weapons/test_blaster.gd' at thread -1
+Loading resource: res://data/combat/default_combat.tres remapped: res://data/combat/default_combat.tres
+Completed load for: 'res://data/combat/default_combat.tres' remapped 'res://data/combat/default_combat.tres' at thread -1
+Loading resource: res://gameplay/weapons/grenade_launcher.gd remapped: res://gameplay/weapons/grenade_launcher.gd
+Completed load for: 'res://gameplay/weapons/grenade_launcher.gd' remapped 'res://gameplay/weapons/grenade_launcher.gd' at thread -1
+Completed load for: 'res://gameplay/player/player.tscn' remapped 'res://gameplay/player/player.tscn' at thread -1
+PASS TwinDaggers: fresh contact loads weapon without immediate cast-off
+PASS TwinDaggers: actual later swing emits causal physical cast-off
+PASS TwinDaggers: full orientation detects roll about the forward axis
+Loading resource: res://gameplay/player/player.tscn remapped: res://gameplay/player/player.tscn
+Loading resource: res://data/movement/default_movement.tres remapped: res://data/movement/default_movement.tres
+Completed load for: 'res://data/movement/default_movement.tres' remapped 'res://data/movement/default_movement.tres' at thread -1
+Loading resource: res://data/combat/default_combat.tres remapped: res://data/combat/default_combat.tres
+Completed load for: 'res://data/combat/default_combat.tres' remapped 'res://data/combat/default_combat.tres' at thread -1
+Completed load for: 'res://gameplay/player/player.tscn' remapped 'res://gameplay/player/player.tscn' at thread -1
+PASS HeavyBlunt: fresh contact loads weapon without immediate cast-off
+PASS HeavyBlunt: actual later swing emits causal physical cast-off
+PASS HeavyBlunt: full orientation detects roll about the forward axis
+PASS full pool refuses breakup without losing mass or overwriting a live drop
+PASS full physical pools conserve a new event through explicit coarse fallback
+PASS blunt +X / -X momentum reversal survives material changes
+PASS quality 0 physical cap respected
+PASS quality 0 represents same logical released blood
+PASS quality 0 no physical parcel outlives its limit
+PASS quality 0 terminal drops and runoff finish
+PASS quality 1 physical cap respected
+PASS quality 1 represents same logical released blood
+PASS quality 1 no physical parcel outlives its limit
+PASS quality 1 terminal drops and runoff finish
+PASS quality 2 physical cap respected
+PASS quality 2 represents same logical released blood
+PASS quality 2 no physical parcel outlives its limit
+PASS quality 2 terminal drops and runoff finish
+BLOOD MATERIAL: 49 checks, 0 failures; captures=false
+MATERIAL: presentation stopped
+MATERIAL: mixer drained; quitting

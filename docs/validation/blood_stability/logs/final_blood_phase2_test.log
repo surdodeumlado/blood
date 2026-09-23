@@ -1,0 +1,143 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+ERROR: Failed to read the root certificate store.
+   at: get_system_ca_certificates (platform/windows/os_windows.cpp:2582)
+  PASS  reservoir starts full (1.00)
+  PASS  reservoir starts full (1.00)
+  PASS  a second hit draws less than the first (0.1131 < 0.1300)
+  PASS  a second hit draws less than the first (0.1131 < 0.1300)
+  PASS  the reservoir is depleted by hits but not emptied (0.757)
+  PASS  the reservoir is depleted by hits but not emptied (0.757)
+  PASS  a kill releases far more than a hit (0.780 vs 0.130)
+  PASS  a kill releases far more than a hit (0.780 vs 0.130)
+  PASS  a maul kill releases more mass than a bullet kill (1.000 > 0.780)
+  PASS  a maul kill releases more mass than a bullet kill (1.000 > 0.780)
+  PASS  an explosive kill is the largest release (1.000)
+  PASS  an explosive kill is the largest release (1.000)
+  PASS  a corpse keeps a bounded post-mortem allowance
+  PASS  a corpse keeps a bounded post-mortem allowance
+  PASS  quality does not change released MASS (0.7800 vs 0.7800)
+  PASS  quality does not change released MASS (0.7800 vs 0.7800)
+  PASS  quality does not change reservoir consumption
+  PASS  quality does not change reservoir consumption
+  PASS  INSANE draws far more representatives than LOW (183 vs 40)
+  PASS  INSANE draws far more representatives than LOW (183 vs 40)
+  PASS  families no longer converge on one droplet count ({ 0: 95, 1: 157, 3: 230, 4: 203 })
+  PASS  families no longer converge on one droplet count ({ 0: 95, 1: 157, 3: 230, 4: 203 })
+  PASS  the spread between families is substantial (95..230)
+  PASS  the spread between families is substantial (95..230)
+  PASS  a grenade kill is no longer capped at 22 physical droplets (203)
+  PASS  a grenade kill is no longer capped at 22 physical droplets (203)
+  PASS  a headshot kill is dramatically bigger than a body shot (234 vs 30)
+  PASS  a headshot kill is dramatically bigger than a body shot (234 vs 30)
+  PASS  layer fills to capacity (8)
+  PASS  layer fills to capacity (8)
+  PASS  filling a cold pool evicts nothing
+  PASS  filling a cold pool evicts nothing
+  PASS  free slots are reused before anything live is evicted (0 evictions)
+  PASS  free slots are reused before anything live is evicted (0 evictions)
+  PASS  the exact freed slots came back ([2, 5, 6])
+  PASS  the exact freed slots came back ([2, 5, 6])
+  PASS  a truly full layer evicts exactly once
+  PASS  a truly full layer evicts exactly once
+  PASS  a full layer still serves a request when allowed to evict
+  PASS  a full layer still serves a request when allowed to evict
+  PASS  a non-evicting request is refused when full
+  PASS  a non-evicting request is refused when full
+  PASS  rejections are counted (1)
+  PASS  rejections are counted (1)
+  PASS  BALLISTIC is strongly axial - a track, not a ball (0.93)
+  PASS  BALLISTIC is strongly axial - a track, not a ball (0.93)
+  PASS  BALLISTIC is far more directional than BLUNT (0.93 vs 0.73)
+  PASS  BALLISTIC is far more directional than BLUNT (0.93 vs 0.73)
+  PASS  BALLISTIC material is born along the wound channel (0.262 along vs 0.000 across)
+  PASS  BALLISTIC material is born along the wound channel (0.262 along vs 0.000 across)
+  PASS  SLASHING stays in the swing plane (mean |dot(up)| 0.106)
+  PASS  SLASHING stays in the swing plane (mean |dot(up)| 0.106)
+  PASS  SLASHING is far flatter than BLUNT (0.106 vs 0.390)
+  PASS  SLASHING is far flatter than BLUNT (0.106 vs 0.390)
+  PASS  SLASHING is born spread ALONG the cut, not at a point (0.288)
+  PASS  SLASHING is born spread ALONG the cut, not at a point (0.288)
+  PASS  BLUNT speed collapses toward the rim (1.92 near axis vs 0.20 at rim)
+  PASS  BLUNT speed collapses toward the rim (1.92 near axis vs 0.20 at rim)
+  PASS  BLUNT is broader than BALLISTIC (0.73 < 0.93)
+  PASS  BLUNT is broader than BALLISTIC (0.73 < 0.93)
+  PASS  BLUNT is born across a contact patch, not a point (0.315 vs ballistic 0.000)
+  PASS  BLUNT is born across a contact patch, not a point (0.315 vs ballistic 0.000)
+  PASS  EXPLOSIVE emits from several distinct rupture points (6)
+  PASS  EXPLOSIVE emits from several distinct rupture points (6)
+  PASS  EXPLOSIVE is less axial than BALLISTIC (0.68 < 0.93)
+  PASS  EXPLOSIVE is less axial than BALLISTIC (0.68 < 0.93)
+  PASS  every pair of families is geometrically distinguishable (closest pair 0.083)
+  PASS  every pair of families is geometrically distinguishable (closest pair 0.083)
+  PASS  all four tissue categories are reachable (4)
+  PASS  all four tissue categories are reachable (4)
+  PASS  BLUNT throws far more FAT than BALLISTIC (0.20 vs 0.04)
+  PASS  BLUNT throws far more FAT than BALLISTIC (0.20 vs 0.04)
+  PASS  BLUNT throws far more DARK_TISSUE than BALLISTIC
+  PASS  BLUNT throws far more DARK_TISSUE than BALLISTIC
+  PASS  FAT is visibly pale against FLESH (fat 0.56/0.41 vs flesh 0.08/0.07)
+  PASS  FAT is visibly pale against FLESH (fat 0.56/0.41 vs flesh 0.08/0.07)
+  PASS  DARK_TISSUE is visibly darker than FLESH (0.24 < 0.41)
+  PASS  DARK_TISSUE is visibly darker than FLESH (0.24 < 0.41)
+  PASS  the tissue mesh library has real shape variety (6)
+  PASS  the tissue mesh library has real shape variety (6)
+  PASS  a maul kill spawns tissue grains (254)
+  PASS  a maul kill spawns tissue grains (254)
+  PASS  a maul kill spawns large chunks (193)
+  PASS  a maul kill spawns large chunks (193)
+  PASS  solid material stays within its budget (447/700)
+  PASS  solid material stays within its budget (447/700)
+  PASS  solids settle and stay on the floor (447)
+  PASS  solids settle and stay on the floor (447)
+  PASS  a slashing hit opens a wound
+  PASS  a slashing hit opens a wound
+  PASS  the wound is held by the victim, not by the blood system
+  PASS  the wound is held by the victim, not by the blood system
+  PASS  the wound releases blood over time (9 discrete events in 120 frames)
+  PASS  the wound releases blood over time (9 discrete events in 120 frames)
+  PASS  the wound does NOT emit every frame (9 events / 120 frames)
+  PASS  the wound does NOT emit every frame (9 events / 120 frames)
+  PASS  a blade opens a worse wound than a bullet (0.85 > 0.35)
+  PASS  a blade opens a worse wound than a bullet (0.85 > 0.35)
+  PASS  a wound is anchored to the VICTIM, so a moving target trails blood
+  PASS  a wound is anchored to the VICTIM, so a moving target trails blood
+  PASS  a detached wound finishes its life in world space
+  PASS  a detached wound finishes its life in world space
+  PASS  a death remnant keeps leaking after the corpse is gone (10 events)
+  PASS  a death remnant keeps leaking after the corpse is gone (10 events)
+  PASS  trajectories paint substantial contamination (3200 stains)
+  PASS  trajectories paint substantial contamination (3200 stains)
+  PASS  contamination is spread over several regions, not one heap (167 cells)
+  PASS  contamination is spread over several regions, not one heap (167 cells)
+  PASS  stains respect their budget (3200/3200)
+  PASS  stains respect their budget (3200/3200)
+  PASS  later kills add to the chamber's memory rather than erasing it (3200 -> 3200)
+  PASS  later kills add to the chamber's memory rather than erasing it (3200 -> 3200)
+  PASS  clear_all wipes the arena ({ "micro": 0, "small": 0, "medium": 0, "large": 0, "surface": 0, "airborne": 0, "representatives": 0, "solids_flying": 0, "solids_settled": 0, "wounds": 0, "remnants": 0, "runoff": 0, "cells": 0 })
+  PASS  clear_all wipes the arena ({ "micro": 0, "small": 0, "medium": 0, "large": 0, "surface": 0, "airborne": 0, "representatives": 0, "solids_flying": 0, "solids_settled": 0, "wounds": 0, "remnants": 0, "runoff": 0, "cells": 0 })
+  PASS  60 catastrophic events allocate no nodes (6 children)
+  PASS  60 catastrophic events allocate no nodes (6 children)
+  PASS  the whole blood system is a handful of batched nodes, not hundreds (6)
+  PASS  the whole blood system is a handful of batched nodes, not hundreds (6)
+  PASS  micro layer stays within capacity (2551/3000)
+  PASS  micro layer stays within capacity (2551/3000)
+  PASS  small layer stays within capacity (1184/1200)
+  PASS  small layer stays within capacity (1184/1200)
+  PASS  medium layer stays within capacity (513/520)
+  PASS  medium layer stays within capacity (513/520)
+  PASS  large layer stays within capacity (700/700)
+  PASS  large layer stays within capacity (700/700)
+  PASS  surface layer stays within capacity (3200/3200)
+  PASS  surface layer stays within capacity (3200/3200)
+  PASS  Phase 1: the forward lobe still survives the entry normal (84.3%)
+  PASS  Phase 1: the forward lobe still survives the entry normal (84.3%)
+  PASS  Phase 1: attack pitch is still preserved (mean y 0.53)
+  PASS  Phase 1: attack pitch is still preserved (mean y 0.53)
+  PASS  Phase 1: the swing plane normal is still the frame's thin axis (1.000)
+  PASS  Phase 1: the swing plane normal is still the frame's thin axis (1.000)
+  PASS  Phase 1: world stains are still persistent for every family
+  PASS  Phase 1: world stains are still persistent for every family
+
+68 checks, 0 failed
+68 checks, 0 failed

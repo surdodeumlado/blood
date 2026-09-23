@@ -55,6 +55,8 @@ func _run() -> void:
 
 func _make_blood() -> BloodSystem:
 	var b := BloodSystem.new()
+	b.synchronous_test_mode = true
+	b.manual_budget_clock = true
 	b.settings = (load(SETTINGS) as BloodSettings).duplicate()
 	b.fallback_reservoir = load(RESERVOIR)
 	b.profiles.assign([

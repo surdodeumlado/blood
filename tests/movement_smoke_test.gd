@@ -282,9 +282,9 @@ func _blood() -> void:
 			family, Vector3(0, 1.2, 0), Vector3(0, 0, -1), BloodTypes.BodyRegion.TORSO, 1.0
 		)
 		blood.spill(ctx)
+		await _tick(4) # Presentation is admitted over three fixed steps.
 		if blood.last_particles_spawned > 0:
 			handled += 1
-		await _tick(1)
 	_check(handled == families.size(), "every damage family has a profile (%d/5)" % handled)
 
 	# Region and event scaling now runs through released MASS rather than through
@@ -395,12 +395,13 @@ func _blood_ctx(
 	return ctx
 
 
-## Particles a single event is worth, as the system itself decides it.
+## Logical released blood: adaptive presentation counts are not a mass metric.
 func _blood_amount(
 	blood: BloodSystem, region: BloodTypes.BodyRegion, kill: bool, energy := 1.0
 ) -> float:
+	var before := blood.accepted_blood_mass
 	blood.spill(_blood_ctx(region, kill, energy))
-	return float(blood.last_particles_spawned)
+	return blood.accepted_blood_mass - before
 
 
 func _count_visible(node: Node, from_index: int, to_index: int) -> int:
@@ -598,9 +599,14 @@ func _ceiling() -> void:
 	_check(movement.state == MovementController.State.GROUND, "stands up in the open")
 
 
-## The two halves of the air model, checked separately.
+## The air model. Both of these used to be enforced by explicit rules; they are
+## now CONSEQUENCES of AirAccelerate, and are checked because the consequences
+## are what the player feels. See tests/movement_source_lab.tscn for the full
+## Source-property suite and the turn-radius table.
 func _air_model() -> void:
-	# Holding forward in the air must never push past move_speed.
+	# Holding forward in the air still cannot outrun a walk - not because
+	# anything clamps it, but because the projection of the velocity onto the
+	# wish direction is already past air_wish_speed_cap, so add_speed <= 0.
 	await _reset(Vector3(0, 0.2, 0))
 	movement.input_dir = Vector2(0, 1)
 	await _tick(40)
@@ -610,10 +616,15 @@ func _air_model() -> void:
 	await _tick(30)
 	_check(
 		movement.horizontal_speed() <= config.move_speed + 0.05,
-		"holding forward in the air cannot exceed move_speed (%.2f)" % movement.horizontal_speed()
+		"W alone in the air adds nothing, the projection is past the cap (%.2f)"
+			% movement.horizontal_speed()
 	)
 
-	# Holding strafe with a FIXED view is worth almost nothing.
+	# Holding strafe with a FIXED view now pays a little, and must keep paying
+	# only a little: it buys one capped tick of orthogonal acceleration and then
+	# the projection catches up. This is the behaviour section 10 of the pass
+	# brief asks for explicitly - it must not be rejected, and must not be a
+	# technique either.
 	await _reset(Vector3(0, 0.2, 0))
 	movement.input_dir = Vector2(0, 1)
 	await _tick(40)
@@ -625,7 +636,7 @@ func _air_model() -> void:
 	var held_gain := movement.horizontal_speed() - before
 	_check(
 		held_gain < 0.6,
-		"holding a strafe key without turning barely gains (+%.2f m/s)" % held_gain
+		"a strafe key with a locked view gains only a little (+%.2f m/s)" % held_gain
 	)
 
 
@@ -666,8 +677,8 @@ func _bunnyhop() -> void:
 		"bunnyhop reaches competent territory (peak %.2f m/s)" % peak
 	)
 	_check(
-		peak <= config.air_soft_ceiling + 0.5,
-		"soft ceiling holds (peak %.2f / ceiling %.1f)" % [peak, config.air_soft_ceiling]
+		peak <= config.bhop_soft_cap_end + 1.5,
+		"soft cap holds (peak %.2f / cap end %.1f)" % [peak, config.bhop_soft_cap_end]
 	)
 	_check(is_finite(body.velocity.length()), "velocity stays finite")
 

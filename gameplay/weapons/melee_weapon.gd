@@ -54,6 +54,10 @@ var blood_load := 0.0
 var tip_velocity := Vector3.ZERO
 var _last_tip := Vector3.ZERO
 var _have_tip := false
+var _last_tip_rotation := Quaternion.IDENTITY
+var tip_angular_speed := 0.0
+var _castoff_available := 0.0
+var _castoff_done := false
 ## Debug readouts for the smoke test.
 var last_sweep_overlaps := -1
 var last_sweep_targets := -1
@@ -94,7 +98,6 @@ func _physics_process(delta: float) -> void:
 		_contact_done = true
 		contact_count += 1
 		_resolve_sweep()
-		_throw_castoff()
 
 
 ## Presentation only, at render rate so the swing stays smooth above 60 Hz.
@@ -102,15 +105,22 @@ func _process(delta: float) -> void:
 	if _swing > 0.0 or not _posed_rest:
 		_pose(_phase())
 	_track_tip(delta)
+	if _swing > 0.0 and _phase() >= contact_at and not _castoff_done:
+		_throw_castoff()
 
 
 ## The weapon tip's real velocity, for cast-off. Sampled after the pose so it
 ## reflects where the rig actually went this frame.
 func _track_tip(delta: float) -> void:
 	var tip := _tip_position()
+	# The authored swings roll around FORWARD. Comparing only the forward
+	# vector misses that entire rotation; compare complete orientations.
+	var tip_rotation := _active_rig().global_basis.orthonormalized().get_rotation_quaternion()
 	if _have_tip and delta > 0.0:
 		tip_velocity = (tip - _last_tip) / delta
+		tip_angular_speed = _last_tip_rotation.angle_to(tip_rotation) / delta
 	_last_tip = tip
+	_last_tip_rotation = tip_rotation
 	_have_tip = true
 
 
@@ -134,6 +144,9 @@ func try_attack() -> void:
 	_cooldown = swing_time
 	_swing = swing_time
 	_contact_done = false
+	_castoff_available = blood_load
+	_castoff_done = false
+	_have_tip = false
 	_posed_rest = false
 	_swing_hits.clear()
 	if alternating:
@@ -284,7 +297,6 @@ func _resolve_sweep() -> void:
 				# back to camera forward while genuine swing data exists.
 				ctx.penetration_direction_ws = momentum_axis
 		)
-		blood_load = minf(blood_load + blood_load_per_hit, 1.0)
 		if first:
 			camera().pulse_fov(
 				config.fov_pulse_head if zone == ZONE_HEAD else config.fov_pulse_body
@@ -307,28 +319,27 @@ func _secondary_damage(area: Object) -> float:
 ## A bloodied weapon throws some of its load off along the swing arc. This is
 ## why a melee fight paints the floor in streaks rather than in neat pools.
 ## Presentation only - it deals no damage and gates nothing.
-func _throw_castoff() -> void:
-	if blood_load <= 0.05:
-		return
+func _retain_contact_blood(release: BloodRelease) -> void:
 	var blood := _blood_system()
-	if blood == null:
-		return
-	var cam := camera()
-	# Prefer the blade's ACTUAL motion. Only when the rig has not moved enough to
-	# give a reliable direction does this fall back to the swing side, which is
-	# the approximation the whole of Phase 1 used.
-	var tangent: Vector3
-	if tip_velocity.length() > 0.75:
-		tangent = tip_velocity.normalized()
-	else:
-		tangent = (cam.global_basis.x * -_side).normalized()
-	var origin := _tip_position()
-	blood.cast_off(
-		origin,
-		tangent,
-		BloodTypes.DamageType.SLASHING if damage_type == BloodTypes.DamageType.SLASHING
-			else damage_type,
-		int(round(castoff_droplets * blood_load)),
-		impact_energy
-	)
-	blood_load = maxf(blood_load - castoff_spend, 0.0)
+	if blood == null: return
+	var unit_mass := blood.settings.fluid.castoff_load_mass
+	var wanted := minf(blood_load_per_hit, 1.0 - blood_load) * unit_mass
+	var taken := minf(wanted, release.blood_mass * blood.settings.fluid.contact_retained_fraction)
+	release.blood_mass -= taken
+	release.contact_retained_mass += taken
+	blood_load = minf(blood_load + taken / maxf(unit_mass, 0.000001), 1.0)
+
+
+func _throw_castoff() -> void:
+	# Only the load present before this swing may detach. New wound release and
+	# newly acquired blade load remain separate from later-motion cast-off.
+	if _castoff_available <= 0.05: return
+	var blood := _blood_system()
+	if blood == null: return
+	var spent := blood.cast_off(_tip_position(), tip_velocity, damage_type,
+		maxi(1, int(round(castoff_droplets * _castoff_available))), impact_energy,
+		_castoff_available, tip_angular_speed, castoff_spend)
+	if spent > 0.0:
+		blood_load = maxf(blood_load - spent, 0.0)
+		_castoff_available -= spent
+		_castoff_done = true

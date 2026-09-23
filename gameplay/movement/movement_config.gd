@@ -8,6 +8,19 @@ extends Resource
 ## the player scene points at) and nowhere else.
 
 @export_group("Ground")
+## SOURCE NAME MAPPING, so searching for the CGameMovement name finds the knob:
+##
+##     sv_maxspeed      -> move_speed
+##     sv_accelerate    -> ground_acceleration
+##     sv_friction      -> ground_deceleration / momentum_friction
+##     sv_airaccelerate -> air_accelerate
+##     GetAirSpeedCap   -> air_wish_speed_cap
+##
+## These keep their existing names because the grounded model is NOT a port: it
+## is the approved traction-heavy model, and Source's friction (a rate applied
+## to max(speed, sv_stopspeed)) would change how walking feels. There is
+## therefore no stop_speed here, because nothing would read it.
+
 ## Speed the player accelerates to on flat ground with no extra momentum.
 @export var move_speed := 9.0
 ## m/s^2 added toward the input direction while grounded. MUST stay comfortably
@@ -43,57 +56,55 @@ extends Resource
 ## move_speed multiplier while crouch-walking.
 @export var crouch_speed_multiplier := 0.45
 
-@export_group("Air control (steering only - never grants speed)")
-## Baseline air control, used only while horizontal speed is BELOW move_speed:
-## step off a ledge from a standstill and you can still fly the jump normally.
-@export var air_acceleration := 16.0
-## Degrees per second the velocity may be rotated toward the input direction
-## while airborne. Speed-PRESERVING: this is "how much can I turn", and it is
-## deliberately unable to change "how fast can I go" - that is the job of the
-## strafe block below. Raising it makes the air feel more agile without making
-## anyone faster.
-@export var air_control_turn_rate := 120.0
-## Extra steering granted when the player is NOT holding forward. Lateral-only
-## input buys tighter, more aggressive curves at the cost of longitudinal
-## efficiency (see air_strafe_lateral_efficiency).
-@export var air_control_lateral_bonus := 1.0
+@export_group("Air movement (Source-style AirAccelerate)")
+## THE WHOLE AIR MODEL IS THESE TWO NUMBERS. See docs/MOVEMENT.md.
+##
+## Per tick, Source adds `air_accelerate * wish_speed * delta` metres per second
+## along the wish direction, but never more than is needed to bring the
+## PROJECTION of the velocity onto that direction up to air_wish_speed_cap.
+##
+## air_accelerate carries units of 1/s, so unlike a speed it is scale-free: the
+## Source value transfers directly instead of needing conversion. 12 is
+## sv_airaccelerate in CS:S / CS:GO.
+##
+## It is not normally the binding constraint. At walk speed it offers
+## 12 * 9 / 60 = 1.8 m/s per tick, and the cap below only ever lets ~1.1 of that
+## through. It matters at the edges: when the wish direction points BACKWARDS
+## the cap is no longer binding, and this is what decides how hard holding S in
+## the air scrubs speed.
+@export var air_accelerate := 12.0
+## Maximum speed the player may have ALONG THE WISH DIRECTION before air
+## acceleration stops adding anything. This is Source's GetAirSpeedCap (30
+## units/s against a 250 units/s run) scaled to our 9 m/s walk: 30/250 * 9.
+##
+## Everything about air feel comes out of this one number:
+##
+##   TURN RATE     adding `cap` perpendicular to a velocity of `v` rotates the
+##                 heading by about cap/v radians per tick. At 60 Hz and 15 m/s
+##                 that is ~250 deg/s, and it tightens as you slow down.
+##   SPEED GAIN    a perfect strafe raises v^2 by cap^2 per tick - so the gain
+##                 in m/s shrinks as you get faster, with no extra rule needed.
+##
+## Raising it makes the air twitchier AND much faster to build speed, because it
+## drives both. That coupling is the point: in Source, turning IS how you gain.
+@export var air_wish_speed_cap := 1.1
 
-@export_group("Air strafe / bunnyhop (speed gain only)")
-## m/s^2 added ALONG THE CURRENT VELOCITY at perfect strafe/turn sync.
+@export_group("Bunnyhop soft cap (bends new gain, never deletes momentum)")
+## Below this horizontal speed, air acceleration gains full strength.
+@export var bhop_soft_cap_start := 20.0
+## At and above this speed, a perfect strafe gains almost nothing.
+@export var bhop_soft_cap_end := 25.0
+## Gain multiplier at and above bhop_soft_cap_end. NOT zero: the curve should
+## asymptote, so there is no exact number where the player feels a wall.
 ##
-## The model: air-strafe gain is paid for by SYNCHRONISATION between the lateral
-## key and the camera turn, not by the geometry of the velocity vector.
-##
-##     A (left)  + turning left   = valid strafe
-##     D (right) + turning right  = valid strafe
-##     either key with a still camera = nothing
-##     camera turn with no lateral key = nothing
-##
-## Both sides are the same rule, so alternating A and D is exactly as valid as
-## holding one long curve, and neither is a privileged special case.
-@export var air_strafe_acceleration := 3.6
-## Yaw rate, in degrees per second, that counts as fully synchronised. Turning
-## slower than this scales the gain down proportionally; turning faster does not
-## pay more, so mouse-spinning is not a technique.
-@export var air_strafe_sync_yaw_rate := 150.0
-## Gain multiplier when the player holds NO forward input. Below 1.0 on purpose:
-## lateral-only strafing stays viable and keeps momentum, but W + A/D remains
-## the better way to build straight-line speed.
-@export_range(0.0, 1.0) var air_strafe_lateral_efficiency := 0.5
-## Below this speed the strafe term has full strength.
-@export var air_falloff_start := 14.0
-## Strafe gain reaches exactly zero here. Not a clamp: it is where the curve
-## lands, so a skilled player asymptotes toward it instead of hitting a wall.
-@export var air_soft_ceiling := 25.0
-## Shape of the diminishing returns between falloff_start and soft_ceiling.
-## 1.0 = linear, >1 = keeps gain longer then drops hard, <1 = drops early.
-@export var air_falloff_exponent := 1.0
-## m/s^2 pulling airborne speed back down to the soft ceiling when above it
-## (e.g. after a dash). Gentle on purpose.
-@export var overspeed_drag := 6.0
-## Max airborne velocity change in m/s^2 while airborne is not limited here; the
-## absolute number below is a safety net against physics blowups, NOT a
-## gameplay cap. It sits far above the soft ceiling and should never be hit.
+## IMPORTANT: this scales the SPEED INCREASE an acceleration would have
+## produced. It never scales the velocity itself, and it never touches the
+## DIRECTION change - so a tight turn at 26 m/s is exactly as tight as one at
+## 16 m/s, it just stops paying. Taking momentum away is the job of collision
+## and ground friction, and of nothing else.
+@export_range(0.0, 1.0) var bhop_soft_cap_min_gain := 0.03
+## Absolute safety net against a physics blowup, NOT a gameplay cap. It sits far
+## above the soft cap and should never be reached.
 @export var safety_speed_limit := 40.0
 ## Terminal fall speed.
 @export var max_fall_speed := 45.0

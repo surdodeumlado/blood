@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS nonlethal family 4 retains living stock (old demand 1.720)
+PASS subsequent family 0 creates a positive release
+PASS no replenishment or invented mass
+PASS nonlethal family 4 retains living stock (old demand 1.720)
+PASS subsequent family 1 creates a positive release
+PASS no replenishment or invented mass
+PASS nonlethal family 3 retains living stock (old demand 1.224)
+PASS subsequent family 0 creates a positive release
+PASS no replenishment or invented mass
+PASS incidence 90 preserves increasing directional aspect
+PASS incidence 60 preserves increasing directional aspect
+PASS incidence 45 preserves increasing directional aspect
+PASS incidence 30 preserves increasing directional aspect
+PASS incidence 15 preserves increasing directional aspect
+POLISH MODEL: 14 checks; 0 failures

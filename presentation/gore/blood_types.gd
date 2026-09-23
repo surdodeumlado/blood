@@ -63,6 +63,8 @@ enum Tissue {
 	FAT,          ## pale cream-yellow, sparse, unmistakable among the red
 	DARK_TISSUE,  ## very dark red-brown, blunt and explosive signature
 	THICK_BLOOD,  ## dense near-black clots, heavy trajectories
+	STRINGY_TISSUE, ## solid fibrous material; distinct from transient liquid ligaments
+	GORE_CHUNK,     ## rare major organic fragment
 }
 
 
@@ -71,6 +73,7 @@ enum Tissue {
 enum Surface {
 	SMOOTH,  ## clean ellipse, few satellites
 	ROUGH,   ## irregular edge, more satellites
+	POROUS,  ## absorption and contact retention suppress runoff
 }
 
 

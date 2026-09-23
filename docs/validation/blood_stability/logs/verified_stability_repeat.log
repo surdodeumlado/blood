@@ -1,0 +1,53 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+ERROR: Failed to read the root certificate store.
+   at: get_system_ca_certificates (platform/windows/os_windows.cpp:2582)
+PASS edge deposit receives a real owned support anchor
+PASS stain point stays outside the correct surface plane at millimetre offset
+PASS large edge stain is reduced until its whole sampled footprint is supported
+PASS edited collision shape invalidates old footprint support
+PASS moved collider retires its old world-space marks
+PASS unsupported floating stain is rejected with explicit retained mass
+PASS empty developer overlay is valid before the first impact
+PASS smooth and rough heavy wall deposits deterministically run after bounded delay
+PASS tiny wall drop remains static
+PASS porous wall absorbs without sustained runoff
+PASS streams exhaust within bounded lifetime without repeatedly restarting the same deposit
+PASS pool grows with repeated incoming deposits rather than appearing at final size
+PASS pool target and rendered area stop growing without additional deposited mass
+PASS residual drip cannot create an immediate catastrophic pool
+PASS wall runoff transfers mass to a real floor contact and feeds a growing floor pool
+PASS living wound anchor follows the moving biological owner
+PASS dead owner cannot keep attached wound emissions
+PASS respawn generation cannot inherit an old wound
+PASS remnant handoff debits exactly its legitimate transferred mass
+PASS world remnant exhausts and retires without owner references
+PASS respawn resets remnant accounting without resurrecting detached wounds
+PASS 1 victims queue presentation without delaying or changing the logical withdrawal
+PASS 1 victims finish primary emission within three fixed steps
+PASS 1 victims conserve physical, pending, retained, runoff and escaped blood mass
+PASS 2 victims queue presentation without delaying or changing the logical withdrawal
+PASS 2 victims finish primary emission within three fixed steps
+PASS 2 victims conserve physical, pending, retained, runoff and escaped blood mass
+PASS 4 victims queue presentation without delaying or changing the logical withdrawal
+PASS 4 victims finish primary emission within three fixed steps
+PASS 4 victims conserve physical, pending, retained, runoff and escaped blood mass
+PASS 8 victims queue presentation without delaying or changing the logical withdrawal
+PASS 8 victims finish primary emission within three fixed steps
+PASS 8 victims conserve physical, pending, retained, runoff and escaped blood mass
+PASS multi-victim sampling degrades gracefully per victim
+PASS strict collision/support ray budget is never exceeded
+PASS stain write budget is never exceeded
+PASS physical admission budget is never exceeded
+PASS runoff event budget is never exceeded
+PASS nearby physical impacts share surface presentation
+PASS 100 writes commit a MultiMesh layer at most once in a rendered frame
+PASS six catch-up steps share one rendered-frame admission and query budget
+PASS same-frame budget overflow retains all logical blood
+PASS 100 simultaneous local impacts form one audio cluster
+PASS 100 impacts produce one quiet rain texture, not 100 voices
+PASS blood audio never exceeds its six pooled voices
+PASS audio overflow enriches bounded clusters
+STABILITY: 46 checks, 0 failed
+STABILITY: presentation stopped
+STABILITY: mixer drained; quitting

@@ -27,6 +27,8 @@ var total_released := 0.0
 
 var _victim: Node3D
 var _emitter: Node
+var generation := 0
+var remnant_transferred := 0.0
 
 
 func _ready() -> void:
@@ -38,6 +40,9 @@ func _ready() -> void:
 
 ## Back to full. The Blood Lab reset and the dummy's respawn both call this.
 func refill() -> void:
+	generation += 1
+	remnant_transferred = 0.0
+	for w in wounds: w.exhaust()
 	remaining_blood = config.max_blood
 	remaining_tissue = config.max_tissue
 	death_release_allowance = config.max_blood * config.death_release_allowance
@@ -83,7 +88,7 @@ func withdraw(ctx: BloodContext) -> BloodRelease:
 		tissue = blood * config.kill_tissue_ratio
 		severity = config.remnant_severity
 	else:
-		blood = remaining_blood * config.hit_blood_fraction * scale
+		blood = remaining_blood * minf(config.hit_blood_fraction * scale, config.max_nonlethal_fraction)
 		tissue = blood * config.hit_tissue_ratio
 		severity = config.wound_severity_for(family) * clampf(scale, 0.3, 2.0)
 
@@ -147,19 +152,75 @@ func open_wound(release: BloodRelease) -> Wound:
 		local,
 		local_dir
 	)
+	# The remnant clock comes from config, not from a constant inside Wound. It
+	# used to be hardcoded there while these values sat unread.
+	w.remnant_lifetime = config.remnant_lifetime
+	w.owner_generation = generation
+	w.last_valid_position = ctx.position_ws
 	wounds.append(w)
 	while wounds.size() > config.max_wounds:
 		wounds.pop_front()
 	return w
 
 
+## Hand a wound over to the world and STOP OWNING IT.
+##
+## This is the other half of the post-mortem gushing bug: a kill opened a wound,
+## handed it to the blood system as a remnant, and left it in this list - so the
+## reservoir's tick AND the remnant tick both dripped the same wound, at double
+## rate, drawing double mass.
+func release_wound(w: Wound) -> void:
+	wounds.erase(w)
+
+
+## Everything this body still has open, handed over at once. Returns the wounds
+## so the caller can turn them into remnants; the reservoir keeps none of them.
+func take_all_wounds() -> Array[Wound]:
+	var out: Array[Wound] = wounds.duplicate()
+	wounds.clear()
+	return out
+
+
+## The budget a remnant may spend. Bounded by what the body has left, so a
+## corpse cannot bleed material it does not have.
+func remnant_budget() -> float:
+	return minf(maxf(0.0, config.remnant_reserve - remnant_transferred), remaining_blood + death_release_allowance)
+
+## Debit once at handoff; multiple wounds share ONE finite corpse allowance.
+func transfer_remnant_budget(w: Wound) -> float:
+	var wanted := minf(w.remaining, remnant_budget())
+	var from_body := minf(wanted, remaining_blood)
+	remaining_blood -= from_body
+	var from_allowance := minf(wanted - from_body, death_release_allowance)
+	death_release_allowance -= from_allowance
+	var drawn := from_body + from_allowance
+	remnant_transferred += drawn
+	total_released += drawn
+	w.death_id = generation
+	return drawn
+
+func attached_owner_valid() -> bool:
+	if not is_instance_valid(_victim) or not _victim.is_inside_tree() or not _victim.is_visible_in_tree(): return false
+	return not _victim.has_method("is_damageable") or bool(_victim.call("is_damageable"))
+
+
 ## Advance every wound. Returns the amount due per wound this tick as an array
 ## of {wound, amount}, which the blood system turns into discrete releases.
 func tick_wounds(delta: float) -> Array[Dictionary]:
 	var due: Array[Dictionary] = []
+	if not attached_owner_valid():
+		for w in wounds: w.exhaust()
+		wounds.clear()
+		return due
 	var i := wounds.size() - 1
 	while i >= 0:
 		var w := wounds[i]
+		if w.state != Wound.State.ATTACHED_LIVING or w.owner_generation != generation:
+			w.exhaust()
+			wounds.remove_at(i)
+			i -= 1
+			continue
+		w.last_valid_position = w.position_ws(_victim.global_transform)
 		var amount := w.tick(delta)
 		if amount > 0.0:
 			var drawn := _draw_blood(amount, false)

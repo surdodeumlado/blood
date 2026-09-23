@@ -1,0 +1,34 @@
+[
+    {
+        "fixture":  "blood_stability_test",
+        "exit_code":  -1073741819,
+        "functional_assertions_failed":  0,
+        "status":  "functional assertions pass; intermittent native shutdown crash in headless; see teardown_runs.json"
+    },
+    {
+        "fixture":  "blood_material_test",
+        "exit_code":  -1073741819,
+        "functional_assertions_failed":  0,
+        "status":  "functional assertions pass; intermittent native shutdown crash in headless; see teardown_runs.json"
+    },
+    {
+        "fixture":  "blood_phase2_test",
+        "exit_code":  0
+    },
+    {
+        "fixture":  "blood_phase21_test",
+        "exit_code":  0
+    },
+    {
+        "fixture":  "blood_phase22_test",
+        "exit_code":  0
+    },
+    {
+        "fixture":  "blood_phase23_test",
+        "exit_code":  0
+    },
+    {
+        "fixture":  "movement_smoke_test",
+        "exit_code":  0
+    }
+]

@@ -2,11 +2,16 @@
 
 Prototype 0.3 — COMBAT/MOVEMENT FEEL TUNING.
 
-> **Bunnyhop, air-strafe and slide are APPROVED and frozen.** The air model in
-> this document is reference game feel for the project. Do not refactor it, do
-> not change the W / A / D relationship, do not chase Counter-Strike or Quake
-> any harder. The smoke test pins the exact numbers (9.00 → 22.93 m/s on a
-> correct strafe run) so any accidental drift fails a check.
+> **THE AIR MODEL WAS DELIBERATELY UNFROZEN AND REPLACED.**
+>
+> The previous air model was approved and frozen, then failed in play: tight
+> curves felt awkward and the player reported losing speed while trying to
+> curve. It has been replaced with mathematics derived from Source SDK 2013's
+> `CGameMovement`. **Ground movement, slide and dash were NOT part of that
+> change and remain as approved.**
+>
+> The air model is now pending a manual playtest and is not approved. Numbers
+> are pinned by `tests/movement_source_lab.tscn`.
 
 ## Philosophy
 
@@ -46,46 +51,66 @@ Combat / feedback numbers: `data/combat/default_combat.tres`
 Nothing hardcodes a tuning value. Edit the `.tres` and press Play. To add a knob,
 add an `@export` to `MovementConfig` and use it.
 
-## The air model, in two terms
+## The air model — Source `AirMove` / `AirAccelerate`
 
-This is the core of 0.2. Air movement is deliberately split so that
-responsiveness and skill gain are separate, independently tunable things.
+**One term. No steering term, no gain term, no rule about the mouse.**
 
-### Term 1 — baseline control (`air_acceleration`, `air_turn_rate`)
+Reference: Source SDK 2013 `gamemovement.cpp`, `CGameMovement::AirMove()` and
+`AirAccelerate()`. The relationships are Valve's; every number is ours. This is
+**not** a claim of parity with Source 2, whose movement code is not public in
+the same way.
 
-- While horizontal speed is **below** `move_speed` (9 m/s): ordinary Quake-style
-  acceleration at 16 m/s². Step off a ledge from a standstill and you can still
-  fly the jump normally.
-- While horizontal speed is **at or above** `move_speed`: the term stops adding
-  and becomes a **speed-preserving turn** limited to `air_turn_rate` (110 °/s).
-  It rotates the velocity vector; it cannot lengthen it.
-
-This is why the game still feels responsive at 24 m/s while remaining impossible
-to farm. Holding a strafe key at speed redirects you and gives you nothing.
-
-### Term 2 — the technique (`air_strafe_acceleration`, `air_speed_cap`)
-
-Identical in shape to Quake/CS air acceleration, but the wish speed is
-`air_speed_cap` (1.1 m/s) rather than the full move speed:
+`AirMove` builds a wish velocity from the flattened view basis and the movement
+keys, and clamps its length to `move_speed`. `AirAccelerate` then does all of it:
 
 ```
-add_speed = air_speed_cap - dot(velocity, wish_dir)
+wishspd     = min(wish_speed, air_wish_speed_cap)   # 1.1 m/s
+current     = dot(velocity, wish_dir)               # a PROJECTION, not a speed
+add_speed   = wishspd - current
 if add_speed <= 0: nothing happens
-gain = min(air_strafe_acceleration * dt, add_speed) * soft_ceiling_falloff(speed)
-velocity += wish_dir * gain
+accel_speed = min(air_accelerate * wish_speed * dt, add_speed)
+velocity   += wish_dir * accel_speed
 ```
 
-Consequences, which are the whole design:
+**The asymmetry on the last line is load-bearing.** The acceleration term uses
+the *uncapped* `wish_speed`; the budget it is clamped against uses the *capped*
+one. Replacing one with the other is the classic mis-port and it turns air
+strafing into a mushy drift.
+
+Why this both turns and gains: `current` is a projection. Moving fast forwards
+while wishing sideways makes it near zero, so the full `add_speed` is available
+— and a vector added at ninety degrees to a velocity both bends it *and*
+lengthens it. Nothing multiplies anything.
 
 | What you do | What happens |
 |---|---|
-| Hold W at speed | velocity is aligned with the wish dir, `dot >> cap`, **zero gain** |
-| Hold A, view fixed | velocity rotates toward A, `dot` crosses the cap in ~3 ticks, **gain stops** |
-| Hold A **and turn the view to match** | wish dir stays just ahead of velocity, `dot` stays under the cap, **speed is added every tick** |
-| Hold A and turn too fast/slow | you fall in and out of the gain window; partial gain |
+| Hold W at any speed | projection is already past the cap, `add_speed < 0`, **nothing added, nothing taken** |
+| Hold A/D, view fixed | one capped tick of orthogonal acceleration, then the projection catches up. **+0.04 m/s and a 4° nudge.** Small, allowed, not a technique |
+| Hold A/D **and turn the view with it** | the wish direction keeps outrunning the projection, so acceleration is added every tick: **a tight arc that gains speed** |
+| Hold S | the projection is negative, so `add_speed` is large and the cap stops binding — speed scrubs off fast. Correct Source behaviour |
 
-Measured in the headless test: holding a strafe key with a fixed view over half
-a second gains **+0.07 m/s**. A correct strafe run goes **9 → 22.9 m/s**.
+There is **no camera-turn bonus**, no lateral-input rejection, no
+velocity carving and no turn damping. The mouse reaches movement only by moving
+the camera, which moves the wish direction.
+
+### What this fixed
+
+The previous model capped air steering at a flat **120 °/s** rotation of the
+velocity vector. Measured in the lab, it turned **exactly 86° per jump at 12,
+16, 20 and 24 m/s** — identical at every speed, and identical whether the camera
+swept or stood still, because the camera only gated the *gain* term and had no
+steering authority at all. That is what "tight curves feel horrible" was.
+
+| Speed | Heading per jump, old | new | Speed change, old | new |
+|---|---|---|---|---|
+| 12 m/s | 86° | **208°** | +1.01 | **+2.00** |
+| 16 m/s | 86° | **162°** | +0.79 | **+1.55** |
+| 20 m/s | 86° | **131°** | +0.44 | **+1.20** |
+| 24 m/s | 86° | **113°** | +0.09 | **+0.13** |
+
+Turning is now **1.3–2.4× tighter**, it **tightens further as you slow down**
+(which is what makes a curve feel like a curve), and a tight turn *gains* speed
+instead of costing it.
 
 ## Bunnyhop: what jumping actually does
 
@@ -149,27 +174,38 @@ this code at all; and `_ground_physics()` receives a `hopping` flag computed
 entirely. The HUD prints which regime ran (`TRACTION` / `MOMENTUM` /
 `HOP (no friction)`) so this is visible while tuning.
 
-## Soft ceiling
+## Soft cap
 
-Not a clamp. `soft_ceiling_falloff()` scales term 2's gain:
+**It bends new gain. It never touches momentum you already have.**
+
+`soft_cap_gain_scale()` scales the *speed increase* an acceleration would have
+produced, then re-lengths the accelerated vector to that:
 
 ```
-speed <= air_falloff_start (14)   -> factor 1.0     full gain
-speed >= air_soft_ceiling  (25)   -> factor 0.0     gain has faded to nothing
-between                           -> pow(1 - t, air_falloff_exponent)
+speed <= bhop_soft_cap_start (20)  -> x1.00   full gain
+speed >= bhop_soft_cap_end   (25)  -> x0.03   asymptote, deliberately not zero
+between                            -> smoothstep, so there is no edge to feel
 ```
 
-With `air_falloff_exponent = 1.0` the falloff is linear, so gain per hop shrinks
-smoothly from 14 m/s upward and a skilled player asymptotes toward 25 rather than
-slamming into it. Raise the exponent to keep gain longer and then lose it
-suddenly; lower it to make the last few m/s much harder.
+Three properties fall out of scaling the *surplus length* rather than the
+vector, and all three are requirements rather than side effects:
 
-Above the ceiling — reachable by dashing, or sliding down the ramp —
-`overspeed_drag` (6 m/s²) gently bleeds airborne speed back down to it. Nothing
-snaps.
+- **Steering is untouched.** The heading of the accelerated vector is preserved
+  exactly, so a tight turn at 25 m/s is as tight as one at 16 m/s. It just
+  stops paying.
+- **Deceleration is untouched.** Wishing backwards produces no surplus, so
+  there is nothing to scale.
+- **Existing velocity is never reduced**, because the result is never shorter
+  than what you came in with.
+
+There is **no `overspeed_drag` any more.** It used to bleed anything above the
+ceiling back down at 6 m/s², and the lab measured it taking **30 → 25.7 m/s over
+a single jump with no input at all**. That is "steering mysteriously deleted my
+speed" wearing a different hat. Speed you have earned is now taken only by
+collision, by ground friction, by braking, or by explicitly wishing backwards.
 
 `safety_speed_limit` (40 m/s) is a **safety net against physics blowups, not a
-gameplay cap**. It sits far above the soft ceiling and reaching it means a bug.
+gameplay cap**. It sits far above the soft cap and reaching it means a bug.
 
 ### Speed bands (targets, measured at 60 Hz)
 
@@ -179,7 +215,11 @@ gameplay cap**. It sits far above the soft ceiling and reaching it means a bug.
 | Competent bhop | 12–16 m/s |
 | Good bhop | 16–20 m/s |
 | Excellent bhop | 20–24 m/s |
-| Soft ceiling | 25 m/s |
+| Soft cap region | 20 → 25 m/s |
+
+Measured: a machine-perfect strafe chain runs **9.00 → 25.28 m/s over 41 hops in
+30 s**. It takes about 2.5 s of air time to reach 16 and roughly 8 s to approach
+the cap, so speed is built progressively rather than jumped into.
 
 ## Current values
 
@@ -190,14 +230,11 @@ gameplay cap**. It sits far above the soft ceiling and reaching it means a bug.
 | ground_deceleration | 95.0 | traction, at or below move_speed, every tick |
 | momentum_friction | 14.0 | above move_speed; the bhop timing pressure |
 | crouch_speed_multiplier | 0.45 | |
-| air_acceleration | 16.0 | only below move_speed |
-| air_turn_rate | 110 °/s | speed-preserving redirection above move_speed |
-| air_strafe_acceleration | 60.0 | the skill term |
-| air_speed_cap | 1.1 | the gain window |
-| air_falloff_start | 14.0 | |
-| air_soft_ceiling | 25.0 | |
-| air_falloff_exponent | 1.0 | linear |
-| overspeed_drag | 6.0 | |
+| air_accelerate | 12.0 | Source `sv_airaccelerate`. Units of 1/s, so it needed no scale conversion |
+| air_wish_speed_cap | 1.1 | Source `GetAirSpeedCap`, 30/250 of a run, scaled to our 9 m/s. Drives turn rate **and** gain |
+| bhop_soft_cap_start | 20.0 | full gain below here |
+| bhop_soft_cap_end | 25.0 | near-zero gain above here |
+| bhop_soft_cap_min_gain | 0.03 | asymptote, not a wall |
 | safety_speed_limit | 40.0 | safety net, not a cap |
 | jump_velocity / gravity | 8.5 / 24.0 | ~0.71 s airtime |
 | coyote_time / jump_buffer_time | 0.10 / 0.10 | |
@@ -271,11 +308,13 @@ Emergent combinations that work because of the above, not because anything
 codes for them:
 
 - **bhop → slide → jump** — bank a fast landing, ride it, launch back into hops.
-- **dash → jump → air-strafe** — dash gives you 20 m/s to start strafing from
-  above `air_falloff_start`, at the cost of the dash cooldown.
+- **dash → jump → air-strafe** — dash hands you 20 m/s to start arcing from, at
+  the cost of the dash cooldown. Air acceleration steers that momentum like any
+  other; it never resets it.
 - **high-speed landing → slide** — the cheapest way to not lose a bad hop.
-- **ramp slide → jump** — slope acceleration can put you over the soft ceiling;
-  `overspeed_drag` takes it back slowly, so the ramp is genuinely worth knowing.
+- **ramp slide → jump** — slope acceleration can put you over the soft cap, and
+  nothing takes it back any more. You keep it until geometry or the ground says
+  otherwise, so the ramp is genuinely worth knowing.
 
 If something emergent turns out to be fun, has skill expression and does not
 break combat, it stays.
@@ -283,13 +322,14 @@ break combat, it stays.
 ## Momentum decisions
 
 **Jump never resets horizontal velocity.** Neither does landing. Speed is only
-removed by friction, by the slide ending, by `overspeed_drag`, or by hitting
-geometry.
+removed by ground friction, by the slide ending, by wishing backwards in the
+air, or by hitting geometry. **Air steering never removes it.**
 
 **Nothing additive.** Every speed-granting move uses `max()` or a bounded gain:
-dash `max()`, slide entry `max()`, air redirection and slide steering rotate
-without lengthening, and the strafe term is gated by `air_speed_cap` and faded by
-the soft ceiling.
+dash `max()`, slide entry `max()`, slide steering rotates without lengthening,
+and air acceleration is bounded per tick by `air_wish_speed_cap` and then by the
+soft cap. Gain per tick shrinks as speed rises with no extra rule for it,
+because adding a fixed length across a longer vector lengthens it less.
 
 ## Crouch / slide safety
 
@@ -303,12 +343,21 @@ hugging a wall does not falsely block standing. The same guard runs in
 ## Frame-rate independence
 
 All movement runs in `_physics_process`, which Godot ticks at a fixed rate
-(`physics/common/physics_ticks_per_second = 60`, now set explicitly). The
-headless test runs the same perfect-strafe bot at 60 Hz and at 120 Hz: peak speed
-**22.93 vs 23.55 m/s, 2.7% drift**. The residual comes from the vector geometry
-of the Quake air model when the wish direction is exactly perpendicular, and is
-inherent to it; correct strafing (wish direction slightly ahead of velocity)
-integrates cleanly.
+(`physics/common/physics_ticks_per_second = 60`, set explicitly). **Render FPS
+cannot affect movement at all**, and the lab asserts that structurally rather
+than statistically: the controller reads no render-rate quantity, and `step()`
+is called from `_physics_process` only.
+
+The **physics tick rate** is a different matter, and it is worth being honest
+about. Over the same wall-clock second, 120 Hz gains **3.1% more speed** but
+**61% more turn authority** than 60 Hz. This is not a delta-time bug — it is
+inherited from Source, where `add_speed` is a *per-tick* budget, and it is the
+same reason 64-tick and 128-tick Counter-Strike feel different to strafe on. At
+60 Hz the accel term offers 1.8 m/s per tick and the 1.1 m/s cap binds; at
+120 Hz it offers 0.9 and the accel term binds instead.
+
+**Consequence: `physics_ticks_per_second` is now an air-feel setting.** Changing
+it retunes movement. The lab prints the figure every run.
 
 The camera — look, recoil recovery and FOV easing — runs in `_process` at render
 rate, using `1 - exp(-k * dt)` easing so it is also rate independent.

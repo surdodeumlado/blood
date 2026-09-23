@@ -1,0 +1,34 @@
+{
+    "changed_existing_files":  [
+                                   "data\\blood\\blood_settings.tres",
+                                   "presentation\\gore\\blood_physics_settings.gd",
+                                   "presentation\\gore\\blood_fluid_model.gd",
+                                   "presentation\\gore\\blood_liquid.gdshader",
+                                   "data\\blood\\blood_physics.tres",
+                                   "presentation\\gore\\blood_settings.gd",
+                                   "presentation\\gore\\blood_system.gd",
+                                   "tests\\blood_material_test.gd"
+                               ],
+    "unexpected_existing_files":  [
+
+                                  ],
+    "material_headless_checks":  49,
+    "material_native_checks":  72,
+    "material_native_failures":  [
+
+                                 ],
+    "phase2_checks":  68,
+    "phase21_checks":  56,
+    "phase22_checks":  39,
+    "phase23_checks":  59,
+    "movement_checks":  154,
+    "stress_events":  56,
+    "stress_budgets_respected":  true,
+    "diff_check":  "passed",
+    "known_diagnostics":  [
+                              "Windows certificate store access",
+                              "GLES3 shader cache write access",
+                              "Movement fixture: two ObjectDB instances at shutdown"
+                          ],
+    "human_visual_acceptance":  "pending player playtest"
+}

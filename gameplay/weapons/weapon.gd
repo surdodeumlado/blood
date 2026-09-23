@@ -88,8 +88,11 @@ func apply_hit(
 	if collider.has_method("is_damageable") and not collider.is_damageable():
 		return false
 
-	var killed: bool = collider.take_damage(damage, point, direction, zone)
 	var blood := _blood_system()
+	var timing := blood != null and blood.profile_stages
+	var stage_start := Time.get_ticks_usec() if timing else 0
+	var killed: bool = collider.take_damage(damage, point, direction, zone)
+	if timing: blood._profile_stage("hit_resolution", stage_start)
 	if blood != null:
 		var ctx := BloodContext.make(
 			damage_type, point, direction, _region_for(zone), impact_energy * energy_scale
@@ -114,23 +117,34 @@ func apply_hit(
 			reservoir = collider.blood_reservoir()
 		var release: BloodRelease
 		if reservoir != null:
+			stage_start = Time.get_ticks_usec() if timing else 0
 			release = reservoir.withdraw(ctx)
+			if timing: blood._profile_stage("reservoir_withdraw", stage_start)
 			if killed:
 				# The corpse is about to be hidden, so the wound this blow opens
-				# finishes its life in world space as a remnant.
+				# finishes its life in world space as a remnant - and the
+				# reservoir stops owning it, or both tick loops would drip the
+				# same wound at double rate.
 				var w := reservoir.open_wound(release)
 				if w != null:
-					blood.add_remnant(w, point)
+					reservoir.release_wound(w)
+					blood.add_remnant(w, point, reservoir.transfer_remnant_budget(w))
 			else:
 				reservoir.open_wound(release)
 		else:
 			release = blood.estimate_release(ctx)
+		_retain_contact_blood(release)
 		blood.release(release)
 
 	hit_confirmed.emit(zone)
 	if killed:
 		enemy_killed.emit(zone)
 	return killed
+
+
+## Presentation-only material transfer. Damage and attack scheduling are done.
+func _retain_contact_blood(_release: BloodRelease) -> void:
+	pass
 
 
 ## Overlap query against hurtboxes. Used by the melee instruments so that

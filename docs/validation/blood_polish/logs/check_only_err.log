@@ -1,0 +1,8 @@
+SCRIPT ERROR: Compile Error: Identifier not found: Sfx
+   at: GDScript::reload (res://gameplay/enemies/dummy_target.gd:211)
+ERROR: Failed to load script "res://gameplay/enemies/dummy_target.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Sfx
+   at: GDScript::reload (res://tests/blood_polish_test.gd:77)
+ERROR: Failed to load script "res://tests/blood_polish_test.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)

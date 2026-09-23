@@ -1,0 +1,50 @@
+{
+    "final_parse":  {
+                        "exit":  0,
+                        "status":  "passed after removing eager autoload-dependent fixture compilation"
+                    },
+    "model":  {
+                  "checks":  14,
+                  "failures":  0,
+                  "exit":  0
+              },
+    "first_headless":  {
+                           "checks":  45,
+                           "failures":  1,
+                           "exit":  1,
+                           "note":  "fixture inspected last submitted satellite instead of primary stain; corrected test contact lookup"
+                       },
+    "second_headless":  {
+                            "checks":  45,
+                            "failures":  0,
+                            "exit":  0,
+                            "native_crash":  true,
+                            "note":  "signal 11 backtrace after quit despite OS exit 0; never considered process success",
+                            "log":  "logs/headless_corrected_console.log"
+                        },
+    "isolation":  {
+                      "audio_exit":  0,
+                      "resource_only_exit":  0,
+                      "empty_world_exit":  0,
+                      "note":  "one run per distinct minimal probe; no reproduced crash, cause not isolated"
+                  },
+    "final_headless_basic":  {
+                                 "checks":  39,
+                                 "failures":  0,
+                                 "exit":  0,
+                                 "backtrace":  false
+                             },
+    "compatibility_basic":  {
+                                "runs":  1,
+                                "checks":  48,
+                                "failures":  0,
+                                "exit":  0,
+                                "backtrace":  false,
+                                "captures":  6,
+                                "audio_mixer_nonzero":  true,
+                                "stress_benchmark":  false
+                            },
+    "p0":  "PENDING: intermittent shutdown crash remains unidentified; successful final runs do not resolve earlier crash",
+    "visual_approval":  "player pending",
+    "gpu_timing":  "not measured"
+}

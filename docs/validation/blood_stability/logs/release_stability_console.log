@@ -1,0 +1,109 @@
+WorkerThreadPool: 12 threads, 3 max low-priority.
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+TextServer: Added interface "Dummy"
+TextServer: Added interface "ICU / HarfBuzz / Graphite (Built-in)"
+Using "default" pen tablet driver...
+
+TextServer: Primary interface set to: "ICU / HarfBuzz / Graphite (Built-in)".
+CORE API HASH: 2004498165
+EDITOR API HASH: 1696660745
+SceneTreeFTI: traversal method DEFAULT
+Loading resource: res://core/autoload/sfx.gd remapped: res://core/autoload/sfx.gd
+Completed load for: 'res://core/autoload/sfx.gd' remapped 'res://core/autoload/sfx.gd' at thread -1
+Loaded builtin CA certificates
+Loading resource: res://tests/blood_stability_test.tscn remapped: res://tests/blood_stability_test.tscn
+Loading resource: res://tests/blood_stability_test.gd remapped: res://tests/blood_stability_test.gd
+Loading resource: res://data/blood/blood_blunt.tres remapped: res://data/blood/blood_blunt.tres
+Loading resource: res://presentation/gore/blood_profile.gd remapped: res://presentation/gore/blood_profile.gd
+Completed load for: 'res://presentation/gore/blood_profile.gd' remapped 'res://presentation/gore/blood_profile.gd' at thread -1
+Completed load for: 'res://data/blood/blood_blunt.tres' remapped 'res://data/blood/blood_blunt.tres' at thread -1
+Loading resource: res://data/blood/surfaces/smooth.tres remapped: res://data/blood/surfaces/smooth.tres
+Loading resource: res://presentation/gore/blood_surface_response.gd remapped: res://presentation/gore/blood_surface_response.gd
+Completed load for: 'res://presentation/gore/blood_surface_response.gd' remapped 'res://presentation/gore/blood_surface_response.gd' at thread -1
+Completed load for: 'res://data/blood/surfaces/smooth.tres' remapped 'res://data/blood/surfaces/smooth.tres' at thread -1
+Loading resource: res://data/blood/surfaces/rough.tres remapped: res://data/blood/surfaces/rough.tres
+Completed load for: 'res://data/blood/surfaces/rough.tres' remapped 'res://data/blood/surfaces/rough.tres' at thread -1
+Loading resource: res://data/blood/surfaces/porous.tres remapped: res://data/blood/surfaces/porous.tres
+Completed load for: 'res://data/blood/surfaces/porous.tres' remapped 'res://data/blood/surfaces/porous.tres' at thread -1
+Loading resource: res://data/blood/blood_stability.tres remapped: res://data/blood/blood_stability.tres
+Loading resource: res://presentation/gore/blood_stability_settings.gd remapped: res://presentation/gore/blood_stability_settings.gd
+Completed load for: 'res://presentation/gore/blood_stability_settings.gd' remapped 'res://presentation/gore/blood_stability_settings.gd' at thread -1
+Completed load for: 'res://data/blood/blood_stability.tres' remapped 'res://data/blood/blood_stability.tres' at thread -1
+Loading resource: res://gameplay/enemies/dummy_target.tscn remapped: res://gameplay/enemies/dummy_target.tscn
+Loading resource: res://gameplay/enemies/dummy_target.gd remapped: res://gameplay/enemies/dummy_target.gd
+Loading resource: res://data/blood/blood_physics.tres remapped: res://data/blood/blood_physics.tres
+Loading resource: res://presentation/gore/blood_physics_settings.gd remapped: res://presentation/gore/blood_physics_settings.gd
+Completed load for: 'res://presentation/gore/blood_physics_settings.gd' remapped 'res://presentation/gore/blood_physics_settings.gd' at thread -1
+Completed load for: 'res://data/blood/blood_physics.tres' remapped 'res://data/blood/blood_physics.tres' at thread -1
+Completed load for: 'res://gameplay/enemies/dummy_target.gd' remapped 'res://gameplay/enemies/dummy_target.gd' at thread -1
+Loading resource: res://data/combat/default_combat.tres remapped: res://data/combat/default_combat.tres
+Completed load for: 'res://data/combat/default_combat.tres' remapped 'res://data/combat/default_combat.tres' at thread -1
+Loading resource: res://data/blood/reservoir_defaults.tres remapped: res://data/blood/reservoir_defaults.tres
+Completed load for: 'res://data/blood/reservoir_defaults.tres' remapped 'res://data/blood/reservoir_defaults.tres' at thread -1
+Completed load for: 'res://gameplay/enemies/dummy_target.tscn' remapped 'res://gameplay/enemies/dummy_target.tscn' at thread -1
+Completed load for: 'res://tests/blood_stability_test.gd' remapped 'res://tests/blood_stability_test.gd' at thread -1
+Completed load for: 'res://tests/blood_stability_test.tscn' remapped 'res://tests/blood_stability_test.tscn' at thread -1
+Loading resource: res://data/blood/blood_settings.tres remapped: res://data/blood/blood_settings.tres
+Completed load for: 'res://data/blood/blood_settings.tres' remapped 'res://data/blood/blood_settings.tres' at thread -1
+Loading resource: res://data/blood/blood_high_energy.tres remapped: res://data/blood/blood_high_energy.tres
+Completed load for: 'res://data/blood/blood_high_energy.tres' remapped 'res://data/blood/blood_high_energy.tres' at thread -1
+Loading resource: res://data/blood/blood_ballistic.tres remapped: res://data/blood/blood_ballistic.tres
+Completed load for: 'res://data/blood/blood_ballistic.tres' remapped 'res://data/blood/blood_ballistic.tres' at thread -1
+Loading resource: res://data/blood/blood_slashing.tres remapped: res://data/blood/blood_slashing.tres
+Completed load for: 'res://data/blood/blood_slashing.tres' remapped 'res://data/blood/blood_slashing.tres' at thread -1
+Loading resource: res://presentation/gore/blood_liquid.gdshader remapped: res://presentation/gore/blood_liquid.gdshader
+Completed load for: 'res://presentation/gore/blood_liquid.gdshader' remapped 'res://presentation/gore/blood_liquid.gdshader' at thread -1
+Loading resource: res://presentation/gore/blood_stain.gdshader remapped: res://presentation/gore/blood_stain.gdshader
+Completed load for: 'res://presentation/gore/blood_stain.gdshader' remapped 'res://presentation/gore/blood_stain.gdshader' at thread -1
+PASS edge deposit receives a real owned support anchor
+PASS stain point stays outside the correct surface plane at millimetre offset
+PASS large edge stain is reduced until its whole sampled footprint is supported
+PASS edited collision shape invalidates old footprint support
+PASS moved collider retires its old world-space marks
+PASS unsupported floating stain is rejected with explicit retained mass
+PASS empty developer overlay is valid before the first impact
+PASS smooth and rough heavy wall deposits deterministically run after bounded delay
+PASS tiny wall drop remains static
+PASS porous wall absorbs without sustained runoff
+PASS streams exhaust within bounded lifetime without repeatedly restarting the same deposit
+PASS pool grows with repeated incoming deposits rather than appearing at final size
+PASS pool target and rendered area stop growing without additional deposited mass
+PASS residual drip cannot create an immediate catastrophic pool
+PASS wall runoff transfers mass to a real floor contact and feeds a growing floor pool
+PASS living wound anchor follows the moving biological owner
+PASS dead owner cannot keep attached wound emissions
+PASS respawn generation cannot inherit an old wound
+PASS remnant handoff debits exactly its legitimate transferred mass
+PASS world remnant exhausts and retires without owner references
+PASS respawn resets remnant accounting without resurrecting detached wounds
+PASS 1 victims queue presentation without delaying or changing the logical withdrawal
+PASS 1 victims finish primary emission within three fixed steps
+PASS 1 victims conserve physical, pending, retained, runoff and escaped blood mass
+PASS 2 victims queue presentation without delaying or changing the logical withdrawal
+PASS 2 victims finish primary emission within three fixed steps
+PASS 2 victims conserve physical, pending, retained, runoff and escaped blood mass
+PASS 4 victims queue presentation without delaying or changing the logical withdrawal
+PASS 4 victims finish primary emission within three fixed steps
+PASS 4 victims conserve physical, pending, retained, runoff and escaped blood mass
+PASS 8 victims queue presentation without delaying or changing the logical withdrawal
+PASS 8 victims finish primary emission within three fixed steps
+PASS 8 victims conserve physical, pending, retained, runoff and escaped blood mass
+PASS multi-victim sampling degrades gracefully per victim
+PASS strict collision/support ray budget is never exceeded
+PASS stain write budget is never exceeded
+PASS physical admission budget is never exceeded
+PASS runoff event budget is never exceeded
+PASS nearby physical impacts share surface presentation
+PASS 100 writes commit a MultiMesh layer at most once in a rendered frame
+PASS six catch-up steps share one rendered-frame admission and query budget
+PASS same-frame budget overflow retains all logical blood
+PASS 100 simultaneous local impacts form one audio cluster
+PASS 100 impacts produce one quiet rain texture, not 100 voices
+PASS blood audio never exceeds its six pooled voices
+PASS audio overflow enriches bounded clusters
+STABILITY: 46 checks, 0 failed
+STABILITY: presentation stopped
+STABILITY: mixer drained; quitting
+XR: Clearing primary interface
+XR: Removed interface "Native mobile"
+XR: Removed interface "OpenXR"

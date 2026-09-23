@@ -69,6 +69,8 @@ func _run() -> void:
 
 func _make_blood() -> BloodSystem:
 	var b := BloodSystem.new()
+	b.synchronous_test_mode = true
+	b.manual_budget_clock = true
 	b.settings = (load(SETTINGS) as BloodSettings).duplicate()
 	b.fallback_reservoir = load(RESERVOIR)
 	b.profiles.assign([
@@ -728,7 +730,16 @@ func _contamination() -> void:
 	)
 
 	# The chamber remembers: many more events must not erase the early ones.
+	#
+	# NOT asserted as a monotonic count. The stain layer deliberately keeps a
+	# free reserve (fade_reserve_slots) so a new event never has to steal a
+	# visible stain, so once the arena saturates the live count OSCILLATES: a
+	# pressure-fade cohort releases ~100 slots at once, new deposits refill
+	# them, and the sample lands wherever it lands between 3000 and 3200. What
+	# must hold is that nothing was DESTROYED to make room, and the arena is
+	# still essentially full.
 	var before: int = live["surface"]
+	var before_admitted: int = int((blood.telemetry()["surface"] as Dictionary)["admitted"])
 	for i in 10:
 		var r := _new_reservoir()
 		await _tick(1)
@@ -738,10 +749,26 @@ func _contamination() -> void:
 		await _tick(2)
 	await _tick(120)
 	var after: Dictionary = blood.live_counts()
+	var tel: Dictionary = blood.telemetry()["surface"]
 	_check(
-		after["surface"] >= before,
-		"later kills add to the chamber's memory rather than erasing it (%d -> %d)"
-			% [before, after["surface"]]
+		int(tel["evicted"]) == 0,
+		"later kills NEVER destroy an earlier stain to make room (%d evictions)"
+			% int(tel["evicted"])
+	)
+	_check(
+		int(tel["admitted"]) > before_admitted,
+		"and the later kills really did lay new marks (+%d admitted)"
+			% (int(tel["admitted"]) - before_admitted)
+	)
+	var floor_live: int = (
+		blood.settings.max_surface
+		- blood.settings.stability.fade_reserve_slots
+		- blood.settings.stability.max_fading_stains
+	)
+	_check(
+		int(after["surface"]) >= floor_live,
+		"the chamber is still essentially full afterwards (%d of %d, floor %d)"
+			% [int(after["surface"]), blood.settings.max_surface, floor_live]
 	)
 
 	# And the reset actually resets.

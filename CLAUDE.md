@@ -23,15 +23,18 @@ architecture or naming from elsewhere.
 Prove **movement feel + combat feel** in one sandbox arena. Nothing else is in
 scope: no roguelike, no procedural generation, no content.
 
-> **Bunnyhop, air-strafe and slide passed playtest and are FROZEN.** They are
-> now the project's reference game feel. Do not refactor the bhop logic, the
-> W / A / D relationship, the air-strafe model or slide momentum conservation,
-> and do not chase Counter-Strike or Quake any harder. `docs/MOVEMENT.md` has
-> the detail; the smoke test pins the numbers so drift fails a check.
+> **Slide is FROZEN.** Do not refactor slide momentum conservation or its
+> limited steering. Ground movement (traction-heavy, ~9 m/s) and dash are also
+> approved as they stand.
+>
+> **The AIR model was deliberately unfrozen and rebuilt on Source SDK 2013
+> `CGameMovement` mathematics** after tight curves failed in play. It is pending
+> manual playtest and is not yet approved. `docs/MOVEMENT.md` has the detail;
+> `tests/movement_source_lab.tscn` pins the numbers so drift fails a check.
 
 Implemented: first person camera, WASD, mouse look, jump, dash, crouch, slide,
-skill-based bunnyhop / air-strafe with a soft ceiling, momentum, dynamic FOV,
-debug HUD, a placeholder **hand cannon** (semi-auto hitscan, ~0.6 s between
+skill-based bunnyhop / Source-style air-strafe with a soft cap, momentum,
+dynamic FOV, debug HUD, a placeholder **hand cannon** (semi-auto hitscan, ~0.6 s between
 shots, 3 body shots or 1 headshot on the dummy, generous head hitbox, spin
 animation as the cooldown tell), tracer / muzzle flash / recoil / hitmarker, a
 dummy target with hit, headshot and death feedback, synthesised placeholder
@@ -127,8 +130,12 @@ docs/          design docs
 godot --headless --path . --editor --quit-after 400          # import
 godot --headless --path . --quit-after 300                   # THE BOX loads
 godot --headless --path . res://tests/movement_smoke_test.tscn
+godot --headless --path . res://tests/movement_source_lab.tscn   # air model
 godot --headless --path . res://tests/blood_phase2_test.tscn   # blood system
 godot --headless --path . res://tests/blood_phase21_test.tscn  # surface payoff
+godot --headless --path . res://tests/blood_phase22_test.tscn  # walls + runoff
+godot --headless --path . res://tests/blood_phase23_test.tscn  # rendered stains
+godot --path . res://tests/blood_render_fixture.tscn            # WINDOWED: pixels
 godot --headless --path . res://tests/blood_stress_test.tscn   # blood budget
 godot --headless --path . res://world/chambers/blood_lab/blood_lab.tscn
 ```

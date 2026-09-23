@@ -1,0 +1,39 @@
+{
+	"audio_peak_voices": 6,
+	"captures": [
+		"01_supported_edge",
+		"02_wall_half_second",
+		"03_wall_finished",
+		"04_pool_0",
+		"04_pool_1",
+		"04_pool_2",
+		"04_pool_3",
+		"04_pool_4"
+	],
+	"checks": 55,
+	"failures": [],
+	"frame_peak_usage": {
+		"audio": 2,
+		"drops": 192,
+		"micro": 128,
+		"queries": 608,
+		"runoff": 4,
+		"solid_queries": 0,
+		"solids": 0,
+		"stains": 25,
+		"wall_drops": 0
+	},
+	"physical_counts_after_three_steps_1_2_4_8_victims": [
+		161,
+		245,
+		333,
+		404
+	],
+	"pool_area_samples_m2": [
+		0.0,
+		0.108000000938773,
+		0.161999986080874,
+		0.215999983549418,
+		0.270000002346933
+	]
+}

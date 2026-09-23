@@ -1,0 +1,54 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS smaller drops lose launch momentum faster
+PASS drag never reverses velocity
+PASS both physical liquid layers use spheres
+PASS liquid longest axis obeys cap at d=0.08 mm
+PASS liquid longest axis obeys cap at d=0.50 mm
+PASS liquid longest axis obeys cap at d=1.50 mm
+PASS liquid longest axis obeys cap at d=3.00 mm
+PASS liquid longest axis obeys cap at d=8.00 mm
+PASS blood uses configured world gravity; player settings untouched
+PASS render exaggeration leaves real flight, physical diameter and parcel mass unchanged
+PASS render exaggeration leaves swept collision and impact response unchanged
+PASS stain visual gain leaves deposited and wet mass unchanged
+PASS arcade settings enlarge liquid and final stain geometry
+PASS grazing incidence progressively elongates stains
+PASS 15 degree impact remains bounded
+PASS three material responses affect spread
+PASS impact satellites conserve parent mass
+PASS porous surface transfers wet material to absorbed stock
+PASS slow swept collision has a causal drop-to-stain record
+PASS aerodynamic breakup occurs and respects generation bound
+PASS breakup conserves represented parcel mass
+PASS breakup conserves equivalent droplet volume
+PASS short-lived ligaments fragment or collapse
+PASS same heavy load runs after bounded delay on smooth and rough walls; porous absorbs
+PASS runoff terminates within its bound
+PASS inclined runoff follows tangential gravity
+PASS blade load is carved from the contact withdrawal, never added blood
+PASS equal cast-off load responds to angular motion and release threshold
+PASS TwinDaggers: fresh contact loads weapon without immediate cast-off
+PASS TwinDaggers: actual later swing emits causal physical cast-off
+PASS TwinDaggers: full orientation detects roll about the forward axis
+PASS HeavyBlunt: fresh contact loads weapon without immediate cast-off
+PASS HeavyBlunt: actual later swing emits causal physical cast-off
+PASS HeavyBlunt: full orientation detects roll about the forward axis
+PASS full pool refuses breakup without losing mass or overwriting a live drop
+PASS full physical pools conserve a new event through explicit coarse fallback
+PASS blunt +X / -X momentum reversal survives material changes
+PASS quality 0 physical cap respected
+PASS quality 0 represents same logical released blood
+PASS quality 0 no physical parcel outlives its limit
+PASS quality 0 terminal drops and runoff finish
+PASS quality 1 physical cap respected
+PASS quality 1 represents same logical released blood
+PASS quality 1 no physical parcel outlives its limit
+PASS quality 1 terminal drops and runoff finish
+PASS quality 2 physical cap respected
+PASS quality 2 represents same logical released blood
+PASS quality 2 no physical parcel outlives its limit
+PASS quality 2 terminal drops and runoff finish
+BLOOD MATERIAL: 49 checks, 0 failures; captures=false
+MATERIAL: presentation stopped
+MATERIAL: mixer drained; quitting

@@ -169,6 +169,7 @@ func _report(elapsed_ms: int) -> void:
 	print("  stains            %5d / %d" % [_peak.get("surface", 0), s.max_surface])
 	print("  wound emitters    %5d" % _peak.get("wounds", 0))
 	print("  remnants          %5d" % _peak.get("remnants", 0))
+	print("  wall rivulets     %5d / %d" % [_peak.get("runoff", 0), s.max_runoff])
 	print("  contaminated cells%5d" % _peak.get("cells", 0))
 	print("")
 	print("FINAL (after everything landed)")

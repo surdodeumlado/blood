@@ -1,0 +1,315 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+ERROR: Failed to read the root certificate store.
+   at: get_system_ca_certificates (platform/windows/os_windows.cpp:2582)
+  PASS  settles on the floor
+  PASS  settles on the floor
+  PASS  idles in GROUND
+  PASS  idles in GROUND
+  PASS  idle speed is zero
+  PASS  idle speed is zero
+  PASS  reaches base speed (9.00)
+  PASS  reaches base speed (9.00)
+  PASS  dash starts
+  PASS  dash starts
+  PASS  dash reaches dash_speed (20.00)
+  PASS  dash reaches dash_speed (20.00)
+  PASS  dash ends by itself
+  PASS  dash ends by itself
+  PASS  momentum survives the dash (16.30)
+  PASS  momentum survives the dash (16.30)
+  PASS  fast crouch becomes a slide
+  PASS  fast crouch becomes a slide
+  PASS  slide jump keeps horizontal momentum (16.20 -> 16.15)
+  PASS  slide jump keeps horizontal momentum (16.20 -> 16.15)
+  PASS  slide jump actually leaves the ground
+  PASS  slide jump actually leaves the ground
+  PASS  returns to GROUND
+  PASS  returns to GROUND
+  PASS  slow crouch stays CROUCH
+  PASS  slow crouch stays CROUCH
+  PASS  crouched under the ceiling
+  PASS  crouched under the ceiling
+  PASS  stays crouched: no clearance to stand
+  PASS  stays crouched: no clearance to stand
+  PASS  head stays low under the ceiling (0.70)
+  PASS  head stays low under the ceiling (0.70)
+  PASS  stands up in the open
+  PASS  stands up in the open
+  PASS  holding forward in the air cannot exceed move_speed (9.00)
+  PASS  holding forward in the air cannot exceed move_speed (9.00)
+  PASS  holding a strafe key without turning barely gains (+0.00 m/s)
+  PASS  holding a strafe key without turning barely gains (+0.00 m/s)
+  PASS  a correct air-strafe gains real speed (9.00 -> 23.66)
+  PASS  a correct air-strafe gains real speed (9.00 -> 23.66)
+  PASS  bunnyhop reaches competent territory (peak 23.66 m/s)
+  PASS  bunnyhop reaches competent territory (peak 23.66 m/s)
+  PASS  soft ceiling holds (peak 23.66 / ceiling 25.0)
+  PASS  soft ceiling holds (peak 23.66 / ceiling 25.0)
+  PASS  velocity stays finite
+  PASS  velocity stays finite
+  PASS  mashing dash never compounds (peak 20.00)
+  PASS  mashing dash never compounds (peak 20.00)
+  PASS  bunnyhop result is tick-rate independent (60Hz 23.66 vs 120Hz 23.70, 0.2%)
+  PASS  bunnyhop result is tick-rate independent (60Hz 23.66 vs 120Hz 23.70, 0.2%)
+  PASS  starts with a full pool (2)
+  PASS  starts with a full pool (2)
+  PASS  a dash costs one charge (1 left)
+  PASS  a dash costs one charge (1 left)
+  PASS  second dash empties the pool
+  PASS  second dash empties the pool
+  PASS  no charges means no dash
+  PASS  no charges means no dash
+  PASS  pool was genuinely empty first
+  PASS  pool was genuinely empty first
+  PASS  charges refill one at a time (1 after one charge time)
+  PASS  charges refill one at a time (1 after one charge time)
+  PASS  the pool refills to full
+  PASS  the pool refills to full
+  PASS  rewards never exceed max charges (2)
+  PASS  rewards never exceed max charges (2)
+  PASS  spent one for the reward test
+  PASS  spent one for the reward test
+  PASS  headshot kill restores a charge immediately
+  PASS  headshot kill restores a charge immediately
+  PASS  a normal kill advances the timer without granting a charge (0.00 -> 0.52)
+  PASS  a normal kill advances the timer without granting a charge (0.00 -> 0.52)
+  PASS  holding A actually curves the slide (16.5 deg in 0.5 s)
+  PASS  holding A actually curves the slide (16.5 deg in 0.5 s)
+  PASS  A cannot snap the slide round (16.5 deg <= 43.5 deg budget)
+  PASS  A cannot snap the slide round (16.5 deg <= 43.5 deg budget)
+  PASS  holding D curves the same amount the other way (16.5 deg)
+  PASS  holding D curves the same amount the other way (16.5 deg)
+  PASS  S brakes the slide (9.00 -> 3.90 m/s)
+  PASS  S brakes the slide (9.00 -> 3.90 m/s)
+  PASS  S never turns the slide around while sliding (worst heading dot 1.000)
+  PASS  S never turns the slide around while sliding (worst heading dot 1.000)
+  PASS  walking stops crisply (6 ticks, 100 ms)
+  PASS  walking stops crisply (6 ticks, 100 ms)
+  PASS  direction reversal is planted (3 ticks, 50 ms)
+  PASS  direction reversal is planted (3 ticks, 50 ms)
+  PASS  traction did not break bunnyhop (peak still 22.45 m/s)
+  PASS  traction did not break bunnyhop (peak still 22.45 m/s)
+  PASS  fx pool preallocates 24 nodes
+  PASS  fx pool preallocates 24 nodes
+  PASS  300 shots allocate nothing (still 24 nodes)
+  PASS  300 shots allocate nothing (still 24 nodes)
+  PASS  fx processes while effects are alive
+  PASS  fx processes while effects are alive
+  PASS  fx stops processing once effects expire
+  PASS  fx stops processing once effects expire
+  PASS  every effect hid itself (0 still visible)
+  PASS  every effect hid itself (0 still visible)
+  PASS  three body shots kill the dummy (took 3)
+  PASS  three body shots kill the dummy (took 3)
+  PASS  death allocates no nodes at all (gore is pooled in BloodSystem)
+  PASS  death allocates no nodes at all (gore is pooled in BloodSystem)
+  PASS  dummy respawned and takes damage again
+  PASS  dummy respawned and takes damage again
+  PASS  blood is a handful of batched layers, not one node per particle (6)
+  PASS  blood is a handful of batched layers, not one node per particle (6)
+  PASS  blood system is discoverable by group
+  PASS  blood system is discoverable by group
+  PASS  layer 0 preallocates its whole capacity (3000)
+  PASS  layer 0 preallocates its whole capacity (3000)
+  PASS  layer 1 preallocates its whole capacity (1200)
+  PASS  layer 1 preallocates its whole capacity (1200)
+  PASS  layer 2 preallocates its whole capacity (520)
+  PASS  layer 2 preallocates its whole capacity (520)
+  PASS  layer 3 preallocates its whole capacity (700)
+  PASS  layer 3 preallocates its whole capacity (700)
+  PASS  layer 4 preallocates its whole capacity (3200)
+  PASS  layer 4 preallocates its whole capacity (3200)
+  PASS  every damage family has a profile (5/5)
+  PASS  every damage family has a profile (5/5)
+  PASS  a headshot bleeds more than a torso hit (0.31 > 0.13)
+  PASS  a headshot bleeds more than a torso hit (0.31 > 0.13)
+  PASS  a limb hit bleeds less than a torso hit (0.08 < 0.13)
+  PASS  a limb hit bleeds less than a torso hit (0.08 < 0.13)
+  PASS  a kill bleeds more than a wound (0.78 > 0.13)
+  PASS  a kill bleeds more than a wound (0.78 > 0.13)
+  PASS  a kill throws far more gore than a hit (36 vs 1)
+  PASS  a kill throws far more gore than a hit (36 vs 1)
+  PASS  gore is still on the floor after 3 s (73 settled)
+  PASS  gore is still on the floor after 3 s (73 settled)
+  PASS  impact energy scales the same family (0.08 weak vs 0.23 extreme)
+  PASS  impact energy scales the same family (0.08 weak vs 0.23 extreme)
+  PASS  120 blood events allocate nothing (6 nodes)
+  PASS  120 blood events allocate nothing (6 nodes)
+  PASS  every layer stays within budget under sustained load ({ "micro": 1196, "small": 287, "medium": 216, "large": 700, "surface": 874, "airborne": 1196, "representatives": 503, "solids_flying": 700, "solids_settled": 0, "wounds": 0, "remnants": 0, "runoff": 5, "cells": 34 })
+  PASS  every layer stays within budget under sustained load ({ "micro": 1196, "small": 287, "medium": 216, "large": 700, "surface": 874, "airborne": 1196, "representatives": 503, "solids_flying": 700, "solids_settled": 0, "wounds": 0, "remnants": 0, "runoff": 5, "cells": 34 })
+  PASS  environment stains actually landed on geometry (874)
+  PASS  environment stains actually landed on geometry (874)
+  PASS  temporary spray cleaned itself up (0 airborne)
+  PASS  temporary spray cleaned itself up (0 airborne)
+  PASS  environment stains are still there (persistent, not temporary)
+  PASS  environment stains are still there (persistent, not temporary)
+  PASS  crosshair centre and weapon ray are the same vector (dot 1.000000)
+  PASS  crosshair centre and weapon ray are the same vector (dot 1.000000)
+  PASS  weapon ray starts at the eye the crosshair projects from (0.0000 m apart)
+  PASS  weapon ray starts at the eye the crosshair projects from (0.0000 m apart)
+  PASS  reference ray down the crosshair hits the target
+  PASS  reference ray down the crosshair hits the target
+  PASS  tracer ends exactly where the hitscan landed (0.0000 m apart)
+  PASS  tracer ends exactly where the hitscan landed (0.0000 m apart)
+  PASS  the crosshair ray resolves to a hurtbox, not the physics body
+  PASS  the crosshair ray resolves to a hurtbox, not the physics body
+  PASS  weapon is cycling right after a shot
+  PASS  weapon is cycling right after a shot
+  PASS  calling fire during the cooldown does nothing (0 extra)
+  PASS  calling fire during the cooldown does nothing (0 extra)
+  PASS  three body shots kill through the real weapon (took 3)
+  PASS  three body shots kill through the real weapon (took 3)
+  PASS  level aim never registered as a headshot
+  PASS  level aim never registered as a headshot
+  PASS  aiming at the head registers a headshot
+  PASS  aiming at the head registers a headshot
+  PASS  one headshot kills the dummy
+  PASS  one headshot kills the dummy
+  PASS  a headshot KILL is reported, which is what pays the dash reward
+  PASS  a headshot KILL is reported, which is what pays the dash reward
+  PASS  the weapon produced a blood context
+  PASS  the weapon produced a blood context
+  PASS  hand cannon emits BALLISTIC
+  PASS  hand cannon emits BALLISTIC
+  PASS  a torso hit reports the TORSO region
+  PASS  a torso hit reports the TORSO region
+  PASS  a non-lethal hit is not reported as a kill
+  PASS  a non-lethal hit is not reported as a kill
+  PASS  impact energy comes from the weapon (1.45)
+  PASS  impact energy comes from the weapon (1.45)
+  PASS  blood direction follows the shot, not a random sphere
+  PASS  blood direction follows the shot, not a random sphere
+  PASS  the surface normal at the wound was carried through
+  PASS  the surface normal at the wound was carried through
+  PASS  a headshot kill reports HEAD + is_kill
+  PASS  a headshot kill reports HEAD + is_kill
+  PASS  headshots carry the weapon's extra energy (1.70)
+  PASS  headshots carry the weapon's extra energy (1.70)
+  PASS  headshot kill bleeds more than a body hit (128 > 41)
+  PASS  headshot kill bleeds more than a body hit (128 > 41)
+  PASS  shooting a corpse produces no hitmarker (0)
+  PASS  shooting a corpse produces no hitmarker (0)
+  PASS  shooting a corpse produces no enemy blood
+  PASS  shooting a corpse produces no enemy blood
+  PASS  the dead dummy reports itself as not damageable
+  PASS  the dead dummy reports itself as not damageable
+  PASS  dead hurtboxes left the hurtbox layer immediately
+  PASS  dead hurtboxes left the hurtbox layer immediately
+  PASS  environment blood survives the enemy being freed
+  PASS  environment blood survives the enemy being freed
+  PASS  time_scale is never touched (no global hit stop)
+  PASS  time_scale is never touched (no global hit stop)
+  PASS  stacked FOV accents stay under the hard ceiling (96.11 / 114.0)
+  PASS  stacked FOV accents stay under the hard ceiling (96.11 / 114.0)
+  PASS  FOV accents decay back to base (90.00)
+  PASS  FOV accents decay back to base (90.00)
+  PASS  cooldown after a connecting shot is still fire_interval (0.633s vs 0.620s)
+  PASS  cooldown after a connecting shot is still fire_interval (0.633s vs 0.620s)
+  PASS  four slots exist (4)
+  PASS  four slots exist (4)
+  PASS  key 1 selects slot 1 (HAND CANNON)
+  PASS  key 1 selects slot 1 (HAND CANNON)
+  PASS  HAND CANNON declares BALLISTIC
+  PASS  HAND CANNON declares BALLISTIC
+  PASS  exactly one weapon active on slot 1 (1)
+  PASS  exactly one weapon active on slot 1 (1)
+  PASS  key 2 selects slot 2 (TWIN DAGGERS)
+  PASS  key 2 selects slot 2 (TWIN DAGGERS)
+  PASS  TWIN DAGGERS declares SLASHING
+  PASS  TWIN DAGGERS declares SLASHING
+  PASS  exactly one weapon active on slot 2 (1)
+  PASS  exactly one weapon active on slot 2 (1)
+  PASS  key 3 selects slot 3 (MAUL)
+  PASS  key 3 selects slot 3 (MAUL)
+  PASS  MAUL declares BLUNT
+  PASS  MAUL declares BLUNT
+  PASS  exactly one weapon active on slot 3 (1)
+  PASS  exactly one weapon active on slot 3 (1)
+  PASS  key 4 selects slot 4 (GRENADE LAUNCHER)
+  PASS  key 4 selects slot 4 (GRENADE LAUNCHER)
+  PASS  GRENADE LAUNCHER declares HIGH_ENERGY
+  PASS  GRENADE LAUNCHER declares HIGH_ENERGY
+  PASS  exactly one weapon active on slot 4 (1)
+  PASS  exactly one weapon active on slot 4 (1)
+  PASS  switching weapons never touches player velocity
+  PASS  switching weapons never touches player velocity
+  PASS  TWIN DAGGERS produces a SLASHING blood context
+  PASS  TWIN DAGGERS produces a SLASHING blood context
+  PASS  MAUL produces a BLUNT blood context
+  PASS  MAUL produces a BLUNT blood context
+  PASS  every one of 16 azimuth sectors gets blood (min 224)
+  PASS  every one of 16 azimuth sectors gets blood (min 224)
+  PASS  azimuth is not concentrated on a few sectors (max/min 1.30)
+  PASS  azimuth is not concentrated on a few sectors (max/min 1.30)
+  PASS  chunks launch across a real elevation band (-0.95 .. -0.17)
+  PASS  chunks launch across a real elevation band (-0.95 .. -0.17)
+  PASS  an event spawns physical droplets (60)
+  PASS  an event spawns physical droplets (60)
+  PASS  droplets landed and left world splats (0 -> 895)
+  PASS  droplets landed and left world splats (0 -> 895)
+  PASS  splat budget still respected (895)
+  PASS  splat budget still respected (895)
+  PASS  dagger swing reached contact (count 1, overlaps 2, targets 1)
+  PASS  dagger swing reached contact (count 1, overlaps 2, targets 1)
+  PASS  one dagger hit does not kill
+  PASS  one dagger hit does not kill
+  PASS  daggers alternate hands between attacks
+  PASS  daggers alternate hands between attacks
+  PASS  two dagger hits kill
+  PASS  two dagger hits kill
+  PASS  one maul swing kills exactly one of two targets (1 died)
+  PASS  one maul swing kills exactly one of two targets (1 died)
+  PASS  the second target survived the same swing
+  PASS  the second target survived the same swing
+  PASS  two grenades can be live (2)
+  PASS  two grenades can be live (2)
+  PASS  a third launch is refused while two are live
+  PASS  a third launch is refused while two are live
+  PASS  the refused launch spawned nothing
+  PASS  the refused launch spawned nothing
+  PASS  grenades inherit player velocity (21.9 vs 0.0 m/s)
+  PASS  grenades inherit player velocity (21.9 vs 0.0 m/s)
+  PASS  A: the forward lobe survives the entry normal (84.6% forward)
+  PASS  A: the forward lobe survives the entry normal (84.6% forward)
+  PASS  A: material is not dumped sideways (214 tangential vs 2539 forward)
+  PASS  A: material is not dumped sideways (214 tangential vs 2539 forward)
+  PASS  B: surface blood is never fired into the surface (0)
+  PASS  B: surface blood is never fired into the surface (0)
+  PASS  C: the back lobe travels toward the attacker (87.7%)
+  PASS  C: the back lobe travels toward the attacker (87.7%)
+  PASS  D: attack pitch is preserved (mean y up 0.51, down -0.52)
+  PASS  D: attack pitch is preserved (mean y up 0.51, down -0.52)
+  PASS  E: the pattern rotates rigidly with the attack (0.610 .. 0.618)
+  PASS  E: the pattern rotates rigidly with the attack (0.610 .. 0.618)
+  PASS  F: azimuth around a tilted attack is uniform (max/min 1.16)
+  PASS  F: azimuth around a tilted attack is uniform (max/min 1.16)
+  PASS  G: a slash fans inside the swing plane (in 1674 vs out 998)
+  PASS  G: a slash fans inside the swing plane (in 1674 vs out 998)
+  PASS  G: the swing plane normal IS the frame's thin axis (1.000)
+  PASS  G: the swing plane normal IS the frame's thin axis (1.000)
+  PASS  H: every family's world splats are persistent (transient: [])
+  PASS  H: every family's world splats are persistent (transient: [])
+  PASS  I: the dummy has a head hurtbox
+  PASS  I: the dummy has a head hurtbox
+  PASS  I: a head wound point is at head height, not at the feet (y 2.15)
+  PASS  I: a head wound point is at head height, not at the feet (y 2.15)
+  PASS  I: the wound point is NOT the hurtbox node origin
+  PASS  I: the wound point is NOT the hurtbox node origin
+  PASS  J: a melee hit produced a blood context
+  PASS  J: a melee hit produced a blood context
+  PASS  J: melee blood is born on the body, not at the feet (y 2.05)
+  PASS  J: melee blood is born on the body, not at the feet (y 2.05)
+  PASS  K: a melee hit carries its swing plane into the blood context
+  PASS  K: a melee hit carries its swing plane into the blood context
+  PASS  K: the swing plane is perpendicular to the way the player faces
+  PASS  K: the swing plane is perpendicular to the way the player faces
+  PASS  L: a blast with no victim spawns no blood (0 new events)
+  PASS  L: a blast with no victim spawns no blood (0 new events)
+  PASS  M: a hurtbox answers overkill_ratio, which is what apply_hit looks for
+  PASS  M: a hurtbox answers overkill_ratio, which is what apply_hit looks for
+  PASS  M: overkill reaches the blood context through the hurtbox (2.00)
+  PASS  M: overkill reaches the blood context through the hurtbox (2.00)
+
+154 checks, 0 failed
+154 checks, 0 failed

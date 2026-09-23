@@ -25,28 +25,43 @@ func _process(_delta: float) -> void:
 		return
 	var speed := _movement.horizontal_speed()
 	var cfg := _movement.config
-	var falloff := _movement.soft_ceiling_falloff(speed)
 	var grounded := _movement.state == MovementController.State.GROUND \
 		or _movement.state == MovementController.State.SLIDE \
 		or _movement.state == MovementController.State.CROUCH
 
-	var strafe := "-"
-	if _movement.strafe_gain > 0.0005:
-		strafe = "GAINING  +%.3f m/s" % _movement.strafe_gain
-	elif _movement.state == MovementController.State.AIR:
-		strafe = "no gain (aligned or capped)"
+	# The terms of AirAccelerate, laid out in the order the equation uses them.
+	# Tuning air feel means watching add_speed and accel, not the speed number.
+	var air := "-"
+	if _movement.state == MovementController.State.AIR:
+		if _movement.air_add_speed <= 0.0:
+			air = "no room  (proj %.2f >= cap %.2f)" % [
+				_movement.air_current_speed, _movement.air_wish_speed_capped
+			]
+		else:
+			air = "+%.3f m/s  (add %.2f)" % [
+				_movement.air_accel_applied, _movement.air_add_speed
+			]
 
 	_label.text = "\n".join([
 		"FPS          %d" % Engine.get_frames_per_second(),
-		"SPEED        %6.2f m/s" % speed,
+		"SPEED        %6.2f m/s%s" % [speed, "   <COLLISION>" if _movement.collided_last_tick else ""],
 		"GROUNDED     %s" % ("YES" if grounded else "NO (AIRBORNE)"),
 		"STATE        %s" % _movement.state_name(),
 		"TRACTION     %s" % _movement.traction_state,
 		"",
 		"BHOP CHAIN   %d" % _movement.bhop_chain,
 		"LAST HOP     %.0f ms on ground" % (_movement.last_hop_ground_time * 1000.0),
-		"AIR STRAFE   %s" % strafe,
-		"SOFT CEIL    %.1f m/s   (gain x%.2f)" % [cfg.air_soft_ceiling, falloff],
+		"AIR ACCEL    %s" % air,
+		"WISH         %.2f m/s  capped %.2f  proj %.2f" % [
+			_movement.air_wish_speed, _movement.air_wish_speed_capped,
+			_movement.air_current_speed,
+		],
+		"ANGLE v^wish %+6.1f deg   cam %+6.0f deg/s" % [
+			_movement.air_wish_angle_deg, rad_to_deg(_movement.yaw_rate()),
+		],
+		"SOFT CAP     %.0f-%.0f m/s   (gain x%.2f)" % [
+			cfg.bhop_soft_cap_start, cfg.bhop_soft_cap_end, _movement.soft_cap_gain,
+		],
 		"",
 		"DASH         %s" % _dash_meter(),
 		"RECHARGE     %s" % _recharge_text(),

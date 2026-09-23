@@ -238,9 +238,10 @@ func _die(push: Vector3) -> void:
 	# instead of vanishing with it, so a kill keeps bleeding for a moment.
 	var blood := BloodSystem.find(get_tree())
 	if blood != null and _reservoir != null:
-		for w in _reservoir.wounds:
-			blood.add_remnant(w, global_position + Vector3.UP * 1.0)
-		_reservoir.wounds.clear()
+		# Hand every open wound over at once. take_all_wounds() clears the list,
+		# so nothing here stays owned by the reservoir and tickable twice.
+		for w in _reservoir.take_all_wounds():
+			blood.add_remnant(w, w.position_ws(global_transform), _reservoir.transfer_remnant_budget(w))
 	Sfx.play_3d(&"death", global_position, randf_range(0.9, 1.05), -4.0)
 	_respawn_after(config.dummy_respawn_delay)
 

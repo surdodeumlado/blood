@@ -1,0 +1,97 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+
+MOVEMENT SOURCE LAB   walk 9.0  jump 8.5  gravity 24.0  air time 43 ticks
+
+=== CASES A-K  (airborne cases run one jump of air time: 43 ticks) ===
+  A  9 m/s, W, camera fixed          9.00 ->   9.00 (+0.00)  heading    +0.0 deg  cam    +0.0 deg/s
+      wish 9.00 | capped 1.10 | proj 9.00 | add -7.90 | accel 0.000 | softcap x1.00
+  B  15 m/s, W, camera fixed        15.00 ->  15.00 (+0.00)  heading    +0.0 deg  cam    +0.0 deg/s
+      wish 9.00 | capped 1.10 | proj 15.00 | add -13.90 | accel 0.000 | softcap x1.00
+  C  15 m/s, D, camera fixed        15.00 ->  15.04 (+0.04)  heading    +4.2 deg  cam    +0.0 deg/s
+      wish 9.00 | capped 1.10 | proj 1.10 | add -0.00 | accel 0.000 | softcap x1.00
+  D  15, D + camera right 160/s     15.00 ->  16.46 (+1.46)  heading  +118.5 deg  cam  -160.0 deg/s
+      wish 9.00 | capped 1.10 | proj 0.34 | add 0.76 | accel 0.764 | softcap x1.00
+  E  15, W+D + camera right 160/s   15.00 ->  15.96 (+0.96)  heading   +73.6 deg  cam  -160.0 deg/s
+      wish 9.00 | capped 1.10 | proj 0.36 | add 0.74 | accel 0.740 | softcap x1.00
+  F  20, tight D + right arc        20.00 ->  21.20 (+1.20)  heading  +131.4 deg  cam  -179.2 deg/s
+      wish 9.00 | capped 1.10 | proj 0.00 | add 1.10 | accel 1.100 | softcap x0.86
+  G  20, tight A + left arc         20.00 ->  21.20 (+1.20)  heading  -131.4 deg  cam  +179.2 deg/s
+      wish 9.00 | capped 1.10 | proj 0.00 | add 1.10 | accel 1.100 | softcap x0.86
+  PASS  12. left and right are symmetric (131.4 vs -131.4 deg, +1.20 vs +1.20 m/s)
+  PASS  12. left and right are symmetric (131.4 vs -131.4 deg, +1.20 vs +1.20 m/s)
+  H  bhop chain, perfect strafe      9.00 ->  25.28 peak over 41 hops in 30 s
+  H2 corridor zigzag, alternating    9.00 ->  25.28 peak, 39 of 39 hops reversed their turn
+  PASS  alternating A/D down a corridor still builds real speed (25.28 m/s)
+  PASS  alternating A/D down a corridor still builds real speed (25.28 m/s)
+  I  land + immediate re-jump       16.00 ->  16.00 (+0.00)  traction HOP (bounce)
+  J  land, no jump                  16.00 ->  13.43 (-2.57)  traction MOMENTUM
+  PASS  9. an immediate landing jump keeps far more than standing (16.00 vs 13.43 m/s)
+  PASS  9. an immediate landing jump keeps far more than standing (16.00 vs 13.43 m/s)
+  PASS  10. standing on the ground still receives normal friction (16.00 -> 13.43)
+  PASS  10. standing on the ground still receives normal friction (16.00 -> 13.43)
+  K  dash into air strafe          peak 20.00 -> exit 17.00 -> +20 strafe ticks 17.70 (heading +72.6)
+  PASS  11. dash momentum survives into air control (17.00 -> 17.70)
+  PASS  11. dash momentum survives into air control (17.00 -> 17.70)
+
+=== TURN RADIUS  (one jump of air time, ideal skilled strafe, per side) ===
+     speed       side      heading    final speed      delta
+        12    D right    208.3 deg      14.00 m/s      2.00
+  PASS  7. a 12 m/s right arc does not scale total velocity down (12.00 -> 14.00)
+  PASS  7. a 12 m/s right arc does not scale total velocity down (12.00 -> 14.00)
+        12     A left   -208.3 deg      14.00 m/s      2.00
+  PASS  7. a 12 m/s left arc does not scale total velocity down (12.00 -> 14.00)
+  PASS  7. a 12 m/s left arc does not scale total velocity down (12.00 -> 14.00)
+        16    D right    161.5 deg      17.55 m/s      1.55
+  PASS  7. a 16 m/s right arc does not scale total velocity down (16.00 -> 17.55)
+  PASS  7. a 16 m/s right arc does not scale total velocity down (16.00 -> 17.55)
+        16     A left   -161.5 deg      17.55 m/s      1.55
+  PASS  7. a 16 m/s left arc does not scale total velocity down (16.00 -> 17.55)
+  PASS  7. a 16 m/s left arc does not scale total velocity down (16.00 -> 17.55)
+        20    D right    131.4 deg      21.20 m/s      1.20
+  PASS  7. a 20 m/s right arc does not scale total velocity down (20.00 -> 21.20)
+  PASS  7. a 20 m/s right arc does not scale total velocity down (20.00 -> 21.20)
+        20     A left   -131.4 deg      21.20 m/s      1.20
+  PASS  7. a 20 m/s left arc does not scale total velocity down (20.00 -> 21.20)
+  PASS  7. a 20 m/s left arc does not scale total velocity down (20.00 -> 21.20)
+        24    D right    112.5 deg      24.13 m/s      0.13
+  PASS  7. a 24 m/s right arc does not scale total velocity down (24.00 -> 24.13)
+  PASS  7. a 24 m/s right arc does not scale total velocity down (24.00 -> 24.13)
+        24     A left   -112.5 deg      24.13 m/s      0.13
+  PASS  7. a 24 m/s left arc does not scale total velocity down (24.00 -> 24.13)
+  PASS  7. a 24 m/s left arc does not scale total velocity down (24.00 -> 24.13)
+
+=== SOURCE-LIKE PROPERTIES ===
+  PASS  1. no horizontal air damping with no input (18.000 -> 18.000)
+  PASS  1. no horizontal air damping with no input (18.000 -> 18.000)
+  PASS  2/3. input along the velocity adds nothing, the projection is past the cap (+0.0000)
+  PASS  2/3. input along the velocity adds nothing, the projection is past the cap (+0.0000)
+  PASS  5. a lateral key perpendicular to the velocity adds orthogonal speed (+0.0336 m/s)
+  PASS  5. a lateral key perpendicular to the velocity adds orthogonal speed (+0.0336 m/s)
+  PASS  4. holding W at speed is not clamped toward walk speed (22.00 -> 22.00, walk 9.0)
+  PASS  4. holding W at speed is not clamped toward walk speed (22.00 -> 22.00, walk 9.0)
+  PASS     and it never dips below where it started (low 22.00)
+  PASS     and it never dips below where it started (low 22.00)
+  PASS  6. coordinated view rotation bends the path much harder (171.2 vs 4.2 deg)
+  PASS  6. coordinated view rotation bends the path much harder (171.2 vs 4.2 deg)
+  PASS     and the coordinated turn is the stronger technique (16.64 vs 15.04 m/s)
+  PASS     and the coordinated turn is the stronger technique (16.64 vs 15.04 m/s)
+  PASS  8. above the soft cap, existing momentum is preserved, not bled (30.00 -> 30.00)
+  PASS  8. above the soft cap, existing momentum is preserved, not bled (30.00 -> 30.00)
+  PASS  collision removes speed, reported separately from steering (20.00 -> 0.00, hit true)
+  PASS  collision removes speed, reported separately from steering (20.00 -> 0.00, hit true)
+
+=== RENDER-RATE AND PHYSICS-TICK BEHAVIOUR ===
+  PASS  movement is stepped from _physics_process, never from a render frame
+  PASS  movement is stepped from _physics_process, never from a render frame
+  PASS  the controller reads no render-rate quantity at all
+  PASS  the controller reads no render-rate quantity at all
+  60 Hz -> 16.644 m/s +171.2 deg   |   120 Hz -> 17.166 m/s +275.7 deg   drift 3.13%
+  accumulated turn over the same wall-clock time differs by 61%
+  PASS  speed gained over the same wall-clock time barely moves with tick rate (3.13%)
+  PASS  speed gained over the same wall-clock time barely moves with tick rate (3.13%)
+  PASS  turn authority scales with tick rate but does not explode (61% at 2x)
+  PASS  turn authority scales with tick rate but does not explode (61% at 2x)
+
+26 checks, 0 failed
+26 checks, 0 failed

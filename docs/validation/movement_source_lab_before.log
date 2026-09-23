@@ -1,0 +1,91 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+
+MOVEMENT SOURCE LAB   walk 9.0  jump 8.5  gravity 24.0  air time 43 ticks
+
+=== CASES A-K  (airborne cases run one jump of air time: 43 ticks) ===
+  A  9 m/s, W, camera fixed          9.00 ->   9.00 (+0.00)  heading    +0.0 deg  cam    +0.0 deg/s
+      telemetry: - (this controller exposes no AirAccelerate readout)
+  B  15 m/s, W, camera fixed        15.00 ->  15.00 (+0.00)  heading    +0.0 deg  cam    +0.0 deg/s
+      telemetry: - (this controller exposes no AirAccelerate readout)
+  C  15 m/s, D, camera fixed        15.00 ->  15.00 (+0.00)  heading   +86.0 deg  cam    +0.0 deg/s
+      telemetry: - (this controller exposes no AirAccelerate readout)
+  D  15, D + camera right 160/s     15.00 ->  16.11 (+1.11)  heading   +86.0 deg  cam  -160.0 deg/s
+      telemetry: - (this controller exposes no AirAccelerate readout)
+  E  15, W+D + camera right 160/s   15.00 ->  17.10 (+2.10)  heading   +86.0 deg  cam  -160.0 deg/s
+      telemetry: - (this controller exposes no AirAccelerate readout)
+  F  20, tight D + right arc        20.00 ->  20.44 (+0.44)  heading   +86.0 deg  cam  -117.2 deg/s
+      telemetry: - (this controller exposes no AirAccelerate readout)
+  G  20, tight A + left arc         20.00 ->  20.44 (+0.44)  heading   -86.0 deg  cam  +117.2 deg/s
+      telemetry: - (this controller exposes no AirAccelerate readout)
+  PASS  12. left and right are symmetric (86.0 vs -86.0 deg, +0.44 vs +0.44 m/s)
+  PASS  12. left and right are symmetric (86.0 vs -86.0 deg, +0.44 vs +0.44 m/s)
+  H  bhop chain, perfect strafe      9.00 ->  24.63 peak over 41 hops in 30 s
+  I  land + immediate re-jump       16.00 ->  16.00 (+0.00)  traction HOP (bounce)
+  J  land, no jump                  16.00 ->  13.43 (-2.57)  traction MOMENTUM
+  PASS  9. an immediate landing jump keeps far more than standing (16.00 vs 13.43 m/s)
+  PASS  9. an immediate landing jump keeps far more than standing (16.00 vs 13.43 m/s)
+  PASS  10. standing on the ground still receives normal friction (16.00 -> 13.43)
+  PASS  10. standing on the ground still receives normal friction (16.00 -> 13.43)
+  K  dash into air strafe          peak 20.00 -> exit 17.00 -> +20 strafe ticks 14.32 (heading +125.5)
+  FAIL  11. dash momentum survives into air control (17.00 -> 14.32)
+  FAIL  11. dash momentum survives into air control (17.00 -> 14.32)
+
+=== TURN RADIUS  (one jump of air time, ideal skilled strafe, per side) ===
+     speed       side      heading    final speed      delta
+        12    D right     86.0 deg      13.01 m/s      1.01
+  PASS  7. a 12 m/s right arc does not scale total velocity down (12.00 -> 13.01)
+  PASS  7. a 12 m/s right arc does not scale total velocity down (12.00 -> 13.01)
+        12     A left    -86.0 deg      13.01 m/s      1.01
+  PASS  7. a 12 m/s left arc does not scale total velocity down (12.00 -> 13.01)
+  PASS  7. a 12 m/s left arc does not scale total velocity down (12.00 -> 13.01)
+        16    D right     86.0 deg      16.79 m/s      0.79
+  PASS  7. a 16 m/s right arc does not scale total velocity down (16.00 -> 16.79)
+  PASS  7. a 16 m/s right arc does not scale total velocity down (16.00 -> 16.79)
+        16     A left    -86.0 deg      16.79 m/s      0.79
+  PASS  7. a 16 m/s left arc does not scale total velocity down (16.00 -> 16.79)
+  PASS  7. a 16 m/s left arc does not scale total velocity down (16.00 -> 16.79)
+        20    D right     86.0 deg      20.44 m/s      0.44
+  PASS  7. a 20 m/s right arc does not scale total velocity down (20.00 -> 20.44)
+  PASS  7. a 20 m/s right arc does not scale total velocity down (20.00 -> 20.44)
+        20     A left    -86.0 deg      20.44 m/s      0.44
+  PASS  7. a 20 m/s left arc does not scale total velocity down (20.00 -> 20.44)
+  PASS  7. a 20 m/s left arc does not scale total velocity down (20.00 -> 20.44)
+        24    D right     86.0 deg      24.09 m/s      0.09
+  PASS  7. a 24 m/s right arc does not scale total velocity down (24.00 -> 24.09)
+  PASS  7. a 24 m/s right arc does not scale total velocity down (24.00 -> 24.09)
+        24     A left    -86.0 deg      24.09 m/s      0.09
+  PASS  7. a 24 m/s left arc does not scale total velocity down (24.00 -> 24.09)
+  PASS  7. a 24 m/s left arc does not scale total velocity down (24.00 -> 24.09)
+
+=== SOURCE-LIKE PROPERTIES ===
+  PASS  1. no horizontal air damping with no input (18.000 -> 18.000)
+  PASS  1. no horizontal air damping with no input (18.000 -> 18.000)
+  PASS  2/3. input along the velocity adds nothing, the projection is past the cap (+0.0000)
+  PASS  2/3. input along the velocity adds nothing, the projection is past the cap (+0.0000)
+  FAIL  5. a lateral key perpendicular to the velocity adds orthogonal speed (+0.0000 m/s)
+  FAIL  5. a lateral key perpendicular to the velocity adds orthogonal speed (+0.0000 m/s)
+  PASS  4. holding W at speed is not clamped toward walk speed (22.00 -> 22.00, walk 9.0)
+  PASS  4. holding W at speed is not clamped toward walk speed (22.00 -> 22.00, walk 9.0)
+  PASS     and it never dips below where it started (low 22.00)
+  PASS     and it never dips below where it started (low 22.00)
+  FAIL  6. coordinated view rotation bends the path much harder (86.0 vs 86.0 deg)
+  FAIL  6. coordinated view rotation bends the path much harder (86.0 vs 86.0 deg)
+  PASS     and the coordinated turn is the stronger technique (15.88 vs 15.00 m/s)
+  PASS     and the coordinated turn is the stronger technique (15.88 vs 15.00 m/s)
+  FAIL  8. above the soft cap, existing momentum is preserved, not bled (30.00 -> 25.70)
+  FAIL  8. above the soft cap, existing momentum is preserved, not bled (30.00 -> 25.70)
+  PASS  collision removes speed, reported separately from steering (20.00 -> 0.00, hit true)
+  PASS  collision removes speed, reported separately from steering (20.00 -> 0.00, hit true)
+
+=== PHYSICS TICK INDEPENDENCE ===
+  60 Hz -> 15.877 m/s +86.0 deg   |   120 Hz -> 15.886 m/s +86.0 deg   drift 0.06%
+  PASS  air gain is physics-tick independent (0.06% drift)
+  PASS  air gain is physics-tick independent (0.06% drift)
+
+22 checks, 4 failed
+22 checks, 4 failed
+  FAILED: 11. dash momentum survives into air control (17.00 -> 14.32)
+  FAILED: 5. a lateral key perpendicular to the velocity adds orthogonal speed (+0.0000 m/s)
+  FAILED: 6. coordinated view rotation bends the path much harder (86.0 vs 86.0 deg)
+  FAILED: 8. above the soft cap, existing momentum is preserved, not bled (30.00 -> 25.70)

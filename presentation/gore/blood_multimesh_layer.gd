@@ -50,8 +50,32 @@ var _age: PackedInt64Array = PackedInt64Array()
 var _active: PackedByteArray = PackedByteArray()
 var _live := 0
 var _stamp := 0
+var write_count := 0
+var instance_api_calls := 0
+var commit_count := 0
+var write_us := 0
+var commit_us := 0
+var profile_writes := false
+var _buffer := PackedFloat32Array()
+var _dirty := false
+var _last_commit_frame := -1
 ## Highest slot ever used, so visible_instance_count can stay tight early on.
 var _high_water := 0
+
+## CPU-SIDE MIRROR OF WHAT WAS SUBMITTED, for tests only.
+##
+## Per-instance MultiMesh data lives in the RenderingServer, and a --headless
+## run uses the DUMMY server, which stores none of it: set_instance_transform
+## succeeds, and get_instance_transform then returns identity. So a headless
+## test cannot read back what it wrote, however correct the write was.
+##
+## Recording the exact Transform3D and custom data handed to the rendering API
+## is the furthest a headless test can honestly follow the value. The PIXELS are
+## checked by eye in tests/blood_render_fixture.tscn, which runs windowed.
+var record_writes := false
+var recorded_xform: Array[Transform3D] = []
+var recorded_custom: PackedColorArray = PackedColorArray()
+var recorded_color: PackedColorArray = PackedColorArray()
 
 
 func setup(mesh: Mesh, material: Material, slots: int, cast_shadows := false) -> void:
@@ -79,6 +103,7 @@ func setup(mesh: Mesh, material: Material, slots: int, cast_shadows := false) ->
 	_free.resize(capacity)
 	_age.resize(capacity)
 	_active.resize(capacity)
+	_buffer.resize(capacity * 20) # 3x4 transform + RGBA + custom RGBA.
 	for i in capacity:
 		# Filled back to front so the first allocations come out in index order,
 		# which keeps visible_instance_count small while the pool is cold.
@@ -86,8 +111,8 @@ func setup(mesh: Mesh, material: Material, slots: int, cast_shadows := false) ->
 		_age[i] = 0
 		_active[i] = 0
 		# Park every instance at zero scale: an unallocated slot must not draw.
-		mm.set_instance_transform(i, Transform3D(Basis().scaled(Vector3.ZERO), Vector3.ZERO))
 	_free_count = capacity
+	_dirty = true
 
 
 ## Returns a slot index, or -1 when the layer refused the request.
@@ -133,7 +158,7 @@ func _occupy(idx: int) -> void:
 	_stamp += 1
 	_age[idx] = _stamp
 	_high_water = maxi(_high_water, idx + 1)
-	multimesh.visible_instance_count = _high_water
+	_dirty = true
 
 
 ## Hand a slot back. It goes on the free list, so the NEXT allocation reuses it
@@ -144,22 +169,63 @@ func release(idx: int) -> void:
 	_active[idx] = 0
 	_live -= 1
 	_age[idx] = 0
-	multimesh.set_instance_transform(
-		idx, Transform3D(Basis().scaled(Vector3.ZERO), Vector3.ZERO)
-	)
+	for j in 12: _buffer[idx * 20 + j] = 0.0
+	_dirty = true
 	if _free_count < capacity:
 		_free[_free_count] = idx
 		_free_count += 1
 
 
 func write(idx: int, xform: Transform3D, color: Color, custom := Color(0, 0, 1, 0)) -> void:
-	multimesh.set_instance_transform(idx, xform)
-	multimesh.set_instance_color(idx, color)
-	multimesh.set_instance_custom_data(idx, custom)
+	write_count += 1
+	var start := Time.get_ticks_usec() if profile_writes else 0
+	var k := idx * 20
+	var b := xform.basis
+	_buffer[k] = b.x.x; _buffer[k + 1] = b.y.x; _buffer[k + 2] = b.z.x; _buffer[k + 3] = xform.origin.x
+	_buffer[k + 4] = b.x.y; _buffer[k + 5] = b.y.y; _buffer[k + 6] = b.z.y; _buffer[k + 7] = xform.origin.y
+	_buffer[k + 8] = b.x.z; _buffer[k + 9] = b.y.z; _buffer[k + 10] = b.z.z; _buffer[k + 11] = xform.origin.z
+	_buffer[k + 12] = color.r; _buffer[k + 13] = color.g; _buffer[k + 14] = color.b; _buffer[k + 15] = color.a
+	_buffer[k + 16] = custom.r; _buffer[k + 17] = custom.g; _buffer[k + 18] = custom.b; _buffer[k + 19] = custom.a
+	_dirty = true
+	if profile_writes: write_us += Time.get_ticks_usec() - start
+	if record_writes:
+		recorded_xform[idx] = xform
+		recorded_custom[idx] = custom
+		recorded_color[idx] = color
+
+
+## Start mirroring submissions. Test-only: it costs one array write per stain.
+func begin_recording() -> void:
+	recorded_xform.resize(capacity)
+	recorded_custom.resize(capacity)
+	recorded_color.resize(capacity)
+	record_writes = true
 
 
 func set_color(idx: int, color: Color) -> void:
-	multimesh.set_instance_color(idx, color)
+	var k := idx * 20 + 12
+	_buffer[k] = color.r; _buffer[k + 1] = color.g; _buffer[k + 2] = color.b; _buffer[k + 3] = color.a
+	_dirty = true
+
+func set_fade(idx: int, alpha: float) -> void:
+	if not is_active(idx): return
+	_buffer[idx * 20 + 18] = clampf(alpha, 0.0, 1.0)
+	if record_writes: recorded_custom[idx].b = clampf(alpha, 0.0, 1.0)
+	_dirty = true
+
+func _process(_delta: float) -> void:
+	commit()
+
+func commit() -> void:
+	var frame := Engine.get_process_frames()
+	if not _dirty or _last_commit_frame == frame: return
+	var start := Time.get_ticks_usec() if profile_writes else 0
+	multimesh.buffer = _buffer
+	multimesh.visible_instance_count = _high_water
+	_last_commit_frame = frame
+	_dirty = false
+	commit_count += 1
+	if profile_writes: commit_us += Time.get_ticks_usec() - start
 
 
 func is_active(idx: int) -> bool:
@@ -179,7 +245,7 @@ func clear_all() -> void:
 		if _active[i] == 1:
 			release(i)
 	_high_water = 0
-	multimesh.visible_instance_count = 0
+	_dirty = true
 
 
 func reset_telemetry() -> void:

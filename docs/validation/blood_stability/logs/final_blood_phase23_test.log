@@ -1,0 +1,154 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+ERROR: Failed to read the root certificate store.
+   at: get_system_ca_certificates (platform/windows/os_windows.cpp:2582)
+  PASS  the stain layer uses a ShaderMaterial, which can read INSTANCE_CUSTOM
+  PASS  the stain layer uses a ShaderMaterial, which can read INSTANCE_CUSTOM
+  PASS  the stain shader is loaded
+  PASS  the stain shader is loaded
+  PASS  the atlas texture is bound to the shader
+  PASS  the atlas texture is bound to the shader
+  PASS  all 7 variants reach DISTINCT atlas cells (7 distinct)
+  PASS  all 7 variants reach DISTINCT atlas cells (7 distinct)
+  [atlas cells] first (0,0) last (2,1)
+  PASS  the first and last variants do NOT share a cell
+  PASS  the first and last variants do NOT share a cell
+  [dimension] asked 0.400 m ink | quad 0.434 m | occupancy 0.92 | ink 0.400 m
+  PASS  the transform that reached the MultiMesh renders the asked-for ink (0.400 vs 0.400)
+  PASS  the transform that reached the MultiMesh renders the asked-for ink (0.400 vs 0.400)
+  PASS  the quad is wider than the ink it must show (0.434 > 0.400)
+  PASS  the quad is wider than the ink it must show (0.434 > 0.400)
+  PASS  doubling the requested ink roughly doubles the quad (0.868 vs 0.434)
+  PASS  doubling the requested ink roughly doubles the quad (0.868 vs 0.434)
+  PASS  variant 0 has a measured ink extent (0.33 x 0.33, fill 0.087)
+  PASS  variant 0 has a measured ink extent (0.33 x 0.33, fill 0.087)
+  PASS  variant 0: quad x occupancy returns the requested ink (0.250)
+  PASS  variant 0: quad x occupancy returns the requested ink (0.250)
+  PASS  variant 1 has a measured ink extent (0.67 x 0.67, fill 0.350)
+  PASS  variant 1 has a measured ink extent (0.67 x 0.67, fill 0.350)
+  PASS  variant 1: quad x occupancy returns the requested ink (0.250)
+  PASS  variant 1: quad x occupancy returns the requested ink (0.250)
+  PASS  variant 2 has a measured ink extent (0.73 x 0.78, fill 0.396)
+  PASS  variant 2 has a measured ink extent (0.73 x 0.78, fill 0.396)
+  PASS  variant 2: quad x occupancy returns the requested ink (0.250)
+  PASS  variant 2: quad x occupancy returns the requested ink (0.250)
+  PASS  variant 3 has a measured ink extent (0.97 x 0.38, fill 0.252)
+  PASS  variant 3 has a measured ink extent (0.97 x 0.38, fill 0.252)
+  PASS  variant 3: quad x occupancy returns the requested ink (0.250)
+  PASS  variant 3: quad x occupancy returns the requested ink (0.250)
+  PASS  variant 4 has a measured ink extent (0.98 x 0.25, fill 0.140)
+  PASS  variant 4 has a measured ink extent (0.98 x 0.25, fill 0.140)
+  PASS  variant 4: quad x occupancy returns the requested ink (0.250)
+  PASS  variant 4: quad x occupancy returns the requested ink (0.250)
+  PASS  variant 5 has a measured ink extent (0.73 x 0.78, fill 0.254)
+  PASS  variant 5 has a measured ink extent (0.73 x 0.78, fill 0.254)
+  PASS  variant 5: quad x occupancy returns the requested ink (0.250)
+  PASS  variant 5: quad x occupancy returns the requested ink (0.250)
+  PASS  variant 6 has a measured ink extent (0.92 x 0.91, fill 0.650)
+  PASS  variant 6 has a measured ink extent (0.92 x 0.91, fill 0.650)
+  PASS  variant 6: quad x occupancy returns the requested ink (0.250)
+  PASS  variant 6: quad x occupancy returns the requested ink (0.250)
+  [occupancy] TINY_DROP fill 0.087, narrowest ink extent 0.33
+  PASS  TINY_DROP is measured as a small fraction of its cell (0.087)
+  PASS  TINY_DROP is measured as a small fraction of its cell (0.087)
+  PASS  POOLED is measured as far denser than TINY_DROP
+  PASS  POOLED is measured as far denser than TINY_DROP
+  [BALLISTIC] 999 marks | median 0.090 m | p90 0.191 m | <5cm 21% | { "<5cm": 213, "5-10cm": 366, "10-20cm": 343, "20-40cm": 72, "40-80cm": 4, ">80cm": 1 }
+  PASS  BALLISTIC: the aftermath is no longer almost entirely sub-5cm marks (21%)
+  PASS  BALLISTIC: the aftermath is no longer almost entirely sub-5cm marks (21%)
+  PASS  BALLISTIC: the median mark is readable at FPS distance (0.090 m)
+  PASS  BALLISTIC: the median mark is readable at FPS distance (0.090 m)
+  PASS  BALLISTIC: the largest marks are substantial (p90 0.191 m)
+  PASS  BALLISTIC: the largest marks are substantial (p90 0.191 m)
+  [BLUNT] 2089 marks | median 0.090 m | p90 0.234 m | <5cm 36% | { "<5cm": 753, "5-10cm": 423, "10-20cm": 615, "20-40cm": 235, "40-80cm": 63, ">80cm": 0 }
+  PASS  BLUNT: the aftermath is no longer almost entirely sub-5cm marks (36%)
+  PASS  BLUNT: the aftermath is no longer almost entirely sub-5cm marks (36%)
+  PASS  BLUNT: the median mark is readable at FPS distance (0.090 m)
+  PASS  BLUNT: the median mark is readable at FPS distance (0.090 m)
+  PASS  BLUNT: the largest marks are substantial (p90 0.234 m)
+  PASS  BLUNT: the largest marks are substantial (p90 0.234 m)
+  [HIGH_ENERGY] 2473 marks | median 0.090 m | p90 0.179 m | <5cm 36% | { "<5cm": 896, "5-10cm": 575, "10-20cm": 842, "20-40cm": 125, "40-80cm": 35, ">80cm": 0 }
+  PASS  HIGH_ENERGY: the aftermath is no longer almost entirely sub-5cm marks (36%)
+  PASS  HIGH_ENERGY: the aftermath is no longer almost entirely sub-5cm marks (36%)
+  PASS  HIGH_ENERGY: the median mark is readable at FPS distance (0.090 m)
+  PASS  HIGH_ENERGY: the median mark is readable at FPS distance (0.090 m)
+  PASS  HIGH_ENERGY: the largest marks are substantial (p90 0.179 m)
+  PASS  HIGH_ENERGY: the largest marks are substantial (p90 0.179 m)
+  [coverage] 60 marks stacked on one point: nominal 8.31 m2, unique 0.14 m2
+  PASS  unique coverage is smaller than the nominal sum when marks overlap (0.14 < 8.31)
+  PASS  unique coverage is smaller than the nominal sum when marks overlap (0.14 < 8.31)
+  PASS  60 marks on one spot cover about one patch, not the room (0.14 m2)
+  PASS  60 marks on one spot cover about one patch, not the room (0.14 m2)
+  [coverage] the same 60 marks spread out: unique 8.55 m2
+  PASS  spreading the same marks raises unique coverage (8.55 vs 0.14)
+  PASS  spreading the same marks raises unique coverage (8.55 vs 0.14)
+  PASS  the ledger reports approximate unique visible coverage
+  PASS  the ledger reports approximate unique visible coverage
+  [fallback] open-air kill spread over 4.74 m2 of unique floor
+  PASS  coarse fallback spreads over an area, not one point (4.74 m2)
+  PASS  coarse fallback spreads over an area, not one point (4.74 m2)
+  PASS  runoff segments overreach the gap between them (1.45)
+  PASS  runoff segments overreach the gap between them (1.45)
+  PASS  a heavy wall deposit starts running
+  PASS  a heavy wall deposit starts running
+  [runoff] 8 segments laid, median visible length 0.189 m, step 0.090 m
+  PASS  the rivulet lays a run of segments (8)
+  PASS  the rivulet lays a run of segments (8)
+  PASS  each segment is at least as long as the gap it must cover (0.189 >= 0.090)
+  PASS  each segment is at least as long as the gap it must cover (0.189 >= 0.090)
+  PASS  and it still terminates
+  PASS  and it still terminates
+  PASS  a hammered patch earns soaked bases (4)
+  PASS  a hammered patch earns soaked bases (4)
+  [soak] widest POOLED base quad 0.456 m (slot 22)
+  PASS  soaked bases are written with the POOLED atlas cell
+  PASS  soaked bases are written with the POOLED atlas cell
+  PASS  a soaked base is a broad region, not a dot (0.456 m quad)
+  PASS  a soaked base is a broad region, not a dot (0.456 m quad)
+  PASS  the screen-space estimate is arithmetically right (20 cm at 10 m = 10.8 px)
+  PASS  the screen-space estimate is arithmetically right (20 cm at 10 m = 10.8 px)
+  [BALLISTIC AFTERMATH]
+      stains 996 | nominal 11.5 m2 | UNIQUE 4.3 m2
+      visible width: median 0.090 m | p90 0.195 m
+      soak bases 0 | widest base quad 0.00 m
+      mass floor 0.252 | wall 0.621 | ceiling 0.000
+      readability: median 12 px at 4 m, 4 px at 12 m; p90 9 px at 12 m
+  PASS  BALLISTIC: larger contamination marks remain readable at 12 m (9 px)
+  PASS  BALLISTIC: larger contamination marks remain readable at 12 m (9 px)
+  PASS  BALLISTIC: larger marks are clearly readable at 4 m (26 px)
+  PASS  BALLISTIC: larger marks are clearly readable at 4 m (26 px)
+  PASS  BALLISTIC: the event covers a real area of the chamber (4.3 m2)
+  PASS  BALLISTIC: the event covers a real area of the chamber (4.3 m2)
+  PASS  BALLISTIC: unique coverage never exceeds the nominal sum
+  PASS  BALLISTIC: unique coverage never exceeds the nominal sum
+  [BLUNT AFTERMATH]
+      stains 2111 | nominal 25.4 m2 | UNIQUE 17.8 m2
+      visible width: median 0.090 m | p90 0.288 m
+      soak bases 73 | widest base quad 0.46 m
+      mass floor 0.635 | wall 0.549 | ceiling 0.000
+      readability: median 12 px at 4 m, 4 px at 12 m; p90 13 px at 12 m
+  PASS  BLUNT: larger contamination marks remain readable at 12 m (13 px)
+  PASS  BLUNT: larger contamination marks remain readable at 12 m (13 px)
+  PASS  BLUNT: larger marks are clearly readable at 4 m (39 px)
+  PASS  BLUNT: larger marks are clearly readable at 4 m (39 px)
+  PASS  BLUNT: the event covers a real area of the chamber (17.8 m2)
+  PASS  BLUNT: the event covers a real area of the chamber (17.8 m2)
+  PASS  BLUNT: unique coverage never exceeds the nominal sum
+  PASS  BLUNT: unique coverage never exceeds the nominal sum
+  [HIGH_ENERGY AFTERMATH]
+      stains 2302 | nominal 25.8 m2 | UNIQUE 10.0 m2
+      visible width: median 0.090 m | p90 0.186 m
+      soak bases 12 | widest base quad 0.10 m
+      mass floor 0.144 | wall 1.064 | ceiling 0.000
+      readability: median 12 px at 4 m, 4 px at 12 m; p90 8 px at 12 m
+  PASS  HIGH_ENERGY: larger contamination marks remain readable at 12 m (8 px)
+  PASS  HIGH_ENERGY: larger contamination marks remain readable at 12 m (8 px)
+  PASS  HIGH_ENERGY: larger marks are clearly readable at 4 m (25 px)
+  PASS  HIGH_ENERGY: larger marks are clearly readable at 4 m (25 px)
+  PASS  HIGH_ENERGY: the event covers a real area of the chamber (10.0 m2)
+  PASS  HIGH_ENERGY: the event covers a real area of the chamber (10.0 m2)
+  PASS  HIGH_ENERGY: unique coverage never exceeds the nominal sum
+  PASS  HIGH_ENERGY: unique coverage never exceeds the nominal sum
+
+59 checks, 0 failed
+59 checks, 0 failed

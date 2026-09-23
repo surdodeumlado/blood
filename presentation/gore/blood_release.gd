@@ -24,6 +24,9 @@ var context: BloodContext
 
 ## How much BLOOD this release is worth, in reservoir units.
 var blood_mass := 0.0
+## Blood retained on the contacting implement, carved out before emission.
+## blood_mass + contact_retained_mass equals the body's original withdrawal.
+var contact_retained_mass := 0.0
 ## How much solid TISSUE came with it. Zero for most non-lethal hits.
 var tissue_mass := 0.0
 

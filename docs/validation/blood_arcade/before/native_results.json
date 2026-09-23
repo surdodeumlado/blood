@@ -1,0 +1,827 @@
+{
+	"absorption_after_2s": {
+		"absorbed": 0.0069528345856174,
+		"frozen_retained": 0.0,
+		"mobile": 0.0,
+		"patches": 37,
+		"wet": 0.0910471684393183
+	},
+	"angle_aspects_90_60_45_30_15": [
+		1.0,
+		1.14053191549781,
+		1.36398862907149,
+		1.8070158058105,
+		2.70207849958884
+	],
+	"authored_weapon_castoff": [
+		{
+			"castoff_drops": 4,
+			"contact_load": 0.7,
+			"peak_angular_speed": 41.1601388454437,
+			"peak_tip_speed": 14.0446310043335,
+			"remaining_load": 0.2,
+			"weapon": "TwinDaggers"
+		},
+		{
+			"castoff_drops": 7,
+			"contact_load": 0.8,
+			"peak_angular_speed": 29.5330631732941,
+			"peak_tip_speed": 12.953125,
+			"remaining_load": 0.3,
+			"weapon": "HeavyBlunt"
+		}
+	],
+	"benchmarks": [
+		{
+			"cpu_render_median_ms": 0.103000000119209,
+			"emit_ms": 9.275,
+			"gpu_render_median_ms": 0.178000003099442,
+			"initial_layers": {
+				"airborne": 393,
+				"cells": 12,
+				"large": 94,
+				"medium": 59,
+				"micro": 393,
+				"remnants": 0,
+				"representatives": 195,
+				"runoff": 1,
+				"small": 136,
+				"solids_flying": 94,
+				"solids_settled": 0,
+				"surface": 71,
+				"wounds": 0
+			},
+			"initial_physical": 195,
+			"ledger": {
+				"air_visual_mass_represented": 0.3825,
+				"approx_unique_visible_coverage": 15.2025,
+				"contact_retained_mass": 0.0,
+				"estimated_total_stain_area": 21.7934219988425,
+				"mean_stain_area": 0.0333743062769411,
+				"nominal_summed_area": 21.7934219988425,
+				"physical_mass_recycled": 0.0,
+				"physical_mass_represented": 0.4675,
+				"physical_mass_that_hit_world": 0.444640622416046,
+				"physical_mass_that_timed_out": 0.0228593748761341,
+				"release_blood_mass": 0.85,
+				"release_tissue_mass": 0.4,
+				"runoff_mass_claimed": 0.026814380827954,
+				"stain_count": 653,
+				"surface_mass_ceiling": 0.0,
+				"surface_mass_deposited": 0.92148196714964,
+				"surface_mass_floor": 0.76024765851861,
+				"surface_mass_wall": 0.161234308631031,
+				"tissue_mass_deposited": 0.072899407800287
+			},
+			"live": {
+				"airborne": 0,
+				"cells": 39,
+				"large": 94,
+				"medium": 1,
+				"micro": 0,
+				"remnants": 0,
+				"representatives": 1,
+				"runoff": 1,
+				"small": 0,
+				"solids_flying": 17,
+				"solids_settled": 77,
+				"surface": 653,
+				"wounds": 0
+			},
+			"logical_blood": 0.85,
+			"material": {
+				"breakups": 86,
+				"coarse_fallback_mass": 0.0228593748761341,
+				"collisions": 262,
+				"escaped_mass": 0.0,
+				"ligaments": 3,
+				"size_warnings": 0
+			},
+			"native_frame_median_ms": 0.201,
+			"native_frame_p95_ms": 0.275,
+			"quality": 0,
+			"render_draw_calls": 9.0,
+			"step_max_ms": 5.005,
+			"step_mean_ms": 0.953938888888889,
+			"step_p95_ms": 3.282
+		},
+		{
+			"cpu_render_median_ms": 0.100000001490116,
+			"emit_ms": 19.444,
+			"gpu_render_median_ms": 0.188999995589256,
+			"initial_layers": {
+				"airborne": 1071,
+				"cells": 14,
+				"large": 256,
+				"medium": 161,
+				"micro": 1071,
+				"remnants": 0,
+				"representatives": 532,
+				"runoff": 1,
+				"small": 371,
+				"solids_flying": 256,
+				"solids_settled": 0,
+				"surface": 70,
+				"wounds": 0
+			},
+			"initial_physical": 532,
+			"ledger": {
+				"air_visual_mass_represented": 0.3825,
+				"approx_unique_visible_coverage": 18.3675,
+				"contact_retained_mass": 0.0,
+				"estimated_total_stain_area": 26.8760008459932,
+				"mean_stain_area": 0.0124714621095096,
+				"nominal_summed_area": 26.8760008459932,
+				"physical_mass_recycled": 0.0,
+				"physical_mass_represented": 0.4675,
+				"physical_mass_that_hit_world": 0.427994591998868,
+				"physical_mass_that_timed_out": 0.0395054051186889,
+				"release_blood_mass": 0.85,
+				"release_tissue_mass": 0.4,
+				"runoff_mass_claimed": 0.01304325,
+				"stain_count": 2155,
+				"surface_mass_ceiling": 0.0,
+				"surface_mass_deposited": 0.911640614945552,
+				"surface_mass_floor": 0.731366031447671,
+				"surface_mass_wall": 0.180274583497888,
+				"tissue_mass_deposited": 0.0693913058261386
+			},
+			"live": {
+				"airborne": 0,
+				"cells": 47,
+				"large": 256,
+				"medium": 0,
+				"micro": 0,
+				"remnants": 0,
+				"representatives": 0,
+				"runoff": 0,
+				"small": 0,
+				"solids_flying": 51,
+				"solids_settled": 205,
+				"surface": 2155,
+				"wounds": 0
+			},
+			"logical_blood": 0.85,
+			"material": {
+				"breakups": 246,
+				"coarse_fallback_mass": 0.0395054051186889,
+				"collisions": 702,
+				"escaped_mass": 0.00775068858638406,
+				"ligaments": 9,
+				"size_warnings": 0
+			},
+			"native_frame_median_ms": 0.21,
+			"native_frame_p95_ms": 0.301,
+			"quality": 1,
+			"render_draw_calls": 9.0,
+			"step_max_ms": 15.62,
+			"step_mean_ms": 2.60483888888889,
+			"step_p95_ms": 8.925
+		},
+		{
+			"cpu_render_median_ms": 0.100000001490116,
+			"emit_ms": 29.815,
+			"gpu_render_median_ms": 0.195999994874001,
+			"initial_layers": {
+				"airborne": 1785,
+				"cells": 15,
+				"large": 427,
+				"medium": 268,
+				"micro": 1785,
+				"remnants": 0,
+				"representatives": 887,
+				"runoff": 3,
+				"small": 619,
+				"solids_flying": 427,
+				"solids_settled": 0,
+				"surface": 70,
+				"wounds": 0
+			},
+			"initial_physical": 887,
+			"ledger": {
+				"air_visual_mass_represented": 0.3825,
+				"approx_unique_visible_coverage": 20.6925,
+				"contact_retained_mass": 0.0,
+				"estimated_total_stain_area": 32.3743704780828,
+				"mean_stain_area": 0.00908881821394802,
+				"nominal_summed_area": 32.3743704780828,
+				"physical_mass_recycled": 0.0,
+				"physical_mass_represented": 0.4675,
+				"physical_mass_that_hit_world": 0.419530153172673,
+				"physical_mass_that_timed_out": 0.0479698423296213,
+				"release_blood_mass": 0.85,
+				"release_tissue_mass": 0.4,
+				"runoff_mass_claimed": 0.040462125,
+				"stain_count": 3562,
+				"surface_mass_ceiling": 0.0,
+				"surface_mass_deposited": 0.914713133201223,
+				"surface_mass_floor": 0.685392093051136,
+				"surface_mass_wall": 0.229321040150089,
+				"tissue_mass_deposited": 0.0728218478616328
+			},
+			"live": {
+				"airborne": 0,
+				"cells": 81,
+				"large": 427,
+				"medium": 0,
+				"micro": 0,
+				"remnants": 0,
+				"representatives": 0,
+				"runoff": 0,
+				"small": 0,
+				"solids_flying": 85,
+				"solids_settled": 342,
+				"surface": 3200,
+				"wounds": 0
+			},
+			"logical_blood": 0.85,
+			"material": {
+				"breakups": 352,
+				"coarse_fallback_mass": 0.0479698423296213,
+				"collisions": 1111,
+				"escaped_mass": 0.00810871087014675,
+				"ligaments": 17,
+				"size_warnings": 0
+			},
+			"native_frame_median_ms": 0.217,
+			"native_frame_p95_ms": 0.299,
+			"quality": 2,
+			"render_draw_calls": 9.0,
+			"step_max_ms": 31.5,
+			"step_mean_ms": 4.16902777777778,
+			"step_p95_ms": 16.063
+		}
+	],
+	"blunt_mean_launch_x": [
+		15.5754555769334,
+		-15.4041328397653
+	],
+	"breakup": {
+		"children": 2,
+		"equivalent_volume_proxy": 0.000000512000089251594,
+		"mass": 0.0399999991059303
+	},
+	"castoff": [
+		{
+			"load_spent": 0.0,
+			"omega": 1.0,
+			"tip_speed": 0.600000023841858
+		},
+		{
+			"load_spent": 0.221806416010171,
+			"omega": 8.0,
+			"tip_speed": 4.80000019073486
+		},
+		{
+			"load_spent": 0.5,
+			"omega": 20.0,
+			"tip_speed": 12.0
+		}
+	],
+	"checks": 68,
+	"cpu": "AMD Ryzen 5 3600 6-Core Processor",
+	"engine": "4.7.2-stable (steam)",
+	"failures": [],
+	"family_readability": [
+		{
+			"aftermath": {
+				"airborne": 0,
+				"cells": 28,
+				"large": 130,
+				"medium": 1,
+				"micro": 0,
+				"remnants": 0,
+				"representatives": 1,
+				"runoff": 9,
+				"small": 0,
+				"solids_flying": 0,
+				"solids_settled": 130,
+				"surface": 1911,
+				"wounds": 0
+			},
+			"family": "ballistic",
+			"initial": {
+				"airborne": 1547,
+				"cells": 8,
+				"large": 130,
+				"medium": 161,
+				"micro": 1547,
+				"remnants": 0,
+				"representatives": 603,
+				"runoff": 9,
+				"small": 442,
+				"solids_flying": 130,
+				"solids_settled": 0,
+				"surface": 67,
+				"wounds": 0
+			},
+			"ledger": {
+				"air_visual_mass_represented": 0.3825,
+				"approx_unique_visible_coverage": 16.3675,
+				"contact_retained_mass": 0.0,
+				"estimated_total_stain_area": 26.4961711974886,
+				"mean_stain_area": 0.0138650817359961,
+				"nominal_summed_area": 26.4961711974886,
+				"physical_mass_recycled": 0.0,
+				"physical_mass_represented": 0.4675,
+				"physical_mass_that_hit_world": 0.438995193777373,
+				"physical_mass_that_timed_out": 0.0495423084066715,
+				"release_blood_mass": 0.85,
+				"release_tissue_mass": 0.4,
+				"runoff_mass_claimed": 0.177759381376721,
+				"stain_count": 1911,
+				"surface_mass_ceiling": 0.0,
+				"surface_mass_deposited": 0.905383727077813,
+				"surface_mass_floor": 0.477663552671671,
+				"surface_mass_wall": 0.427720174406141,
+				"tissue_mass_deposited": 0.0872131148353219
+			},
+			"median_liquid_axis_m": 0.00620000017806888,
+			"p90_liquid_axis_m": 0.0110640851780772
+		},
+		{
+			"aftermath": {
+				"airborne": 0,
+				"cells": 28,
+				"large": 193,
+				"medium": 0,
+				"micro": 0,
+				"remnants": 0,
+				"representatives": 0,
+				"runoff": 1,
+				"small": 0,
+				"solids_flying": 0,
+				"solids_settled": 193,
+				"surface": 2724,
+				"wounds": 0
+			},
+			"family": "slashing",
+			"initial": {
+				"airborne": 1309,
+				"cells": 11,
+				"large": 193,
+				"medium": 232,
+				"micro": 1309,
+				"remnants": 0,
+				"representatives": 762,
+				"runoff": 7,
+				"small": 530,
+				"solids_flying": 193,
+				"solids_settled": 0,
+				"surface": 70,
+				"wounds": 0
+			},
+			"ledger": {
+				"air_visual_mass_represented": 0.3825,
+				"approx_unique_visible_coverage": 19.1875,
+				"contact_retained_mass": 0.0,
+				"estimated_total_stain_area": 26.882172018362,
+				"mean_stain_area": 0.00986863877326064,
+				"nominal_summed_area": 26.882172018362,
+				"physical_mass_recycled": 0.0,
+				"physical_mass_represented": 0.4675,
+				"physical_mass_that_hit_world": 0.439097172114998,
+				"physical_mass_that_timed_out": 0.028402830590494,
+				"release_blood_mass": 0.85,
+				"release_tissue_mass": 0.4,
+				"runoff_mass_claimed": 0.090222951418364,
+				"stain_count": 2724,
+				"surface_mass_ceiling": 0.0,
+				"surface_mass_deposited": 0.927080246229805,
+				"surface_mass_floor": 0.564178199305917,
+				"surface_mass_wall": 0.362902046923882,
+				"tissue_mass_deposited": 0.0778247763402759
+			},
+			"median_liquid_axis_m": 0.00619691889733076,
+			"p90_liquid_axis_m": 0.0161544065922499
+		},
+		{
+			"aftermath": {
+				"airborne": 0,
+				"cells": 28,
+				"large": 431,
+				"medium": 0,
+				"micro": 0,
+				"remnants": 0,
+				"representatives": 0,
+				"runoff": 3,
+				"small": 0,
+				"solids_flying": 0,
+				"solids_settled": 431,
+				"surface": 2759,
+				"wounds": 0
+			},
+			"family": "blunt",
+			"initial": {
+				"airborne": 655,
+				"cells": 13,
+				"large": 431,
+				"medium": 303,
+				"micro": 655,
+				"remnants": 0,
+				"representatives": 701,
+				"runoff": 6,
+				"small": 398,
+				"solids_flying": 431,
+				"solids_settled": 0,
+				"surface": 70,
+				"wounds": 0
+			},
+			"ledger": {
+				"air_visual_mass_represented": 0.3825,
+				"approx_unique_visible_coverage": 22.69,
+				"contact_retained_mass": 0.0,
+				"estimated_total_stain_area": 29.6286653009384,
+				"mean_stain_area": 0.0107389145708367,
+				"nominal_summed_area": 29.6286653009384,
+				"physical_mass_recycled": 0.0,
+				"physical_mass_represented": 0.4675,
+				"physical_mass_that_hit_world": 0.44242179763387,
+				"physical_mass_that_timed_out": 0.0250782034709118,
+				"release_blood_mass": 0.85,
+				"release_tissue_mass": 0.4,
+				"runoff_mass_claimed": 0.101749986758572,
+				"stain_count": 2759,
+				"surface_mass_ceiling": 0.0,
+				"surface_mass_deposited": 0.939191675744609,
+				"surface_mass_floor": 0.514245693915414,
+				"surface_mass_wall": 0.424945981829193,
+				"tissue_mass_deposited": 0.0911163890501487
+			},
+			"median_liquid_axis_m": 0.00590521469712257,
+			"p90_liquid_axis_m": 0.0236040316522121
+		},
+		{
+			"aftermath": {
+				"airborne": 0,
+				"cells": 75,
+				"large": 427,
+				"medium": 0,
+				"micro": 0,
+				"remnants": 0,
+				"representatives": 0,
+				"runoff": 0,
+				"small": 0,
+				"solids_flying": 98,
+				"solids_settled": 329,
+				"surface": 3200,
+				"wounds": 0
+			},
+			"family": "high_energy",
+			"initial": {
+				"airborne": 1785,
+				"cells": 15,
+				"large": 427,
+				"medium": 268,
+				"micro": 1785,
+				"remnants": 0,
+				"representatives": 887,
+				"runoff": 1,
+				"small": 619,
+				"solids_flying": 427,
+				"solids_settled": 0,
+				"surface": 70,
+				"wounds": 0
+			},
+			"ledger": {
+				"air_visual_mass_represented": 0.3825,
+				"approx_unique_visible_coverage": 20.8625,
+				"contact_retained_mass": 0.0,
+				"estimated_total_stain_area": 31.2474748059919,
+				"mean_stain_area": 0.00905199154287134,
+				"nominal_summed_area": 31.2474748059919,
+				"physical_mass_recycled": 0.0,
+				"physical_mass_represented": 0.4675,
+				"physical_mass_that_hit_world": 0.421116178986267,
+				"physical_mass_that_timed_out": 0.0463838165160269,
+				"release_blood_mass": 0.85,
+				"release_tissue_mass": 0.4,
+				"runoff_mass_claimed": 0.01304325,
+				"stain_count": 3452,
+				"surface_mass_ceiling": 0.0,
+				"surface_mass_deposited": 0.911800259167575,
+				"surface_mass_floor": 0.784637901038073,
+				"surface_mass_wall": 0.127162358129501,
+				"tissue_mass_deposited": 0.0699089739471675
+			},
+			"median_liquid_axis_m": 0.00620000017806888,
+			"p90_liquid_axis_m": 0.021643839776516
+		}
+	],
+	"liquid_sizes": [
+		{
+			"actual_basis_lengths_m": [
+				0.00391292804852128,
+				0.00391292804852128,
+				0.00418000016361475
+			],
+			"class": 1,
+			"physical_diameter_m": 0.00015,
+			"requested_render_diameter_m": 0.00400000018998981
+		},
+		{
+			"actual_basis_lengths_m": [
+				0.00469551375135779,
+				0.00469551375135779,
+				0.00501600001007319
+			],
+			"class": 2,
+			"physical_diameter_m": 0.0006,
+			"requested_render_diameter_m": 0.00480000022798777
+		},
+		{
+			"actual_basis_lengths_m": [
+				0.0117387836799026,
+				0.0117387836799026,
+				0.0125400004908443
+			],
+			"class": 3,
+			"physical_diameter_m": 0.0015,
+			"requested_render_diameter_m": 0.0120000001043081
+		},
+		{
+			"actual_basis_lengths_m": [
+				0.0234775673598051,
+				0.0234775673598051,
+				0.0250800009816885
+			],
+			"class": 4,
+			"physical_diameter_m": 0.003,
+			"requested_render_diameter_m": 0.0240000002086163
+		},
+		{
+			"actual_basis_lengths_m": [
+				0.0469551347196102,
+				0.0469551347196102,
+				0.050160001963377
+			],
+			"class": 5,
+			"physical_diameter_m": 0.006,
+			"requested_render_diameter_m": 0.0480000004172325
+		},
+		{
+			"actual_basis_lengths_m": [
+				0.0120000001043081,
+				0.0120000001043081,
+				0.096000000834465
+			],
+			"class": 6,
+			"physical_diameter_m": 0.004,
+			"requested_render_diameter_m": 0.0120000001043081
+		}
+	],
+	"max_liquid_axis_m": 0.0599999986588955,
+	"normal_surfaces": [
+		{
+			"aspect": 1.0,
+			"drop_id": 1,
+			"incidence": 1.0,
+			"outcome": 2,
+			"re": 1758.33333333333,
+			"splash": true,
+			"spread": 1.7325,
+			"stains": 4,
+			"surface": "SMOOTH_NONABSORBENT",
+			"we": 562.666666666667
+		},
+		{
+			"aspect": 1.0,
+			"drop_id": 2,
+			"incidence": 1.0,
+			"outcome": 2,
+			"re": 1758.33333333333,
+			"splash": true,
+			"spread": 1.452,
+			"stains": 4,
+			"surface": "ROUGH_NONABSORBENT",
+			"we": 562.666666666667
+		},
+		{
+			"aspect": 1.0,
+			"drop_id": 3,
+			"incidence": 1.0,
+			"outcome": 2,
+			"re": 1758.33333333333,
+			"splash": true,
+			"spread": 1.3695,
+			"stains": 4,
+			"surface": "POROUS_ABSORBENT",
+			"we": 562.666666666667
+		}
+	],
+	"renderer": "AMD Radeon RX 9060 XT",
+	"runoff": [
+		{
+			"active": 2,
+			"positions": [
+				"(-4.0, 5.0, -4.99)",
+				"(0.0, 5.0, -4.99)"
+			],
+			"rendered_streams": [
+				{
+					"rendered_length_m": 0.0,
+					"segment_widths_m": [],
+					"source_x": -4.0
+				},
+				{
+					"rendered_length_m": 0.0,
+					"segment_widths_m": [],
+					"source_x": 0.0
+				}
+			],
+			"stock": {
+				"absorbed": 0.0,
+				"frozen_retained": 0.0,
+				"mobile": 0.0721599981188774,
+				"patches": 11,
+				"wet": 0.167839996248484
+			},
+			"time": 0.0
+		},
+		{
+			"active": 2,
+			"positions": [
+				"(-4.0, 4.664004, -5.0)",
+				"(0.0, 4.820642, -5.0)"
+			],
+			"rendered_streams": [
+				{
+					"rendered_length_m": 0.350402928888798,
+					"segment_widths_m": [
+						0.0646194517612457,
+						0.0714490786194801,
+						0.0797778889536858
+					],
+					"source_x": -4.0
+				},
+				{
+					"rendered_length_m": 0.192676246166229,
+					"segment_widths_m": [
+						0.0797778889536858
+					],
+					"source_x": 0.0
+				}
+			],
+			"stock": {
+				"absorbed": 0.057079614975356,
+				"frozen_retained": 0.0226810420677066,
+				"mobile": 0.0494789574295282,
+				"patches": 11,
+				"wet": 0.110760381273128
+			},
+			"time": 0.5
+		},
+		{
+			"active": 2,
+			"positions": [
+				"(-4.0, 4.417266, -5.0)",
+				"(0.0, 4.673985, -5.0)"
+			],
+			"rendered_streams": [
+				{
+					"rendered_length_m": 0.606201961636543,
+					"segment_widths_m": [
+						0.0506612807512283,
+						0.0544269196689129,
+						0.0590191595256329,
+						0.0646194517612457,
+						0.0714490786194801,
+						0.0797778889536858
+					],
+					"source_x": -4.0
+				},
+				{
+					"rendered_length_m": 0.355540372431278,
+					"segment_widths_m": [
+						0.0646194517612457,
+						0.0714490786194801,
+						0.0797778889536858
+					],
+					"source_x": 0.0
+				}
+			],
+			"stock": {
+				"absorbed": 0.0734331984687282,
+				"frozen_retained": 0.0412980809994042,
+				"mobile": 0.0308619178831577,
+				"patches": 11,
+				"wet": 0.0944067977797555
+			},
+			"time": 1.0
+		},
+		{
+			"active": 2,
+			"positions": [
+				"(-4.0, 4.028216, -5.0)",
+				"(0.0, 4.432417, -5.0)"
+			],
+			"rendered_streams": [
+				{
+					"rendered_length_m": 0.966397620737553,
+					"segment_widths_m": [
+						0.0412626676261425,
+						0.0429651960730553,
+						0.0450414456427097,
+						0.0475734621286392,
+						0.0506612807512283,
+						0.0544269196689129,
+						0.0590191595256329,
+						0.0646194517612457,
+						0.0714490786194801,
+						0.0797778889536858
+					],
+					"source_x": -4.0
+				},
+				{
+					"rendered_length_m": 0.611184909939766,
+					"segment_widths_m": [
+						0.0506612807512283,
+						0.0544269196689129,
+						0.0590191595256329,
+						0.0646194517612457,
+						0.0714490786194801,
+						0.0797778889536858
+					],
+					"source_x": 0.0
+				}
+			],
+			"stock": {
+				"absorbed": 0.0794609624639822,
+				"frozen_retained": 0.0562323132622987,
+				"mobile": 0.0159276854246855,
+				"patches": 11,
+				"wet": 0.0883790337845014
+			},
+			"time": 2.0
+		},
+		{
+			"active": 0,
+			"positions": [],
+			"rendered_streams": [
+				{
+					"rendered_length_m": 2.22392965108156,
+					"segment_widths_m": [
+						0.0348067618906498,
+						0.0350921414792538,
+						0.0354401618242264,
+						0.0358645766973495,
+						0.0363821536302567,
+						0.0370133481919765,
+						0.0377830974757671,
+						0.0387218184769154,
+						0.0398665964603424,
+						0.0412626676261425,
+						0.0429651960730553,
+						0.0450414456427097,
+						0.0475734621286392,
+						0.0506612807512283,
+						0.0544269196689129,
+						0.0590191595256329,
+						0.0646194517612457,
+						0.0714490786194801,
+						0.0797778889536858,
+						0.0345727540552616,
+						0.0343808680772781,
+						0.0342235192656517,
+						0.0340944938361645,
+						0.0339886955916882
+					],
+					"source_x": -4.0
+				},
+				{
+					"rendered_length_m": 1.3001933246851,
+					"segment_widths_m": [
+						0.0398665964603424,
+						0.0412626676261425,
+						0.0429651960730553,
+						0.0450414456427097,
+						0.0475734621286392,
+						0.0506612807512283,
+						0.0544269196689129,
+						0.0590191595256329,
+						0.0646194517612457,
+						0.0714490786194801,
+						0.0797778889536858,
+						0.0387218184769154,
+						0.0377830974757671,
+						0.0370133481919765
+					],
+					"source_x": 0.0
+				}
+			],
+			"stock": {
+				"absorbed": 0.0799999912004622,
+				"frozen_retained": 0.072159999239957,
+				"mobile": 0.0,
+				"patches": 11,
+				"wet": 0.0878400050480214
+			},
+			"time": 6.5
+		}
+	],
+	"speed_after_1s_from_20ms_no_gravity": [
+		0.00000893515061761718,
+		1.40780925750732,
+		6.93713760375977
+	]
+}

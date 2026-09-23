@@ -1,0 +1,15 @@
+{
+    "status":  "implemented; native benchmark and captures completed; headless teardown defect remains unresolved",
+    "git_diff_check":  "pass",
+    "native_benchmark_exit":  0,
+    "native_stability_exit":  0,
+    "native_warm_control_exit":  0,
+    "headless_stability_exit":  -1073741819,
+    "headless_material_exit":  -1073741819,
+    "gameplay_scope":  "only blood handoff and opt-in timing in weapon/dummy; frozen files match initial SHA256 snapshot",
+    "visual_approval":  "pending player",
+    "final_audio_assets":  "placeholder",
+    "gpu_timing":  "not measured",
+    "cold_renderer_preparation_ms":  841.161,
+    "teardown_evidence":  "teardown_runs.json"
+}

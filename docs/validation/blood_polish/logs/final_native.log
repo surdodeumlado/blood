@@ -1,0 +1,73 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+OpenGL API 3.3.0 Core Profile Context 26.8.1.260810 - Compatibility - Using Device: ATI Technologies Inc. - AMD Radeon RX 9060 XT
+
+ERROR: Failed to read the root certificate store.
+   at: get_system_ca_certificates (platform/windows/os_windows.cpp:2582)
+PASS angle 90 long axis follows floor travel
+PASS angle 60 long axis follows floor travel
+PASS angle 45 long axis follows floor travel
+PASS angle 30 long axis follows floor travel
+PASS angle 15 long axis follows floor travel
+ERROR: Condition "f.is_null()" is true.
+   at: _save_to_cache (drivers/gles3/shader_gles3.cpp:648)
+ERROR: Condition "f.is_null()" is true.
+   at: _save_to_cache (drivers/gles3/shader_gles3.cpp:648)
+ERROR: Condition "f.is_null()" is true.
+   at: _save_to_cache (drivers/gles3/shader_gles3.cpp:648)
+ERROR: Condition "f.is_null()" is true.
+   at: _save_to_cache (drivers/gles3/shader_gles3.cpp:648)
+ERROR: Condition "f.is_null()" is true.
+   at: _save_to_cache (drivers/gles3/shader_gles3.cpp:648)
+ERROR: Condition "f.is_null()" is true.
+   at: _save_to_cache (drivers/gles3/shader_gles3.cpp:648)
+ERROR: Condition "f.is_null()" is true.
+   at: _save_to_cache (drivers/gles3/shader_gles3.cpp:648)
+PASS capture 01_angles
+PASS fresh impact cannot be prematurely retired
+PASS budget pressure puts an old stain into FADING without freeing its slot
+PASS custom-data alpha decreases smoothly
+PASS capture 02_fade
+PASS faded slot becomes FREE only at opacity zero
+PASS capture 03_pool_0
+PASS capture 03_pool_3
+PASS tiny representative with large parcel cannot instantly unlock a giant pool
+PASS new deposited material funds progressive pooling
+PASS no incoming material: pool stops after bounded spreading window
+PASS family 4 first hit survives
+ERROR: Condition "f.is_null()" is true.
+   at: _save_to_cache (drivers/gles3/shader_gles3.cpp:648)
+PASS subsequent hit accepts damage and creates correct positive BloodRelease
+PASS subsequent release reaches presentation admission
+PASS subsequent event has physical and rendered representatives
+ERROR: Condition "f.is_null()" is true.
+   at: _save_to_cache (drivers/gles3/shader_gles3.cpp:648)
+PASS subsequent survivor event causes its own surface deposition
+PASS family 4 first hit survives
+PASS subsequent hit accepts damage and creates correct positive BloodRelease
+PASS subsequent release reaches presentation admission
+PASS subsequent event has physical and rendered representatives
+PASS subsequent survivor event causes its own surface deposition
+PASS family 3 first hit survives
+PASS subsequent hit accepts damage and creates correct positive BloodRelease
+PASS subsequent release reaches presentation admission
+PASS subsequent event has physical and rendered representatives
+PASS subsequent survivor event causes its own surface deposition
+PASS slow droplet has no wake
+PASS fine/micro material has no wake
+PASS slash has stronger bounded velocity wake
+PASS capture 04_slash_fan
+PASS slash keeps physical rounded droplets
+PASS physical impact retains cutting stain identity
+PASS capture 05_slash_aftermath
+PASS 1 impacts share one audio cluster
+PASS 1 impacts emit one voice
+PASS 1 impacts reach audio mixer with nonzero output
+PASS 10 impacts share one audio cluster
+PASS 10 impacts emit one voice
+PASS 10 impacts reach audio mixer with nonzero output
+PASS 100 impacts share one audio cluster
+PASS 100 impacts emit one voice
+PASS 100 impacts reach audio mixer with nonzero output
+PASS audio voice capacity respected
+POLISH: 48 checks, 0 failures
+POLISH: playback stopped; orderly exit requested

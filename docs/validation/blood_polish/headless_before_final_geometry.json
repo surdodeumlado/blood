@@ -1,0 +1,137 @@
+{
+	"angles": [
+		{
+			"angle": 90,
+			"custom": "(2.0, 0.0, 1.0, 2.0)",
+			"height": 0.475376576185226,
+			"width": 0.505719780921936
+		},
+		{
+			"angle": 60,
+			"custom": "(2.0, 0.0, 1.0, 2.0469)",
+			"height": 0.445127129554749,
+			"width": 0.540086925029755
+		},
+		{
+			"angle": 45,
+			"custom": "(2.0, 0.0, 1.0, 2.1025)",
+			"height": 0.407035619020462,
+			"width": 0.590629756450653
+		},
+		{
+			"angle": 30,
+			"custom": "(2.0, 0.0, 1.0, 2.175)",
+			"height": 0.353636264801025,
+			"width": 0.679815292358398
+		},
+		{
+			"angle": 15,
+			"custom": "(3.0, 0.0, 1.0, 2.2594)",
+			"height": 0.578203141689301,
+			"width": 0.604780733585358
+		}
+	],
+	"audio": [
+		{
+			"count": 1,
+			"db": -20.8093795776367,
+			"mixer_rms": 0.0,
+			"voices": 1
+		},
+		{
+			"count": 10,
+			"db": -19.6137065887451,
+			"mixer_rms": 0.0,
+			"voices": 1
+		},
+		{
+			"count": 100,
+			"db": -16.2042102813721,
+			"mixer_rms": 0.0,
+			"voices": 1
+		}
+	],
+	"capacities": {
+		"audio_clusters": 32,
+		"audio_voices": 6,
+		"fades": 128,
+		"surface_slots": 3200,
+		"trails": 96,
+		"wet_and_pool_patches": 1024
+	},
+	"checks": 45,
+	"cost": [
+		{
+			"emit_cpu_ms": 0.044,
+			"frame_budget_peaks": {
+				"audio": 2,
+				"drops": 189,
+				"micro": 128,
+				"queries": 541,
+				"runoff": 4,
+				"solid_queries": 54,
+				"solids": 54,
+				"stains": 23,
+				"wall_drops": 0
+			},
+			"static_memory_delta_bytes": 512736,
+			"step_mean_ms": 2.63640833333333,
+			"step_p95_ms": 6.589,
+			"step_peak_ms": 8.826,
+			"victims": 1
+		},
+		{
+			"emit_cpu_ms": 0.067,
+			"frame_budget_peaks": {
+				"audio": 2,
+				"drops": 192,
+				"micro": 128,
+				"queries": 608,
+				"runoff": 4,
+				"solid_queries": 64,
+				"solids": 72,
+				"stains": 27,
+				"wall_drops": 0
+			},
+			"static_memory_delta_bytes": 950420,
+			"step_mean_ms": 4.43780833333334,
+			"step_p95_ms": 9.461,
+			"step_peak_ms": 13.24,
+			"victims": 4
+		}
+	],
+	"damage_sequences": [
+		{
+			"first": 4,
+			"next": 0,
+			"remaining": 0.255369605855828,
+			"second_mass": 0.0455
+		},
+		{
+			"first": 4,
+			"next": 1,
+			"remaining": 0.247477431403966,
+			"second_mass": 0.052325
+		},
+		{
+			"first": 3,
+			"next": 0,
+			"remaining": 0.255933010647157,
+			"second_mass": 0.0455
+		}
+	],
+	"fade_alpha": [
+		1.0,
+		0.875,
+		0.750000059604645,
+		0.625000059604645
+	],
+	"failures": [],
+	"native": false,
+	"pool_areas": [
+		0.079999995581688,
+		0.16,
+		0.239999989345148,
+		0.319999982326752
+	]
+}

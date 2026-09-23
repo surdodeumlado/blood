@@ -3,3 +3,7 @@ build/
 exports/
 *.tmp
 *.log
+
+# Validation evidence is deliberate, not stray runtime output: the crash log
+# and the movement before/after measurements are referenced by docs.
+!docs/validation/**/*.log

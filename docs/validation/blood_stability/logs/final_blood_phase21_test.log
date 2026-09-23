@@ -1,0 +1,128 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+ERROR: Failed to read the root certificate store.
+   at: get_system_ca_certificates (platform/windows/os_windows.cpp:2582)
+  PASS  the system prewarms at chamber load
+  PASS  the system prewarms at chamber load
+  PASS  prewarm emits no visible blood ({ "micro": 0, "small": 0, "medium": 0, "large": 0, "surface": 0, "airborne": 0, "representatives": 0, "solids_flying": 0, "solids_settled": 0, "wounds": 0, "remnants": 0, "runoff": 0, "cells": 0 })
+  PASS  prewarm emits no visible blood ({ "micro": 0, "small": 0, "medium": 0, "large": 0, "surface": 0, "airborne": 0, "representatives": 0, "solids_flying": 0, "solids_settled": 0, "wounds": 0, "remnants": 0, "runoff": 0, "cells": 0 })
+  PASS  prewarm produces no blood events
+  PASS  prewarm produces no blood events
+  PASS  prewarm does not pollute layer telemetry
+  PASS  prewarm does not pollute layer telemetry
+  PASS  prewarm consumes no reservoir (1.000)
+  PASS  prewarm consumes no reservoir (1.000)
+  PASS  the first catastrophic event allocates no nodes (6)
+  PASS  the first catastrophic event allocates no nodes (6)
+  [first event 26446 us, second identical event 26221 us]
+  PASS  no order-of-magnitude first-event CPU penalty (26446 us vs 26221 us)
+  PASS  no order-of-magnitude first-event CPU penalty (26446 us vs 26221 us)
+  [BALLISTIC] blood 0.780 -> surface 0.890 over 814 stains, area 9.96 m2 (floor 0.878 wall 0.011 ceil 0.000)
+  PASS  BALLISTIC: surface mass matches what was released, no more (0.890 vs 0.890)
+  PASS  BALLISTIC: surface mass matches what was released, no more (0.890 vs 0.890)
+  PASS  BALLISTIC: leaves a substantial stained area (9.96 m2)
+  PASS  BALLISTIC: leaves a substantial stained area (9.96 m2)
+  PASS  BALLISTIC: leaves a substantial number of marks (814)
+  PASS  BALLISTIC: leaves a substantial number of marks (814)
+  PASS  BALLISTIC: the cheap airborne cloud carries a real share of the mass (0.351)
+  PASS  BALLISTIC: the cheap airborne cloud carries a real share of the mass (0.351)
+  PASS  BALLISTIC: physical representatives reach the world (0.403 of 0.429)
+  PASS  BALLISTIC: physical representatives reach the world (0.403 of 0.429)
+  [SLASHING] blood 0.897 -> surface 1.013 over 1577 stains, area 14.83 m2 (floor 1.013 wall 0.000 ceil 0.000)
+  PASS  SLASHING: surface mass matches what was released, no more (1.013 vs 1.013)
+  PASS  SLASHING: surface mass matches what was released, no more (1.013 vs 1.013)
+  PASS  SLASHING: leaves a substantial stained area (14.83 m2)
+  PASS  SLASHING: leaves a substantial stained area (14.83 m2)
+  PASS  SLASHING: leaves a substantial number of marks (1577)
+  PASS  SLASHING: leaves a substantial number of marks (1577)
+  PASS  SLASHING: the cheap airborne cloud carries a real share of the mass (0.404)
+  PASS  SLASHING: the cheap airborne cloud carries a real share of the mass (0.404)
+  PASS  SLASHING: physical representatives reach the world (0.463 of 0.493)
+  PASS  SLASHING: physical representatives reach the world (0.463 of 0.493)
+  [BLUNT] blood 1.000 -> surface 1.197 over 2156 stains, area 22.18 m2 (floor 1.141 wall 0.056 ceil 0.000)
+  PASS  BLUNT: surface mass matches what was released, no more (1.197 vs 1.197)
+  PASS  BLUNT: surface mass matches what was released, no more (1.197 vs 1.197)
+  PASS  BLUNT: leaves a substantial stained area (22.18 m2)
+  PASS  BLUNT: leaves a substantial stained area (22.18 m2)
+  PASS  BLUNT: leaves a substantial number of marks (2156)
+  PASS  BLUNT: leaves a substantial number of marks (2156)
+  PASS  BLUNT: the cheap airborne cloud carries a real share of the mass (0.450)
+  PASS  BLUNT: the cheap airborne cloud carries a real share of the mass (0.450)
+  PASS  BLUNT: physical representatives reach the world (0.517 of 0.550)
+  PASS  BLUNT: physical representatives reach the world (0.517 of 0.550)
+  [HIGH_ENERGY] blood 1.000 -> surface 1.247 over 2419 stains, area 22.63 m2 (floor 0.997 wall 0.193 ceil 0.056)
+  PASS  HIGH_ENERGY: surface mass matches what was released, no more (1.247 vs 1.247)
+  PASS  HIGH_ENERGY: surface mass matches what was released, no more (1.247 vs 1.247)
+  PASS  HIGH_ENERGY: leaves a substantial stained area (22.63 m2)
+  PASS  HIGH_ENERGY: leaves a substantial stained area (22.63 m2)
+  PASS  HIGH_ENERGY: leaves a substantial number of marks (2419)
+  PASS  HIGH_ENERGY: leaves a substantial number of marks (2419)
+  PASS  HIGH_ENERGY: the cheap airborne cloud carries a real share of the mass (0.450)
+  PASS  HIGH_ENERGY: the cheap airborne cloud carries a real share of the mass (0.450)
+  PASS  HIGH_ENERGY: physical representatives reach the world (0.514 of 0.550)
+  PASS  HIGH_ENERGY: physical representatives reach the world (0.514 of 0.550)
+  PASS  EXPLOSIVE leaves a larger footprint than BALLISTIC (22.63 > 9.96)
+  PASS  EXPLOSIVE leaves a larger footprint than BALLISTIC (22.63 > 9.96)
+  [stain radii] tiny 0.045 small 0.129 medium 0.408 heavy 0.815
+  PASS  stain radius rises monotonically with deposited mass
+  PASS  stain radius rises monotonically with deposited mass
+  PASS  a heavy deposit is dramatically larger than a small one (0.815 vs 0.129)
+  PASS  a heavy deposit is dramatically larger than a small one (0.815 vs 0.129)
+  PASS  stain growth is area-proportional, not linear (10x mass -> 3.16x radius)
+  PASS  stain growth is area-proportional, not linear (10x mass -> 3.16x radius)
+  PASS  the average mark is a real mark, not a speck (0.0103 m2 mean)
+  PASS  the average mark is a real mark, not a speck (0.0103 m2 mean)
+  PASS  a repeatedly hit region earns soaked base layers (185)
+  PASS  a repeatedly hit region earns soaked base layers (185)
+  PASS  fine directional spatter survives alongside the soaked base (3200 stains, 185 bases)
+  PASS  fine directional spatter survives alongside the soaked base (3200 stains, 185 bases)
+  PASS  the soaked base is laid UNDER the detail stains, never over them
+  PASS  the soaked base is laid UNDER the detail stains, never over them
+  PASS  a slashing hit opens a wound
+  PASS  a slashing hit opens a wound
+  PASS  a fresh wound is ATTACHED_LIVING
+  PASS  a fresh wound is ATTACHED_LIVING
+  PASS  a stationary wounded target stains the floor below it (0 -> 30)
+  PASS  a stationary wounded target stains the floor below it (0 -> 30)
+  PASS  a moving wound travels with its victim, laying a trail (11.9 m)
+  PASS  a moving wound travels with its victim, laying a trail (11.9 m)
+  PASS  a lethal blow opens a wound to convert into a remnant
+  PASS  a lethal blow opens a wound to convert into a remnant
+  PASS  a dead target's wound becomes a WORLD_REMNANT
+  PASS  a dead target's wound becomes a WORLD_REMNANT
+  PASS  the remnant SINKS toward the floor rather than floating (1.80 -> 0.01)
+  PASS  the remnant SINKS toward the floor rather than floating (1.80 -> 0.01)
+  PASS  the remnant comes to rest on the floor instead of falling forever (0.01)
+  PASS  the remnant comes to rest on the floor instead of falling forever (0.01)
+  PASS  the remnant actually deposits blood on the world (19 -> 117)
+  PASS  the remnant actually deposits blood on the world (19 -> 117)
+  PASS  the remnant exhausts itself on a finite clock
+  PASS  the remnant exhausts itself on a finite clock
+  PASS  the exhausted remnant retires (0 left)
+  PASS  the exhausted remnant retires (0 left)
+  PASS  an exhausted wound has nothing left to give
+  PASS  an exhausted wound has nothing left to give
+  PASS  a maul hit carries a real weapon velocity into the context
+  PASS  a maul hit carries a real weapon velocity into the context
+  PASS  BLUNT penetration direction follows the swing, not camera forward
+  PASS  BLUNT penetration direction follows the swing, not camera forward
+  [blunt +X] travel 1.703 chunks 0.887 thick 0.864 lateral 0.282 local 383
+  [blunt -X] travel -1.748 chunks -0.877 thick -0.882 lateral 0.264 local 403
+  PASS  BLUNT travelling material reverses with the swing (1.703 vs -1.748)
+  PASS  BLUNT travelling material reverses with the swing (1.703 vs -1.748)
+  PASS  large chunks reverse with the swing (0.887 vs -0.877)
+  PASS  large chunks reverse with the swing (0.887 vs -0.877)
+  PASS  THICK_BLOOD reverses with the swing (0.864 vs -0.882)
+  PASS  THICK_BLOOD reverses with the swing (0.864 vs -0.882)
+  PASS  a substantial local impact zone remains in both directions (383)
+  PASS  a substantial local impact zone remains in both directions (383)
+  PASS  BLUNT keeps a wide lateral spread - a thrown volume, not a beam (0.282)
+  PASS  BLUNT keeps a wide lateral spread - a thrown volume, not a beam (0.282)
+  PASS  THICK_BLOOD follows the blow harder than FAT does (0.7 vs 0.6)
+  PASS  THICK_BLOOD follows the blow harder than FAT does (0.7 vs 0.6)
+  [blunt surface centroid] +X (6.33, -0.10, -0.98)   -X (-6.10, 0.07, -0.94)
+  PASS  the surface contamination centroid shifts with the swing (6.33 vs -6.10)
+  PASS  the surface contamination centroid shifts with the swing (6.33 vs -6.10)
+
+56 checks, 0 failed
+56 checks, 0 failed

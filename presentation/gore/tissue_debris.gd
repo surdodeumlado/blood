@@ -14,9 +14,11 @@ extends RefCounted
 ## Per-category colour, with a small jitter range so a burst is not uniform.
 const COLORS := {
 	BloodTypes.Tissue.FLESH: Color(0.42, 0.08, 0.07),
-	BloodTypes.Tissue.FAT: Color(0.80, 0.72, 0.54),
+	BloodTypes.Tissue.FAT: Color(0.63, 0.55, 0.40),
 	BloodTypes.Tissue.DARK_TISSUE: Color(0.20, 0.06, 0.05),
 	BloodTypes.Tissue.THICK_BLOOD: Color(0.26, 0.015, 0.02),
+	BloodTypes.Tissue.STRINGY_TISSUE: Color(0.37, 0.13, 0.10),
+	BloodTypes.Tissue.GORE_CHUNK: Color(0.31, 0.045, 0.035),
 }
 
 ## Relative size per category. Fat grains are small and sparse; flesh carries
@@ -107,3 +109,22 @@ static func build_meshes() -> Array[Mesh]:
 	meshes.append(flat)
 
 	return meshes
+
+
+## An asymmetric, flat-shaded octahedral fragment. No rectangular faces.
+## All axes fit in one local metre, so visual bounds apply directly.
+static func fragment_mesh() -> ArrayMesh:
+	var points := [Vector3(0, 0.5, 0.04), Vector3(-0.06, -0.44, 0),
+		Vector3(0.48, 0.02, 0), Vector3(0.02, -0.06, 0.45),
+		Vector3(-0.5, 0.08, -0.03), Vector3(0.04, 0, -0.5)]
+	var tool := SurfaceTool.new()
+	tool.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for i in 4:
+		var a: Vector3 = points[2 + i]
+		var b: Vector3 = points[2 + (i + 1) % 4]
+		for face in [[points[0], b, a], [points[1], a, b]]:
+			var normal: Vector3 = (face[1] - face[0]).cross(face[2] - face[0]).normalized()
+			for vertex: Vector3 in face:
+				tool.set_normal(normal)
+				tool.add_vertex(vertex)
+	return tool.commit()

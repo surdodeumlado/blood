@@ -1,0 +1,95 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+ERROR: Failed to read the root certificate store.
+   at: get_system_ca_certificates (platform/windows/os_windows.cpp:2582)
+  [BALLISTIC] blood 0.780 -> surface 0.878 (+runoff 0.247) | 999 stains | area 10.6 m2
+  PASS  BALLISTIC: a major kill leaves a large aftermath (10.6 m2)
+  PASS  BALLISTIC: a major kill leaves a large aftermath (10.6 m2)
+  PASS  BALLISTIC: surface mass still matches what was released, runoff included (0.878 vs 0.890)
+  PASS  BALLISTIC: surface mass still matches what was released, runoff included (0.878 vs 0.890)
+  [BLUNT] blood 1.000 -> surface 1.192 (+runoff 0.128) | 2089 stains | area 24.4 m2
+  PASS  BLUNT: a major kill leaves a large aftermath (24.4 m2)
+  PASS  BLUNT: a major kill leaves a large aftermath (24.4 m2)
+  PASS  BLUNT: surface mass still matches what was released, runoff included (1.192 vs 1.206)
+  PASS  BLUNT: surface mass still matches what was released, runoff included (1.192 vs 1.206)
+  [HIGH_ENERGY] blood 1.000 -> surface 1.216 (+runoff 0.246) | 2473 stains | area 24.7 m2
+  PASS  HIGH_ENERGY: a major kill leaves a large aftermath (24.7 m2)
+  PASS  HIGH_ENERGY: a major kill leaves a large aftermath (24.7 m2)
+  PASS  HIGH_ENERGY: surface mass still matches what was released, runoff included (1.216 vs 1.247)
+  PASS  HIGH_ENERGY: surface mass still matches what was released, runoff included (1.216 vs 1.247)
+  [packet radii] fine 0.045 m, heavy 0.200 m
+  PASS  a heavy packet marks far bigger than a fine one (0.200 vs 0.045)
+  PASS  a heavy packet marks far bigger than a fine one (0.200 vs 0.045)
+  PASS  a heavy packet lands as a CLUSTER, not a single disc (0.0120 > 0.0035)
+  PASS  a heavy packet lands as a CLUSTER, not a single disc (0.0120 > 0.0035)
+  PASS  a fine droplet still lands as a single small mark
+  PASS  a fine droplet still lands as a single small mark
+  PASS  a vertical surface is classed as a wall
+  PASS  a vertical surface is classed as a wall
+  PASS  a floor is not classed as a wall
+  PASS  a floor is not classed as a wall
+  PASS  a ceiling is not classed as a wall either
+  PASS  a ceiling is not classed as a wall either
+  [elongation] wall glancing 3.57, wall head-on 1.00, floor glancing 1.80
+  PASS  a glancing wall impact smears far longer than a head-on one (3.57 vs 1.00)
+  PASS  a glancing wall impact smears far longer than a head-on one (3.57 vs 1.00)
+  PASS  the same glancing angle stretches further on a wall than on a floor (3.57 vs 1.80)
+  PASS  the same glancing angle stretches further on a wall than on a floor (3.57 vs 1.80)
+  PASS  walls have their own streak ratio (4.5)
+  PASS  walls have their own streak ratio (4.5)
+  PASS  a tiny wall droplet does not start running
+  PASS  a tiny wall droplet does not start running
+  PASS  a heavy wall deposit starts a rivulet (1)
+  PASS  a heavy wall deposit starts a rivulet (1)
+  [runoff] y 5.77 -> 5.13, stains 4 -> 11
+  PASS  the rivulet runs downward (5.77 -> 5.13)
+  PASS  the rivulet runs downward (5.77 -> 5.13)
+  PASS  the rivulet leaves a visible streak behind it (4 -> 11)
+  PASS  the rivulet leaves a visible streak behind it (4 -> 11)
+  PASS  every rivulet terminates within its bounded lifetime (0 left)
+  PASS  every rivulet terminates within its bounded lifetime (0 left)
+  PASS  active rivulets stay within the cap (0 / 24)
+  PASS  active rivulets stay within the cap (0 / 24)
+  PASS  the whole wall drains and stops
+  PASS  the whole wall drains and stops
+  [runoff accounting] put 0.600 on the wall, world holds 0.600 (0.330 ran)
+  PASS  runoff genuinely engaged on that wall (0.330)
+  PASS  runoff genuinely engaged on that wall (0.330)
+  PASS  running blood creates NO extra mass (0.600 <= 0.612)
+  PASS  running blood creates NO extra mass (0.600 <= 0.612)
+  PASS  and loses none of it either (0.600 >= 0.540)
+  PASS  and loses none of it either (0.600 >= 0.540)
+  PASS  a slashing hit opens a wound
+  PASS  a slashing hit opens a wound
+  [remnant] carried 0.2150, budget 0.1600, kept 0.1600, life 1.90s
+  PASS  a remnant is capped to its budget, not the whole wound (0.1600 <= 0.1600)
+  PASS  a remnant is capped to its budget, not the whole wound (0.1600 <= 0.1600)
+  PASS  a remnant's clock comes from settings (1.90 <= 1.90)
+  PASS  a remnant's clock comes from settings (1.90 <= 1.90)
+  PASS  a remnant carries a hard deadline it cannot outlive (1.90)
+  PASS  a remnant carries a hard deadline it cannot outlive (1.90)
+  [remnant] stopped after 1.92 s
+  PASS  the remnant stops bleeding (after 1.92 s)
+  PASS  the remnant stops bleeding (after 1.92 s)
+  PASS  it stops within its stated lifetime, not long after (1.92 s)
+  PASS  it stops within its stated lifetime, not long after (1.92 s)
+  PASS  the exhausted remnant is retired from the system
+  PASS  the exhausted remnant is retired from the system
+  PASS  a remnant never releases more than its budget (0.1533 <= 0.1600)
+  PASS  a remnant never releases more than its budget (0.1533 <= 0.1600)
+  PASS  concurrent remnants stay within the cap (4 / 4)
+  PASS  concurrent remnants stay within the cap (4 / 4)
+  PASS  a wound handed over as a remnant is no longer owned by the reservoir
+  PASS  a wound handed over as a remnant is no longer owned by the reservoir
+  PASS  the remnant reserve is a real configured number (0.160)
+  PASS  the remnant reserve is a real configured number (0.160)
+  [accumulation] 4 soaked bases, 44 stains
+  PASS  a repeatedly hit patch becomes soaked (4 bases)
+  PASS  a repeatedly hit patch becomes soaked (4 bases)
+  PASS  fine spatter still reads on top of the soaked base
+  PASS  fine spatter still reads on top of the soaked base
+  PASS  the soaked base stays UNDER the detail, never erasing it
+  PASS  the soaked base stays UNDER the detail, never erasing it
+
+39 checks, 0 failed
+39 checks, 0 failed
