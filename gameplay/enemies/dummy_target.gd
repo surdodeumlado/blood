@@ -241,7 +241,7 @@ func _die(push: Vector3) -> void:
 		# Hand every open wound over at once. take_all_wounds() clears the list,
 		# so nothing here stays owned by the reservoir and tickable twice.
 		for w in _reservoir.take_all_wounds():
-			blood.add_remnant(w, w.position_ws(global_transform), _reservoir.transfer_remnant_budget(w))
+			blood.add_remnant(w, w.position_ws(_visual.global_transform), _reservoir.transfer_remnant_budget(w))
 	Sfx.play_3d(&"death", global_position, randf_range(0.9, 1.05), -4.0)
 	_respawn_after(config.dummy_respawn_delay)
 
@@ -318,6 +318,11 @@ func _build_material() -> StandardMaterial3D:
 ## Duck-typed: this is how a Hurtbox finds the body's material store.
 func blood_reservoir() -> BloodReservoir:
 	return _reservoir
+
+## The visible body continues moving after the collision body stops at death.
+## Blood uses this transform only when creating a NEW wound release.
+func blood_source() -> Node3D:
+	return _visual
 
 
 ## Immediate respawn, for the Blood Lab reset. Bypasses the timer so the four

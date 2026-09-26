@@ -132,15 +132,17 @@ func _draw_blood(wanted: float, is_kill: bool) -> float:
 func open_wound(release: BloodRelease) -> Wound:
 	if config.wound_reserve <= 0.0 or release.wound_severity <= 0.01:
 		return null
-	if _victim == null:
+	if not is_instance_valid(_victim):
 		return null
 	var ctx := release.context
-	var local := _victim.global_transform.affine_inverse() * ctx.position_ws
+	var source := _victim.call("blood_source") as Node3D if _victim.has_method("blood_source") else _victim
+	if not is_instance_valid(source) or not source.is_inside_tree() or not source.is_visible_in_tree(): return null
+	var local := source.to_local(ctx.position_ws)
 	# Blood runs off the wound roughly the way the blow drove through it, with a
 	# downward bias: it is leaking, not spraying.
 	var dir := ctx.primary_axis()
 	dir = (dir * 0.45 + Vector3.DOWN).normalized()
-	var local_dir := _victim.global_transform.basis.inverse() * dir
+	var local_dir := source.global_basis.inverse() * dir
 
 	var w := Wound.open(
 		ctx.damage_type,
@@ -156,6 +158,7 @@ func open_wound(release: BloodRelease) -> Wound:
 	# used to be hardcoded there while these values sat unread.
 	w.remnant_lifetime = config.remnant_lifetime
 	w.owner_generation = generation
+	w.bind_source(source, self, ctx.position_ws)
 	w.last_valid_position = ctx.position_ws
 	wounds.append(w)
 	while wounds.size() > config.max_wounds:
@@ -220,7 +223,13 @@ func tick_wounds(delta: float) -> Array[Dictionary]:
 			wounds.remove_at(i)
 			i -= 1
 			continue
-		w.last_valid_position = w.position_ws(_victim.global_transform)
+		var source := w.current_source()
+		if source == null:
+			w.exhaust()
+			wounds.remove_at(i)
+			i -= 1
+			continue
+		w.last_valid_position = w.position_ws(source.global_transform)
 		var amount := w.tick(delta)
 		if amount > 0.0:
 			var drawn := _draw_blood(amount, false)

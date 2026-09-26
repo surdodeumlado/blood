@@ -309,6 +309,9 @@ func budget_checks() -> void:
 	await get_tree().process_frame
 
 func audio_checks() -> void:
+	if blood._audio.streams.is_empty():
+		print("PENDING: playback checks require real foley originals; no synthetic fallback")
+		return
 	blood._audio.clear()
 	var before := blood._audio.played
 	for i in 100: blood._audio.submit(Vector3(0, 0, 0), smooth, 0.002, 3, 3, Vector3.UP, 0)
@@ -320,5 +323,3 @@ func audio_checks() -> void:
 		blood._audio.advance(0.01, 2)
 	check(blood._audio.peak_voices <= blood.settings.stability.audio_voices, "blood audio never exceeds its six pooled voices")
 	check(blood._audio.clusters.size() <= blood.settings.stability.audio_clusters, "audio overflow enriches bounded clusters")
-	blood._audio.streams[0].save_to_wav(output + "/placeholder_single.wav")
-	blood._audio.streams[1].save_to_wav(output + "/placeholder_rain.wav")

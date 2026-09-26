@@ -233,6 +233,9 @@ var _runoff_count := 0
 
 # --- Wound scheduling ---
 var _reservoirs: Array[BloodReservoir] = []
+const MAX_WOUND_RESERVOIRS := 256
+var source_high_water := 0
+var source_cleanup_count := 0
 ## Wounds whose victim is gone, finishing out in world space.
 var _remnants: Array[Wound] = []
 var _remnant_family: Array[int] = []
@@ -2631,6 +2634,9 @@ func _step_stains(delta: float) -> void:
 ## every enemy needing its own _process.
 func register_reservoir(res: BloodReservoir) -> void:
 	if res != null and not _reservoirs.has(res):
+		for i in range(_reservoirs.size()-1,-1,-1):
+			if not is_instance_valid(_reservoirs[i]): _reservoirs.remove_at(i)
+		if _reservoirs.size() >= MAX_WOUND_RESERVOIRS: return
 		_reservoirs.append(res)
 
 
@@ -2638,12 +2644,16 @@ func unregister_reservoir(res: BloodReservoir) -> void:
 	_reservoirs.erase(res)
 
 
-## A wound whose victim is gone finishes its life here, in world space. This is
-## what lets a catastrophic head kill keep leaking after the corpse is hidden.
+## A finite corpse wound follows its CURRENT visible source for future releases.
+## A hidden/destroyed body cannot leave an emitter behind in empty space.
 func add_remnant(wound: Wound, at: Vector3, budget := -1.0) -> void:
 	if wound == null or wound.state != Wound.State.ATTACHED_LIVING: return
 	var transfer := minf(wound.remaining, fallback_reservoir.remnant_reserve) if budget < 0 else budget
 	if transfer <= 0: wound.exhaust(); return
+	if wound.current_source() == null:
+		_retained_patch_mass += transfer
+		wound.exhaust()
+		return
 	while _remnants.size() >= settings.max_remnants:
 		var oldest: Wound = _remnants.pop_front()
 		_retained_patch_mass += oldest.remaining
@@ -2653,7 +2663,6 @@ func add_remnant(wound: Wound, at: Vector3, budget := -1.0) -> void:
 	wound.detach(at, -INF, transfer, settings.remnant_lifetime)
 	_remnants.append(wound)
 	_remnant_family.append(int(wound.family))
-	_pending_remnants.append(wound)
 
 func _resolve_remnant_support() -> void:
 	for w in _pending_remnants.duplicate():
@@ -2676,12 +2685,18 @@ func _tick_wounds(delta: float) -> void:
 		var res := _reservoirs[i]
 		if not is_instance_valid(res):
 			_reservoirs.remove_at(i)
+			source_cleanup_count += 1
 			continue
 		var victim := res.victim()
 		if victim == null or not is_instance_valid(victim):
+			res.tick_wounds(0.0) # Exhaust detached/orphaned attached sources safely.
+			_reservoirs.remove_at(i)
+			source_cleanup_count += 1
 			continue
 		for entry in res.tick_wounds(delta):
-			_drip(entry["wound"], entry["amount"], victim.global_transform)
+			var wound: Wound = entry["wound"]
+			var source := wound.current_source()
+			if source != null: _drip(wound, entry["amount"], source.global_transform)
 
 	for i in range(_remnants.size() - 1, -1, -1):
 		var w: Wound = _remnants[i]
@@ -2689,8 +2704,14 @@ func _tick_wounds(delta: float) -> void:
 		if not w.last_valid_surface.is_empty() and not is_instance_id_valid(w.last_valid_surface.collider_id):
 			_retained_patch_mass += w.remaining
 			w.exhaust()
-		# The source collapses toward the floor while it bleeds out.
-		w.fall(delta)
+		var source := w.current_source()
+		if source == null:
+			_retained_patch_mass += w.remaining
+			w.exhaust()
+			source_cleanup_count += 1
+		else:
+			w.world_anchor = source.global_transform * w.local_anchor
+			w.last_valid_position = w.world_anchor
 		var before := w.remaining
 		var amount := w.tick(delta)
 		_retained_patch_mass += maxf(0.0, before - amount - w.remaining)
@@ -2700,6 +2721,7 @@ func _tick_wounds(delta: float) -> void:
 			w.exhaust()
 			_remnants.remove_at(i)
 			_remnant_family.remove_at(i)
+	source_high_water = maxi(source_high_water, active_wounds() + _remnants.size())
 
 
 ## One discrete release from a wound. Small, downward, and flagged residual so

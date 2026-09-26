@@ -9,9 +9,8 @@ extends RefCounted
 ##
 ## Anchoring is local to the victim, so a wounded target that walks leaves a
 ## trail rather than dripping into the spot where it was hit. When the victim
-## dies or disappears, the wound is handed a fixed world position and finishes
-## its life there as a remnant, which is how a catastrophic head kill keeps
-## bleeding for a moment after the corpse is hidden.
+## dies, future releases follow its visible body via validated instance IDs.
+## Hiding/freeing that body terminates the source. Released drops never follow it.
 
 ## EXPLICIT LIFECYCLE. Phase 2 had a boolean `detached`, which was not enough:
 ## a wound on a dead target kept its attached transform and hung in the air at
@@ -21,8 +20,7 @@ enum State {
 	## Following a living body. Inherits its motion, so a wounded target that
 	## walks leaves a trail rather than dripping into the spot it was hit.
 	ATTACHED_LIVING,
-	## The body is gone. Anchored to a fixed world point, falling toward the
-	## floor, bleeding out what it has left on a finite clock.
+	## Finite post-mortem reserve; BloodSystem resolves the visible body each tick.
 	WORLD_REMNANT,
 	## Spent. Retired by its owner on the next tick.
 	EXHAUSTED,
@@ -66,6 +64,24 @@ var death_id := 0
 var transferred_mass := 0.0
 var last_valid_surface: Dictionary = {}
 var last_valid_position := Vector3.ZERO
+## IDs do not retain Nodes. Only FUTURE releases resolve this source.
+var source_id := 0
+var reservoir_id := 0
+
+func bind_source(source: Node3D, reservoir: BloodReservoir, at: Vector3) -> void:
+	source_id = source.get_instance_id()
+	reservoir_id = reservoir.get_instance_id()
+	local_anchor = source.to_local(at)
+	owner_generation = reservoir.generation
+
+func current_source() -> Node3D:
+	var source := instance_from_id(source_id) as Node3D if is_instance_id_valid(source_id) else null
+	var reservoir := instance_from_id(reservoir_id) as BloodReservoir if is_instance_id_valid(reservoir_id) else null
+	if source == null or reservoir == null: return null
+	if source.is_queued_for_deletion() or reservoir.is_queued_for_deletion(): return null
+	if not source.is_inside_tree() or not source.is_visible_in_tree(): return null
+	if reservoir.generation != owner_generation: return null
+	return source
 
 
 static func open(
@@ -172,8 +188,8 @@ func detach(at: Vector3, floor_y := -INF, budget := -1.0, life := -1.0) -> void:
 	drip_interval = maxf(drip_interval * 0.75, 0.08)
 
 
-## Remnants fall. Called once per tick by the owner while WORLD_REMNANT, so the
-## source collapses toward the impact zone rather than floating.
+## Legacy standalone model helper. Production body wounds NEVER use this:
+## they resolve the current visible source or terminate safely.
 func fall(delta: float) -> void:
 	if state != State.WORLD_REMNANT:
 		return

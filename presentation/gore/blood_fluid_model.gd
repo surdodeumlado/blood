@@ -34,10 +34,14 @@ static func air_weber(d: float, speed: float, p: BloodPhysicsSettings) -> float:
 
 ## Explicit arcade descent, not a fluid constant. Called AFTER drag/gravity,
 ## BEFORE position integration and the existing swept collision. No family gate.
-## Keep aerodynamic X/Z. While converging, cancel only vertical drag braking:
-## otherwise tiny representatives fight the assist and settle below its target.
+## A continuous force field, not an apex-triggered mode or velocity target.
+## Keep ALL aerodynamic response. The small pre-apex contribution joins with
+## zero derivative; strong rising arcs receive exactly zero assistance.
+static func descent_weight(vertical_speed: float) -> float:
+	return 1.0 - smoothstep(-3.0, 0.5, vertical_speed)
+
 static func assist_descent(v: Vector3, previous_y: float, kind: int, diameter: float, dt: float, s: BloodStabilitySettings) -> Vector3:
-	if not s.fall_assist_enabled or v.y >= -s.fall_assist_threshold_m_s: return v
+	if not s.fall_assist_enabled: return v
 	if kind == Liquid.LIGAMENT: kind=category(diameter)
 	var target:float
 	var cap:float
@@ -47,9 +51,13 @@ static func assist_descent(v: Vector3, previous_y: float, kind: int, diameter: f
 		Liquid.LARGE: target=s.fall_assist_large_target; cap=s.fall_assist_large_cap
 		Liquid.GLOB: target=s.fall_assist_glob_target; cap=s.fall_assist_glob_cap
 		_: return v
-	if v.y > -target:
-		v.y=minf(v.y,maxf(-target,minf(v.y,previous_y)-s.fall_assist_acceleration*dt))
-	v.y=maxf(v.y,-cap)
+	var down := -previous_y
+	var weight := descent_weight(previous_y)
+	# Targets now locate the smooth force roll-off, NOT identical terminal speeds.
+	# Diameter-dependent drag remains, so parcels retain a speed distribution.
+	var drive := weight * (1.0 - smoothstep(target * 0.8, cap, down))
+	var brake := smoothstep(cap, cap + 2.0, down)
+	v.y -= s.fall_assist_acceleration * (drive - brake) * dt
 	return v
 
 static func breakup_threshold(d: float, p: BloodPhysicsSettings) -> float:

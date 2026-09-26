@@ -4,7 +4,9 @@ extends Resource
 @export_group("Descending blood assist / arcade")
 @export var fall_assist_enabled := true
 @export var fall_assist_acceleration := 35.0
+## Telemetry descent marker only; no longer switches a physical force on/off.
 @export var fall_assist_threshold_m_s := 0.15
+## Roll-off landmarks for the smooth force, not velocity assignments.
 @export var fall_assist_small_target := 7.0
 @export var fall_assist_medium_target := 9.5
 @export var fall_assist_large_target := 11.0
