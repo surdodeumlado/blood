@@ -1,6 +1,19 @@
 class_name BloodStabilitySettings
 extends Resource
 
+@export_group("Descending blood assist / arcade")
+@export var fall_assist_enabled := true
+@export var fall_assist_acceleration := 35.0
+@export var fall_assist_threshold_m_s := 0.15
+@export var fall_assist_small_target := 7.0
+@export var fall_assist_medium_target := 9.5
+@export var fall_assist_large_target := 11.0
+@export var fall_assist_glob_target := 12.0
+@export var fall_assist_small_cap := 9.0
+@export var fall_assist_medium_cap := 11.0
+@export var fall_assist_large_cap := 13.0
+@export var fall_assist_glob_cap := 14.0
+
 @export_group("Presentation frame limits")
 @export var queries_per_frame := 640
 @export var new_drops_per_frame := 192
@@ -62,9 +75,9 @@ extends Resource
 @export var fade_pool_s := 1.2
 ## Trail occupies the rear vertices of existing rounded droplets, no extra instances.
 @export var max_trails := 96
-@export var trail_min_speed := 5.0
+@export var trail_min_speed := 2.5
 @export var trail_max_length_m := 0.18
-@export var trail_time_s := 0.012
+@export var trail_time_s := 0.018
 @export var slash_trail_gain := 1.65
 @export var slash_stain_aspect := 1.65
 @export var directional_tail_strength := 0.35
@@ -80,8 +93,8 @@ extends Resource
 @export var audio_cell_m := 1.2
 @export var audio_min_mass := 0.00015
 @export var audio_max_distance_m := 18.0
-@export var audio_base_db := -21.0
-@export var audio_max_db := -16.0
+@export var audio_base_db := -18.0
+@export var audio_max_db := -13.0
 @export var audio_unit_size_m := 5.0
 @export var audio_cluster_max_age_s := 0.35
 
@@ -97,11 +110,88 @@ extends Resource
 ## cap, well inside the second-scale behaviour these patches model.
 @export var wet_updates_per_frame := 128
 
-## Impact bloom, matching the uniforms in blood_stain.gdshader.
-##
-## A deposit starts at bloom_initial of its footprint and spreads to full over
-## bloom_duration_s. The window is the wrap period of the packed birth time and
-## only needs to be much longer than the duration.
-@export var bloom_window_s := 8.0
-@export var bloom_duration_s := 0.11
-@export_range(0.05, 1.0) var bloom_initial := 0.22
+## Visual-only continuity. GPU formation is bounded by max_surface slots;
+## admission remains stain_writes_per_frame. No growth nodes/materials/CPU writes.
+@export_group("Flight and wet formation")
+@export var bloom_duration_s := 0.14
+@export var bloom_max_duration_s := 0.23
+@export var small_min_pixels := 2.8
+@export var medium_min_pixels := 4.0
+@export var large_min_pixels := 5.0
+@export var small_render_cap_m := 0.045
+@export var medium_render_cap_m := 0.065
+@export var large_render_cap_m := 0.095
+@export var glob_render_cap_m := 0.12
+@export var near_readability_ramp_m := 1.25
+## Sampling only; all parcel mass is divided across the surviving representatives.
+@export_range(0.1, 1.0) var small_sampling := 0.55
+@export_range(0.1, 1.0) var medium_sampling := 0.75
+@export_range(0.1, 1.0) var micro_sampling := 0.65
+@export_group("Fresh wet bridges")
+@export var bridge_jobs := 64
+@export var bridge_pairs := 128
+@export var bridge_ops_per_step := 2
+@export var bridge_max_age_s := 1.2
+@export var bridge_min_mass := 0.012
+@export var bridge_max_distance_m := 0.32
+@export var bridge_offset_m := 0.0015
+
+@export_group("Heavy blood rain / presentation")
+@export var rain_enabled := true
+## Developer-only live THE_BOX A/B. F8 toggles; never enabled by default.
+@export var blood_rain_debug_extreme := false
+## Production values selected AFTER the actual THE_BOX NORMAL / EXTREME capture.
+@export var rain_launch_speed_scale := 0.18
+@export var rain_medium_upward_scale := 0.18
+@export var rain_medium_min_physical_m := 0.00198
+## Initial rain-carrier distribution, NOT gravity or a per-frame velocity clamp.
+@export var rain_medium_downward_m_s := 9.2
+@export var rain_large_downward_m_s := 11.2
+@export var rain_glob_downward_m_s := 12.5
+@export var rain_launch_vertical_spread_m_s := 0.7
+## Presentation floor for descending important drops; bounded by tail cap.
+@export var falling_trail_min_pixels := 14.0
+@export_group("Shared rectangular rain streaks")
+## One fixed allocation. Active selection may be profiled at96/128/160/192.
+@export var rain_streak_capacity := 192
+@export var rain_streak_budget := 192
+@export_enum("Bodies only", "Production", "Streaks only") var rain_streak_mode := 1
+@export var rain_streak_exposure_s := 0.11
+@export var rain_streak_min_speed := 2.0
+@export var rain_streak_min_pixels := 18.0
+@export var rain_streak_width_pixels := 1.7
+@export var rain_streak_width_min_m := 0.014
+@export var rain_streak_width_max_m := 0.04
+@export var rain_streak_medium_cap_m := 0.9
+@export var rain_streak_large_cap_m := 1.1
+@export var rain_high_arc_fraction := 0.35
+@export var rain_high_arc_speed_cap := 34.0
+@export var rain_high_arc_medium_speed_cap := 16.0
+@export var rain_carrier_horizontal_cap_m_s := 12.0
+## Developer A/B only. Normal gameplay never enables the rejected baseline.
+@export var rain_rejected_baseline_debug := false
+@export var blood_impact_audio_debug := false
+@export var rain_splash_scale := 2.2
+@export var rain_splash_duration_scale := 1.45
+@export var rain_splash_irregularity := 0.85
+## Optional authored replacement: isolated / sparse / patter / rain / heavy rain.
+## Only first five entries are read, once per playback; no resources created.
+@export var rain_audio_samples: Array[AudioStream] = []
+@export var rain_audio_wet_sample: AudioStream
+## Restored verbatim from pre-reduction live snapshot (222 initial reps).
+@export var explosion_small_sampling := 0.65
+@export var explosion_medium_sampling := 0.9
+@export var explosion_medium_fraction := 0.52
+@export var explosion_large_fraction := 0.25
+@export var heavy_upward_scale := 0.22
+@export var glob_upward_scale := 0.12
+@export var rain_exposure_s := 0.07
+@export var rain_tail_cap_m := 0.65
+@export var rain_medium_min_pixels := 4.0
+@export var rain_large_min_pixels := 5.5
+@export var splash_capacity := 64
+@export var splashes_per_frame := 8
+@export var splash_max_width_m := 0.16
+@export var audio_recent_capacity := 128
+@export var audio_recent_window_s := 0.55
+@export var audio_recent_radius_m := 5.0

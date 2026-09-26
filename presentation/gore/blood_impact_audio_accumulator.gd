@@ -1,20 +1,17 @@
 class_name BloodImpactAudioAccumulator
 extends Node3D
 ## Local pooled presentation component, NOT another global audio bus/autoload.
-## Deterministic synthesized placeholders; replace streams for final sound design.
-## Density tiers: isolated ticks, a patter, and a rain texture.
-const TIERS := 4
+## Real recorded foley only. Missing categories are counted and remain silent.
+const TIERS := 5
 ## Impact counts at which a cluster moves up a tier.
 ##
-## FOUR tiers, not three: with three, twenty and a hundred impacts landed in the
-## same texture AND both saturated the gain cap, so a downpour sounded exactly
-## like a patter. The top tier is what keeps heavy blood rain distinct once
-## loudness has deliberately stopped growing.
+## Five tiers distinguish sparse, patter, rain and dense rain after gain saturates.
 const TIER_PATTER := 4
 const TIER_RAIN := 18
-const TIER_DOWNPOUR := 55
+const TIER_DOWNPOUR := 40
+const TIER_DENSE := 90
 ## Seconds of texture per tier. Longer means denser-sounding, not just louder.
-const TIER_DURATION := [0.09, 0.24, 0.46, 0.78]
+const TIER_DURATION := [0.07, 0.24, 0.42, 0.62, 0.78]
 
 var settings: BloodStabilitySettings
 var clusters: Dictionary = {}
@@ -22,6 +19,9 @@ var voices: Array[AudioStreamPlayer3D] = []
 var voice_left: Array[float] = []
 var voice_ready_at: Array[int] = []
 var streams: Array[AudioStreamWAV] = []
+var bank := BloodFoleyBank.new()
+var missing_foley_events := 0
+var last_missing_impact: Dictionary = {} # one bounded diagnostic, never history
 var clock := 0.0
 var submitted := 0
 var played := 0
@@ -30,16 +30,30 @@ var merged_overflow := 0
 var filtered := 0
 var expired_clusters := 0
 var last_events: Array[Dictionary] = []
+var recent_pos := PackedVector3Array()
+var recent_time := PackedFloat64Array()
+var recent_cursor := 0
+var recent_count := 0
+var peak_clusters := 0
+var peak_recent := 0
+var voice_tier := PackedInt32Array()
 
 func setup(config: BloodStabilitySettings) -> void:
 	if not voices.is_empty(): return # Capacities/resources are fixed at construction.
 	settings = config
-	# 4 surfaces x 3 DENSITY TIERS, all built once here. Fixed capacity, no hot
-	# path allocation, and the tiers are what make a hundred drops sound unlike
-	# six - previously there were only two textures and a binary switch at six
-	# impacts, so "patter" and "downpour" were literally the same sound.
-	for surface in 4:
-		for tier in TIERS: streams.append(_placeholder(surface, tier))
+	if settings.rain_audio_samples.size() > TIERS: settings.rain_audio_samples.resize(TIERS)
+	for i in settings.rain_audio_samples.size():
+		if not BloodFoleyBank.valid(settings.rain_audio_samples[i] as AudioStreamWAV): settings.rain_audio_samples[i] = null
+	if not BloodFoleyBank.valid(settings.rain_audio_wet_sample as AudioStreamWAV): settings.rain_audio_wet_sample = null
+	recent_pos.resize(clampi(settings.audio_recent_capacity, 1, 256))
+	recent_time.resize(recent_pos.size())
+	recent_time.fill(-INF)
+	voice_tier.resize(settings.audio_voices)
+	bank.setup()
+	for clip in bank.clips:
+		if clip != null: streams.append(clip)
+	if streams.is_empty():
+		push_warning("Blood foley bank absent: impacts silent, no synthetic fallback. See docs/audio/BLOOD_RAIN_AUDIO_SOURCES.md")
 	for i in settings.audio_voices:
 		var voice := AudioStreamPlayer3D.new()
 		voice.max_distance = settings.audio_max_distance_m
@@ -49,11 +63,16 @@ func setup(config: BloodStabilitySettings) -> void:
 		voice_left.append(0.0)
 		voice_ready_at.append(0)
 
-func submit(pos: Vector3, surface: BloodSurfaceResponse, mass: float, speed: float, material: int, normal: Vector3, timestamp: float) -> void:
+func submit(pos: Vector3, surface: BloodSurfaceResponse, mass: float, speed: float, material: int, normal: Vector3, timestamp: float, wet := false, drop_id := -1) -> void:
 	if not settings.audio_enabled or mass < settings.audio_min_mass or speed < 0.2:
 		filtered += 1
 		return
 	submitted += 1
+	recent_pos[recent_cursor] = pos
+	recent_time[recent_cursor] = clock
+	recent_cursor = (recent_cursor + 1) % recent_pos.size()
+	recent_count = mini(recent_count + 1, recent_pos.size())
+	peak_recent = maxi(peak_recent, recent_count)
 	var cell := Vector3i((pos / settings.audio_cell_m).floor())
 	var acoustic := 2 if surface.absorption_rate > 0.1 else (1 if surface.roughness > 0.4 else 0)
 	if acoustic == 0 and absf(normal.y) < 0.6: acoustic = 3
@@ -68,12 +87,22 @@ func submit(pos: Vector3, surface: BloodSurfaceResponse, mass: float, speed: flo
 			merged_overflow += 1
 		else:
 			clusters[key] = {"pos": pos, "mass": 0.0, "count": 0, "speed": 0.0,
-				"surface": acoustic, "age": 0.0, "timestamp": timestamp, "material": material}
+				"surface": acoustic, "age": 0.0, "timestamp": timestamp, "material": material, "wet": 0, "drop_id": drop_id}
+	peak_clusters = maxi(peak_clusters, clusters.size())
 	var c: Dictionary = clusters[key]
 	c.pos = (c.pos * c.mass + pos * mass) / maxf(c.mass + mass, 0.000001)
 	c.mass += mass
 	c.count += 1
+	c.wet += int(wet)
 	c.speed = maxf(c.speed, speed)
+
+func nearby_count(pos: Vector3) -> int:
+	var total := 0
+	var radius_sq := settings.audio_recent_radius_m * settings.audio_recent_radius_m
+	for i in recent_count:
+		if clock - recent_time[i] <= settings.audio_recent_window_s and recent_pos[i].distance_squared_to(pos) <= radius_sq:
+			total += 1
+	return total
 
 func advance(delta: float, event_budget: int) -> int:
 	if not settings.audio_enabled: return 0
@@ -96,30 +125,57 @@ func advance(delta: float, event_budget: int) -> int:
 				free = i
 				break
 		if free < 0: continue
-		var tier := tier_for(int(c.count))
+		# Rendering density was diluted by 1.2m cells and 80ms dispatch. Remember
+		# nearby recent landings after dispatch, with a fixed ring, not a growing grid.
+		var density := maxi(int(c.count), nearby_count(c.pos)) if settings.rain_enabled else int(c.count)
+		if settings.blood_rain_debug_extreme and density >= 5: density = mini(density * 4, 128)
+		var tier := tier_for(density)
+		var covered := false
+		if tier >= 2:
+			for i in voices.size():
+				if voice_tier[i] >= 2 and voices[i].playing and voices[i].global_position.distance_squared_to(c.pos) < settings.audio_recent_radius_m * settings.audio_recent_radius_m:
+					covered = true
+		if covered: continue # Keep/expire the bounded cluster; don't stack rain beds.
 		var voice := voices[free]
-		voice.stream = streams[c.surface * TIERS + tier]
+		var wet_surface := int(c.wet) * 2 > int(c.count)
+		# Wet one-shots must not replace a dense patter bed with a single plop.
+		var clip: AudioStream = bank.choose(tier, wet_surface, float(c.mass) > 0.025, float(c.mass) > 0.003, played)
+		if tier < mini(settings.rain_audio_samples.size(), TIERS) and settings.rain_audio_samples[tier] != null:
+			clip = settings.rain_audio_samples[tier]
+		if tier == 0 and wet_surface and settings.rain_audio_wet_sample != null: clip = settings.rain_audio_wet_sample
+		if clip == null:
+			missing_foley_events += 1
+			last_missing_impact={"position":c.pos,"drop_id":c.drop_id,"material":c.material,"speed":c.speed,"wet":wet_surface,"reason":"real foley category missing","tier":tier}
+			clusters.erase(key)
+			continue
+		voice.stream = clip
 		voice.global_position = c.pos
 		# Denser clusters sit slightly lower and vary less: a downpour is a bed,
 		# a single drop is a distinct tick.
-		var spread: float = [0.12, 0.08, 0.05, 0.035][tier]
-		var centre: float = [0.98, 0.92, 0.86, 0.82][tier]
+		var spread: float = [0.045, 0.035, 0.025, 0.02, 0.015][tier]
+		var centre: float = 0.98 if wet_surface else 1.0
 		voice.pitch_scale = clampf(
-			centre + sin(float(played) * 2.37) * spread + minf(c.speed, 10.0) * 0.006, 0.78, 1.15
+			centre + sin(float(played) * 2.37) * spread, 0.93, 1.05
 		)
 		# SATURATING gain, driven by mass AND count, so density is audible
 		# without ever becoming linear in impact count or outrunning combat.
-		var loudness: float = log(1.0 + c.mass * 25.0 + float(c.count) * 0.9) * 2.6
-		voice.volume_db = minf(settings.audio_max_db, settings.audio_base_db + loudness)
+		voice.volume_db = gain_for(density, float(c.mass))
+		voice.volume_db -= 0.6 + 0.6 * sin(float(played) * 1.79)
 		if c.surface == 2: voice.volume_db -= 4.0
+		if wet_surface: voice.volume_db -= 1.5
+		if settings.blood_rain_debug_extreme: voice.volume_db = minf(-6.0, voice.volume_db + 12.0)
+		if settings.blood_impact_audio_debug: voice.volume_db=-6.0
 		voice.play()
-		voice_left[free] = float(TIER_DURATION[tier]) / voice.pitch_scale
+		voice_tier[free] = tier
+		voice_left[free] = minf(clip.get_length(), BloodFoleyBank.MAX_SECONDS) / voice.pitch_scale
 		voice_ready_at[free] = Time.get_ticks_usec() + int(voice_left[free] * 1000000)
 		played += 1
 		emitted += 1
-		last_events.append({"position": c.pos, "count": c.count, "mass": c.mass, "tier": tier,
+		last_events.append({"position": c.pos, "count": c.count, "density": density, "wet": wet_surface, "mass": c.mass, "tier": tier,
 			"dense": tier > 0, "db": voice.volume_db, "surface": c.surface,
-			"duration": float(TIER_DURATION[tier])})
+			"duration": clip.get_length(), "sample": clip.resource_path, "pitch": voice.pitch_scale,
+			"drop_id":c.drop_id,"playing":voice.playing,"bus":voice.bus,"attenuation":voice.attenuation_model,
+			"unit_size":voice.unit_size,"max_distance":voice.max_distance})
 		if last_events.size() > 32: last_events.pop_front()
 		clusters.erase(key)
 	var active := 0
@@ -131,64 +187,33 @@ func advance(delta: float, event_budget: int) -> int:
 ## Which density texture a cluster of this many impacts deserves.
 ##
 ##   0  isolated  - a single quiet wet tick
-##   1  patter    - several irregular details
-##   2  rain      - a continuous wet bed
-##   3  downpour  - a heavy continuous wash
+##   1  sparse    - several irregular details
+##   2  patter    - a continuous wet bed
+##   3  rain      - a continuous wash
+##   4  dense     - more internal transients, same gain ceiling
 func tier_for(count: int) -> int:
+	if count >= TIER_DENSE: return 4
 	if count >= TIER_DOWNPOUR: return 3
 	if count >= TIER_RAIN: return 2
 	if count >= TIER_PATTER: return 1
 	return 0
 
+func gain_for(count: int, mass: float) -> float:
+	var loudness := log(1.0 + mass * 25.0 + float(count) * 0.9) * 2.6
+	var restraint := 8.0 if count < TIER_PATTER else (3.0 if count < TIER_RAIN else 0.0)
+	return minf(settings.audio_max_db, settings.audio_base_db + loudness - restraint)
+
 
 func clear() -> void:
 	clusters.clear()
+	last_missing_impact.clear()
+	recent_time.fill(-INF)
+	recent_pos.fill(Vector3.ZERO)
+	recent_count = 0; recent_cursor = 0
+	voice_tier.fill(0)
 	for i in voices.size():
 		if is_instance_valid(voices[i]):
 			voices[i].stop()
 		voice_left[i] = 0.0
 		# stop() does not synchronously retire playback in the audio mixer.
 		# Preserve the real-time deadline across reset instead of stealing it.
-
-## One placeholder texture. `tier` changes the NUMBER OF INTERNAL TRANSIENTS and
-## the length, not just the amplitude: that is what makes density audible rather
-## than merely loud.
-func _placeholder(surface: int, tier: int) -> AudioStreamWAV:
-	var rate := 22050
-	var dense := tier > 0
-	var duration: float = float(TIER_DURATION[tier])
-	var data := PackedByteArray()
-	data.resize(int(rate * duration) * 2)
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 19283 + surface * 13 + tier
-	var phase := 0.0
-	var filtered_sample := 0.0
-	var onset := 0.0
-	# Higher tiers fire their next wet transient sooner, so the same second of
-	# audio contains many more of them: a texture, not one repeated splat.
-	var gap_min: float = [0.023, 0.014, 0.005, 0.0025][tier]
-	var gap_max: float = [0.049, 0.030, 0.012, 0.0065][tier]
-	var next_onset := rng.randf_range(gap_min, gap_max)
-	for i in data.size() / 2:
-		var t := float(i) / rate
-		if dense and t >= next_onset:
-			onset = next_onset
-			next_onset += rng.randf_range(gap_min, gap_max)
-		var cycle := t - onset
-		var freq: float = lerpf(850.0, 180.0, clampf(cycle / 0.05, 0, 1)) * [1.1, 0.8, 0.55, 0.92][surface]
-		phase += TAU * freq / rate
-		filtered_sample = lerpf(filtered_sample, rng.randf_range(-1, 1), 0.25 if surface == 2 else 0.65)
-		var envelope := (1.0 - exp(-cycle * 1500)) * exp(-cycle * 95) * (1.0 - t / duration)
-		var sample := (sin(phase) * 0.25 + filtered_sample * 0.65) * envelope
-		data.encode_s16(i * 2, int(clampf(sample, -1, 1) * 32767))
-	# Known source amplitude; otherwise quiet source + -30 dB + inverse distance
-	# made valid impacts effectively inaudible next to combat.
-	var peak := 1.0
-	for i in data.size() / 2: peak = maxf(peak, absf(data.decode_s16(i * 2)))
-	for i in data.size() / 2:
-		data.encode_s16(i * 2, int(data.decode_s16(i * 2) * (0.7 * 32767.0 / peak)))
-	var stream := AudioStreamWAV.new()
-	stream.format = AudioStreamWAV.FORMAT_16_BITS
-	stream.mix_rate = rate
-	stream.data = data
-	return stream

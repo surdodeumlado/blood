@@ -25,13 +25,8 @@ extends MultiMeshInstance3D
 ## while hundreds of retired slots sat unused a few indices away. That is why a
 ## grenade kill could delete its own spray.
 
-## Per-instance CUSTOM_DATA layout, since it is easy to lose track of:
-##     x = atlas column      (stain shape / sprite variation)
-##     y = atlas row
-##     z = fade alpha driver (1.0 fresh, 0.0 gone)
-##     w = free
-const CUSTOM_SHAPE_X := 0
-const CUSTOM_SHAPE_Y := 1
+## Surface layout is owned by BloodSurfacePresentation; liquid X is its tail.
+## Only fade Z is shared here. Each full write replaces all four channels.
 const CUSTOM_FADE := 2
 
 var capacity := 0

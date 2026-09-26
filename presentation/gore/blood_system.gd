@@ -120,6 +120,15 @@ var _rep_color: PackedColorArray = PackedColorArray()
 var _rep_profile: Array[BloodProfile] = []
 ## Simulation priority, computed once per frame. See _step_representatives.
 var _rep_rank: PackedByteArray = PackedByteArray()
+var _rep_trail: PackedByteArray = PackedByteArray()
+var _rep_trail_rank: PackedByteArray = PackedByteArray()
+var _rep_body_hidden: PackedByteArray = PackedByteArray()
+var _impact_accent: BloodImpactAccent
+var _rain_streaks: BloodRainStreakLayer
+var _writing_rain := false
+var _view_right := Vector3.RIGHT
+var _view_position := Vector3.ZERO
+var _view_pixels_per_radian := 514.0
 var _rep_count := 0
 
 # Physical equivalent size is independent of the mass of the represented parcel.
@@ -151,6 +160,8 @@ var _smooth: BloodSurfaceResponse = preload("res://data/blood/surfaces/smooth.tr
 var _rough: BloodSurfaceResponse = preload("res://data/blood/surfaces/rough.tres")
 var _porous: BloodSurfaceResponse = preload("res://data/blood/surfaces/porous.tres")
 var _wet_patches: Dictionary = {}
+var _bridge_pending: Array[String] = []
+var _bridge_pairs: Dictionary = {}
 var _retained_patch_mass := 0.0
 ## Material that finished soaking INTO a surface and whose patch has since been
 ## retired. Absorption is a real, terminal destination, so it must survive the
@@ -400,7 +411,7 @@ func _drain_contacts() -> void:
 		_causal_drop = -1
 		_causal_event = -1
 
-func _write_surface(slot: int, xform: Transform3D, color: Color, custom: Color, offset: float) -> bool:
+func _write_surface(slot: int, xform: Transform3D, color: Color, custom: Color, offset: float, duration := 0.0, initial := 1.0) -> bool:
 	if not _spend("stains", settings.stability.stain_writes_per_frame):
 		_surface.release(slot)
 		_stain_active[slot] = 0
@@ -414,7 +425,7 @@ func _write_surface(slot: int, xform: Transform3D, color: Color, custom: Color, 
 		_forget_stain(slot)
 		_support.forget(slot)
 		return false
-	_surface.write(slot, fitted.transform, color, custom)
+	_surface.write(slot, fitted.transform, color, BloodSurfacePresentation.encode(custom, _clock, duration, initial))
 	if _stain_active[slot] == 0: _stain_birth[slot] = _clock
 	_support.own(slot, fitted)
 	_last_surface_slot = slot
@@ -480,6 +491,10 @@ func _ready() -> void:
 	_audio = BloodImpactAudioAccumulator.new()
 	add_child(_audio)
 	_audio.setup(settings.stability)
+	_impact_accent = BloodImpactAccent.new()
+	_impact_accent.setup(self, settings.stability)
+	_rain_streaks=BloodRainStreakLayer.new()
+	_rain_streaks.setup(self,settings.stability.rain_streak_capacity)
 	_runoff_patch.resize(settings.max_runoff)
 
 	if settings.prewarm:
@@ -495,6 +510,21 @@ func _exit_tree() -> void:
 		_support.clear()
 		_support.blood = null
 	if is_instance_valid(_audio): _audio.clear()
+
+func _unhandled_key_input(event: InputEvent) -> void:
+	if OS.is_debug_build() and event is InputEventKey and event.pressed and not event.echo:
+		if event.physical_keycode==KEY_F11:
+			settings.stability.fall_assist_enabled=not settings.stability.fall_assist_enabled
+			print("[blood fall] assist ","ON" if settings.stability.fall_assist_enabled else "OFF")
+		if event.physical_keycode==KEY_F9:
+			settings.stability.rain_streak_mode=(settings.stability.rain_streak_mode+1)%3
+			print("[blood rain] streak mode: ",settings.stability.rain_streak_mode," (0 bodies / 1 production / 2 streaks only)")
+		if event.physical_keycode==KEY_F10:
+			settings.stability.blood_impact_audio_debug=not settings.stability.blood_impact_audio_debug
+			print("[blood audio] obvious impact diagnostic: ",settings.stability.blood_impact_audio_debug,"; requires real foley bank")
+	if OS.is_debug_build() and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_F8:
+		settings.stability.blood_rain_debug_extreme = not settings.stability.blood_rain_debug_extreme
+		print("[blood rain] THE_BOX diagnostic extreme = ", settings.stability.blood_rain_debug_extreme)
 
 static func find(tree: SceneTree) -> BloodSystem:
 	return tree.get_first_node_in_group(GROUP) as BloodSystem
@@ -673,7 +703,11 @@ func estimate_release(ctx: BloodContext) -> BloodRelease:
 ## entire mass model was invisible. Demand scales with mass; supply is limited
 ## only by what is genuinely free.
 func _admit(layer: BloodMultiMeshLayer, demand: float, floor_count: int) -> int:
-	var want := int(round(demand * settings.quality_scale() * _density))
+	var sampling := 1.0
+	if layer == _small: sampling = settings.stability.small_sampling
+	elif layer == _medium: sampling = settings.stability.medium_sampling
+	elif layer == _micro: sampling = settings.stability.micro_sampling
+	var want := int(round(demand * settings.quality_scale() * _density * sampling))
 	if want <= 0:
 		return 0
 	var affordable := int(layer.free_slots() * settings.event_free_share)
@@ -715,7 +749,7 @@ func _emit_micro(profile: BloodProfile, rel: BloodRelease, pattern: BloodPattern
 
 
 func _emit_small(profile: BloodProfile, rel: BloodRelease, pattern: BloodPattern) -> void:
-	var count := mini(_admit(_small, rel.blood_mass * settings.small_per_mass * profile.small_weight, 4), _small.free_slots())
+	var count := mini(_admit(_small, rel.blood_mass * settings.small_per_mass * profile.small_weight * (settings.stability.explosion_small_sampling if settings.stability.rain_enabled and profile.damage_type == BloodTypes.DamageType.HIGH_ENERGY else 1.0), 4), _small.free_slots())
 	if rel.is_residual: return
 	var parcel := rel.blood_mass * settings.physical_mass_share * 0.35
 	if count <= 0:
@@ -731,7 +765,7 @@ func _emit_small(profile: BloodProfile, rel: BloodRelease, pattern: BloodPattern
 	if not rel.is_residual: last_small_spawned = count
 
 func _emit_medium(profile: BloodProfile, rel: BloodRelease, pattern: BloodPattern) -> void:
-	var count := mini(_admit(_medium, rel.blood_mass * settings.medium_per_mass * profile.medium_weight, settings.min_medium_per_event), _medium.free_slots())
+	var count := mini(_admit(_medium, rel.blood_mass * settings.medium_per_mass * profile.medium_weight * (settings.stability.explosion_medium_sampling if settings.stability.rain_enabled and profile.damage_type == BloodTypes.DamageType.HIGH_ENERGY else 1.0), settings.min_medium_per_event), _medium.free_slots())
 	if rel.is_residual: count = mini(count, 3)
 	var parcel := rel.blood_mass if rel.is_residual else rel.blood_mass * settings.physical_mass_share * 0.65
 	if count <= 0:
@@ -740,15 +774,26 @@ func _emit_medium(profile: BloodProfile, rel: BloodRelease, pattern: BloodPatter
 	var diameters := PackedFloat32Array()
 	var weights := PackedFloat32Array()
 	var total := 0.0
+	var medium_fraction := profile.droplet_medium_fraction
+	var large_fraction := profile.droplet_large_fraction
+	if settings.stability.rain_enabled and profile.damage_type == BloodTypes.DamageType.HIGH_ENERGY and not rel.is_residual:
+		medium_fraction = settings.stability.explosion_medium_fraction
+		large_fraction = settings.stability.explosion_large_fraction
 	for i in count:
 		var roll := _rng.randf()
 		var d: float
-		if roll < profile.droplet_large_fraction * 0.15:
+		if roll < large_fraction * 0.15:
 			d = _rng.randf_range(0.004, 0.008)
-		elif roll < profile.droplet_large_fraction:
+			if settings.stability.rain_enabled and profile.damage_type == BloodTypes.DamageType.HIGH_ENERGY and not rel.is_residual:
+				d = lerpf(0.0055, 0.0075, (d - 0.004) / 0.004)
+		elif roll < large_fraction:
 			d = _rng.randf_range(0.002, 0.004)
-		elif roll < profile.droplet_large_fraction + profile.droplet_medium_fraction:
+			if settings.stability.rain_enabled and profile.damage_type == BloodTypes.DamageType.HIGH_ENERGY and not rel.is_residual:
+				d = lerpf(0.003, 0.0039, (d - 0.002) / 0.002)
+		elif roll < large_fraction + medium_fraction:
 			d = _rng.randf_range(0.001, 0.002)
+			if profile.damage_type == BloodTypes.DamageType.HIGH_ENERGY and settings.stability.rain_enabled and not rel.is_residual:
+				d = lerpf(clampf(settings.stability.rain_medium_min_physical_m, 0.001, 0.00199), 0.00199, (d - 0.001) / 0.001)
 		else:
 			d = exp(_rng.randf_range(log(0.00035), log(0.001)))
 		diameters.append(d)
@@ -763,11 +808,19 @@ func _emit_medium(profile: BloodProfile, rel: BloodRelease, pattern: BloodPatter
 		if violent and not rel.is_residual and _rng.randf() < settings.fluid.ligament_fraction:
 			kind = BloodFluidModel.Liquid.LIGAMENT
 		var velocity := pattern.out_dir * profile.medium_speed * pattern.out_speed * (0.8 + rel.total_mass() * 1.1)
+		var high_arc := false
+		if profile.damage_type == BloodTypes.DamageType.HIGH_ENERGY and not rel.is_residual:
+			high_arc = kind<=BloodFluidModel.Liquid.MEDIUM and velocity.y>0 and fmod(float(i)*0.61803398875,1.0)<settings.stability.rain_high_arc_fraction
+			velocity = BloodFlightPresentation.explosive_velocity(velocity, kind, settings.stability,high_arc)
 		# Ballistic fine drops launch faster on average; size bands still overlap.
 		if profile.damage_type == BloodTypes.DamageType.BALLISTIC:
 			velocity *= clampf(pow(0.0015 / diameters[i], 0.18), 0.7, 1.35)
+		var base_flags := _emission_flags
+		if profile.damage_type==BloodTypes.DamageType.HIGH_ENERGY and not rel.is_residual:
+			_emission_flags |= 8 if high_arc else 4 # launch role, never a physics mode
 		_emit_representative(profile, _safe_release_origin(rel.position_ws(), pattern.out_origin), velocity,
 			0.0, parcel * weights[i] / total, 1.0, diameters[i], kind, rel.event_id)
+		_emission_flags=base_flags
 	_led_physical_mass += parcel
 	if not rel.is_residual: last_droplets_spawned = count
 
@@ -1079,35 +1132,51 @@ func _emit_representative(
 	_rep_event[i] = event_id if event_id >= 0 else _event_counter
 	_rep_flags[i] = _emission_flags
 	_rep_wait[i] = 0.0
+	_rep_trail[i] = 0
+	_rep_trail_rank[i] = 4
+	_rep_body_hidden[i] = 0
 	_record_causal({"action": "spawn", "drop_id": _rep_id[i], "parent_id": parent_id,
 		"event_id": _rep_event[i], "position": pos, "velocity": vel, "physical_diameter": d,
-		"render_diameter": _rep_size[i], "material_class": kind, "represented_mass": mass})
+		"render_diameter": _rep_size[i], "material_class": kind, "represented_mass": mass,"launch_flags":_rep_flags[i]})
 	if kind == BloodFluidModel.Liquid.LIGAMENT: material_stats.ligaments += 1
 	_write_representative(i)
 	return _rep_id[i]
 
 func _write_representative(i: int) -> void:
-	var xform := BloodFluidModel.liquid_transform(_rep_pos[i], _rep_vel[i], _rep_size[i],
-		_rep_kind[i], _rep_age[i], settings.fluid)
-	var longest := maxf(xform.basis.x.length(), maxf(xform.basis.y.length(), xform.basis.z.length()))
-	var cap := settings.fluid.max_glob_diameter if _rep_kind[i] == BloodFluidModel.Liquid.GLOB else settings.fluid.max_drop_diameter
-	if _rep_kind[i] == BloodFluidModel.Liquid.LIGAMENT: cap = settings.fluid.ligament_max_length
-	if longest > cap + 0.0001:
-		material_stats.size_warnings += 1
-		push_warning("Blood liquid render limit exceeded: drop %d, %.4f m" % [_rep_id[i], longest])
 	var layer := _small if _rep_layer[i] == 1 else _medium
-	var trail := 0.0
-	# A fixed subset of existing medium slots owns wakes. No new mesh, buffer,
-	# history array or per-drop node. The tail ends with the causal collision.
-	if _rep_layer[i] != 1 and _rep_slot[i] < settings.stability.max_trails:
-		trail = trail_length_for(_rep_kind[i], _rep_vel[i].length(), _rep_profile[i].damage_type)
+	if not settings.stability.rain_rejected_baseline_debug:
+		var drawn := false
+		if _writing_rain and _rep_trail[i]!=0 and settings.stability.rain_streak_mode!=0:
+			var dims:=BloodFlightPresentation.streak_dimensions(_rep_kind[i],_rep_vel[i].length(),_view_position.distance_to(_rep_pos[i]),_view_pixels_per_radian,_rep_vel[i].y < -1,settings.stability)
+			drawn=_rain_streaks.write(_rep_pos[i],_rep_vel[i],_view_position,_view_right,dims,_rep_color[i],_rep_id[i])
+		if (drawn and _rep_kind[i]<=BloodFluidModel.Liquid.MEDIUM) or settings.stability.rain_streak_mode==2:
+			# Hidden bodies need one zero-scale write, not a basis rebuild every step.
+			if _rep_body_hidden[i]==0: layer.write(_rep_slot[i],BloodRainStreakLayer.HIDDEN,_rep_color[i],Color(0,0,1,0))
+			_rep_body_hidden[i]=1
+			return
+	_rep_body_hidden[i]=0
+	var diameter := BloodFlightPresentation.diameter(_rep_size[i], _rep_kind[i],
+		_view_position.distance_to(_rep_pos[i]), _view_pixels_per_radian, settings.stability)
+	var xform := BloodFluidModel.liquid_transform(_rep_pos[i], _rep_vel[i], diameter,
+		_rep_kind[i], _rep_age[i], settings.fluid)
+	# Width is the readable sphere diameter; preserve the bounded physical elongation.
+	if _rep_kind[i] != BloodFluidModel.Liquid.LIGAMENT:
+		xform.basis.z = xform.basis.z.normalized() * diameter * minf(settings.fluid.max_elongation, 1.0 + _rep_vel[i].length() * 0.015)
+	if not settings.stability.rain_rejected_baseline_debug:
+		layer.write(_rep_slot[i],xform,_rep_color[i],Color(0,0,1,0))
+		return
+	var trail := trail_length_for(_rep_kind[i], _rep_vel[i].length(), _rep_profile[i].damage_type,
+		_view_position.distance_to(_rep_pos[i]), _rep_vel[i].y < -1.0) if _rep_trail[i] != 0 else 0.0
 	layer.write(_rep_slot[i], xform, _rep_color[i], Color(trail / maxf(xform.basis.z.length(), 0.001), 0, 1, 0))
 
-func trail_length_for(kind: int, speed: float, family: int) -> float:
-	if kind < BloodFluidModel.Liquid.MEDIUM or speed <= settings.stability.trail_min_speed: return 0.0
+func trail_length_for(kind: int, speed: float, family: int, distance := 0.0, falling := false) -> float:
+	# All liquid families, including cast-off, use current motion for eligibility.
+	if settings.stability.rain_enabled:
+		return BloodFlightPresentation.rain_tail(kind, speed, settings.stability, distance, _view_pixels_per_radian, falling)
+	if kind < BloodFluidModel.Liquid.SMALL or speed <= settings.stability.trail_min_speed: return 0.0
 	var gain := settings.stability.slash_trail_gain if family == BloodTypes.DamageType.SLASHING else 1.0
+	if kind == BloodFluidModel.Liquid.GLOB: gain *= 0.65
 	return minf(settings.stability.trail_max_length_m, (speed - settings.stability.trail_min_speed) * settings.stability.trail_time_s * gain)
-
 func _split_representative(i: int) -> void:
 	var layer := _small if _rep_layer[i] == 1 else _medium
 	if layer.free_slots() < 1 or _rep_count >= _rep_slot.size(): return
@@ -1144,6 +1213,9 @@ func _step_representatives(delta: float) -> void:
 	# Computing it once into a preallocated byte array leaves the ordering
 	# semantics identical and removes two thirds of the distance maths.
 	var camera_pos := camera.global_position if camera != null else Vector3.ZERO
+	_view_position = camera_pos
+	if camera!=null: _view_right=camera.global_basis.x
+	if camera != null: _view_pixels_per_radian = get_viewport().get_visible_rect().size.y / (2.0 * tan(deg_to_rad(camera.fov) * 0.5))
 	var importance := settings.stability.importance_distance_m
 	var importance_sq := importance * importance
 	for j in _rep_count:
@@ -1156,10 +1228,30 @@ func _step_representatives(delta: float) -> void:
 			if camera == null or camera_pos.distance_squared_to(_rep_pos[j]) < importance_sq:
 				rank = 1
 		_rep_rank[j] = rank
+		var relative := _rep_pos[j] - camera_pos
+		var in_front := camera == null or relative.dot(-camera.global_basis.z) > 0.0
+		_rep_trail_rank[j] = BloodFlightPresentation.trail_priority(_rep_kind[j], _rep_vel[j], relative.length_squared(), in_front, settings.stability)
+	# Fixed storage, choose wakes by current importance, never by a recycled slot ID.
+	_rep_trail.fill(0)
+	var trail_count := 0
+	for priority in 5:
+		for j in _rep_count:
+			var budget:=settings.stability.max_trails if settings.stability.rain_rejected_baseline_debug else mini(settings.stability.rain_streak_budget,_rain_streaks.slots.size())
+			if trail_count >= budget: break
+			if _rep_trail_rank[j] != priority: continue
+			if settings.stability.rain_rejected_baseline_debug:
+				if trail_length_for(_rep_kind[j],_rep_vel[j].length(),_rep_profile[j].damage_type)<=0: continue
+			elif _rep_kind[j]<BloodFluidModel.Liquid.SMALL or _rep_vel[j].length()<settings.stability.rain_streak_min_speed: continue
+			_rep_trail[j] = 1
+			trail_count += 1
 	for priority in 3:
 		var i := 0
 		while i < _rep_count:
 			if _rep_rank[i] != priority: i += 1; continue
+			# Fine/small physical samples use30Hz swept queries; accumulate full
+			# elapsed time and sweep previous->new position, never delete their mass.
+			if _rep_kind[i]<BloodFluidModel.Liquid.MEDIUM and _rep_wait[i]<1.0/30.0:
+				i+=1; continue
 			if not can_query(1, settings.stability.surface_query_reserve + settings.stability.solid_queries_per_frame):
 				# Bounded deferred simulation. Fine/distant samples that cannot be
 				# serviced become an explicit coarse parcel, preserving all mass.
@@ -1179,7 +1271,9 @@ func _step_representatives(delta: float) -> void:
 			var velocity := _rep_vel[i]
 			var to := from
 			for substep in steps:
+				var previous_y:=velocity.y
 				velocity = BloodFluidModel.advance_velocity(velocity, _rep_diameter[i], dt, _gravity, settings.fluid)
+				velocity = BloodFluidModel.assist_descent(velocity,previous_y,_rep_kind[i],_rep_diameter[i],dt,settings.stability)
 				to += velocity * dt
 			_ray.from = from
 			_ray.to = to
@@ -1219,7 +1313,11 @@ func _step_representatives(delta: float) -> void:
 		if ligament:
 			_rep_kind[j] = BloodFluidModel.category(_rep_diameter[j])
 			_rep_size[j] = BloodFluidModel.render_diameter(_rep_diameter[j], _rep_kind[j], settings.fluid)
+	_rain_streaks.begin()
+	_writing_rain=true
 	for j in _rep_count: _write_representative(j)
+	_writing_rain=false
+	_rain_streaks.finish()
 
 func _land_representative(i: int, point: Vector3, normal: Vector3, vel: Vector3) -> void:
 	var profile := _rep_profile[i]
@@ -1227,6 +1325,9 @@ func _land_representative(i: int, point: Vector3, normal: Vector3, vel: Vector3)
 	var surface := _deposit_surface if _deposit_surface != null else surface_response(null, normal)
 	_impact_response = BloodFluidModel.impact(_rep_diameter[i], vel, normal, surface, settings.fluid)
 	_impact_response["render_scale"] = BloodFluidModel.stain_render_scale(_rep_kind[i], settings.fluid)
+	_impact_response["physical_diameter"] = _rep_diameter[i]
+	_impact_response["kind"] = int(_rep_kind[i])
+	_impact_response["speed"] = vel.length()
 	_causal_drop = _rep_id[i]
 	_causal_event = _rep_event[i]
 	material_stats.collisions += 1
@@ -1241,7 +1342,10 @@ func _land_representative(i: int, point: Vector3, normal: Vector3, vel: Vector3)
 	_impact_response["max_width"] = limit
 	# A small bead carrying a large statistical parcel is not a giant glob.
 	_impact_response["direct_large"] = kind >= BloodFluidModel.Liquid.LARGE
-	_audio.submit(point, surface, mass, vel.length(), kind, normal, _clock)
+	_audio.submit(point, surface, mass, vel.length(), kind, normal, _clock, _wet_contact_for_audio(point, normal),_causal_drop)
+	var accent_start := Time.get_ticks_usec() if profile_stages else 0
+	_impact_accent.submit(point, normal, vel, kind, _rep_diameter[i], float(_impact_response.we), settings.fresh_blood_color, _causal_event)
+	_profile_stage("impact_accents", accent_start)
 	if not synchronous_test_mode:
 		var satellite_mass := _impact_satellites(profile, point, normal, vel, radius, mass, surface)
 		_queue_contact(profile, point, normal, vel, radius, mass - satellite_mass, _impact_response, _contact_hit,
@@ -1257,6 +1361,17 @@ func _land_representative(i: int, point: Vector3, normal: Vector3, vel: Vector3)
 	_causal_drop = -1
 	_causal_event = -1
 	_retire_representative(i)
+
+func _wet_contact_for_audio(point: Vector3, normal: Vector3) -> bool:
+	var owner := int(_contact_hit.get("collider_id", 0))
+	# Swept contact and footprint-support rays can land on opposite sides of a
+	# grid boundary by floating-point epsilon. Read both sides of the SAME plane;
+	# never move the deposit, alter its grid or query physics again for audio.
+	for side in 3:
+		var sample := point + normal * (float(side) - 1.0) * 0.001
+		var key := "%d:%s:%s" % [owner, Vector3i((sample / settings.stability.wet_patch_cell_m).floor()), Vector3i((normal * 20).round())]
+		if _wet_patches.has(key) and float(_wet_patches[key].wet) > 0.002 and float(_wet_patches[key].age) < settings.stability.wet_lifetime_s: return true
+	return false
 
 func _impact_satellites(profile: BloodProfile, point: Vector3, normal: Vector3, velocity: Vector3, radius: float, mass: float, surface: BloodSurfaceResponse) -> float:
 	if not bool(_impact_response.get("splash", false)): return 0.0
@@ -1334,6 +1449,9 @@ func _retire_representative(i: int) -> void:
 		_rep_flags[i] = _rep_flags[last]
 		_rep_wait[i] = _rep_wait[last]
 		_rep_rank[i] = _rep_rank[last]
+		_rep_trail[i] = _rep_trail[last]
+		_rep_trail_rank[i] = _rep_trail_rank[last]
+		_rep_body_hidden[i] = _rep_body_hidden[last]
 	_rep_count -= 1
 
 func _emit_solid(
@@ -1508,18 +1626,6 @@ func _stain_size(profile: BloodProfile, mass: float) -> float:
 ## Pick a stain shape from the family's weights. This is a large part of how an
 ## aftermath is recognised: slashing is nearly all STREAK, blunt is POOLED.
 
-## Birth time for the shader's impact bloom, packed into 0..1.
-##
-## The shader compares this against mod(TIME, bloom_window). Using the engine
-## clock directly - rather than the system's own accumulated _clock - keeps the
-## two in step without sending a second time value per instance.
-func _bloom_stamp() -> float:
-	var window: float = maxf(settings.stability.bloom_window_s, 0.1)
-	# Kept strictly below 1.0 so it can never carry into the row integer.
-	return minf(fmod(float(Time.get_ticks_msec()) * 0.001, window) / window, 0.9999)
-
-
-
 func _pick_stain_shape(profile: BloodProfile) -> int:
 	var total := 0.0
 	for w in profile.stain_shape_weights:
@@ -1673,11 +1779,22 @@ func _place_stain_impl(profile: BloodProfile, pos: Vector3, normal: Vector3, tra
 	if _deposit_surface != null: c = c.darkened(_deposit_surface.stain_darkening)
 	var color := Color(c.r * (1.0 - dark), c.g * (1.0 - dark), c.b * (1.0 - dark), 1.0)
 
-	# The atlas ROW carries the bloom birth time in its fraction. Rows are whole
-	# numbers, so the fraction was unused; this lets the shader grow the mark
-	# from its contact point to its footprint with no per-frame CPU writes.
+	# Initial contact is bounded by the visible/physical class, not parcel mass.
+	# Excess statistical mass remains in the existing wet grid / causal pool.
+	var physical_d := float(_impact_response.get("physical_diameter", 0.0006))
+	var kind := int(_impact_response.get("kind", BloodFluidModel.Liquid.SMALL))
+	var seed_width := BloodFluidModel.render_diameter(physical_d, kind, settings.fluid)
+	seed_width *= clampf(1.0 + sqrt(maxf(travel.length(), 0.0)) * 0.16, 1.0, 1.7)
+	var seed_cap := 0.045
+	if kind == BloodFluidModel.Liquid.MEDIUM: seed_cap = 0.07
+	elif kind >= BloodFluidModel.Liquid.LARGE: seed_cap = 0.14
+	seed_width = minf(seed_width, seed_cap)
+	var final_width := visual_radius * 2.0 * maxf(elongation, across)
+	var initial := clampf(seed_width / maxf(final_width, 0.001), 0.01, 0.48)
+	var formation := clampf(settings.stability.bloom_duration_s + final_width * 0.08 - minf(travel.length(), 20.0) * 0.001,
+		0.08, settings.stability.bloom_max_duration_s)
 	var custom := Color(
-		float(shape % ATLAS_COLS), float(shape / ATLAS_COLS) + _bloom_stamp(), 1.0, 0.0
+		float(shape % ATLAS_COLS), float(shape / ATLAS_COLS), 1.0, 0.0
 	)
 	if procedural:
 		custom.a = 2.0 # Procedural irregular mask, no magnified 64px bitmap.
@@ -1686,7 +1803,7 @@ func _place_stain_impl(profile: BloodProfile, pos: Vector3, normal: Vector3, tra
 		slot,
 		Transform3D(basis, pos + normal * settings.stability.detail_surface_offset_m),
 		color,
-		custom, settings.stability.detail_surface_offset_m
+		custom, settings.stability.detail_surface_offset_m, formation, initial
 	):
 		_retained_patch_mass += mass
 		material_stats["unsupported_mass"] = float(material_stats.get("unsupported_mass", 0.0)) + mass
@@ -1744,16 +1861,25 @@ func _accumulate_wet(profile: BloodProfile, pos: Vector3, normal: Vector3, mass:
 			_retained_patch_mass += float(_wet_patches[oldest].wet)
 			_absorbed_retired += float(_wet_patches[oldest].absorbed)
 			_wet_patches.erase(oldest)
+			_wet_keys.erase(oldest)
 			_pools.erase(oldest)
 		_wet_patches[key] = {"wet": 0.0, "absorbed": 0.0, "surface": surface, "pos": pos, "normal": normal,
 			"profile": profile, "owner": anchor.owner_id, "owner_transform": anchor.owner_transform,
 			"age": 0.0, "eligible_age": 0.0, "state": "STATIC_WET", "running": false, "revision": 0, "started_revision": -1,
-			"last_clock": _clock,
+			"last_clock": _clock, "fresh_clock": _clock, "latest": pos, "deposits": 0,
+			"bridge_pos": pos, "strongest_mass": 0.0,
 			"footprint": maxf(0.05, minf(anchor.tangent_frame.x.length(), anchor.tangent_frame.y.length())), "event": _causal_event}
 		# Joins the round-robin scan order. Stale keys are swept by the scan.
 		_wet_keys.append(key)
 	var patch: Dictionary = _wet_patches[key]
 	patch.wet += mass
+	if mass >= float(patch.strongest_mass) or _clock - float(patch.fresh_clock) > settings.stability.bridge_max_age_s:
+		patch.bridge_pos = pos
+		patch.strongest_mass = mass
+	patch.latest = pos
+	patch.fresh_clock = _clock
+	patch.deposits += 1
+	if _bridge_pending.size() < settings.stability.bridge_jobs and not _bridge_pending.has(key): _bridge_pending.append(key)
 	patch.age = 0.0
 	patch.revision += 1
 	if _suppress_runoff: patch.started_revision = patch.revision
@@ -1803,7 +1929,7 @@ func _step_wet_patches(_delta: float) -> void:
 	# delta. Absorption, drying and runoff eligibility all operate on second
 	# timescales, so a ~0.1 s revisit interval is invisible - while the cost
 	# stops scaling with how much of the fight the arena is still holding.
-	var budget: int = maxi(settings.stability.wet_updates_per_frame, 1)
+	var budget: int = mini(maxi(settings.stability.wet_updates_per_frame, 1), total)
 	var visited := 0
 	while visited < budget and not _wet_keys.is_empty():
 		if _wet_cursor >= _wet_keys.size():
@@ -1873,6 +1999,9 @@ func _step_wet_patches(_delta: float) -> void:
 		for dead in _wet_retire:
 			_absorbed_retired += float(_wet_patches[dead].absorbed) if _wet_patches.has(dead) else 0.0
 			_wet_patches.erase(dead)
+			# Remove the index entry at the same time. Reinserting this cell before
+			# the next scan must not accumulate duplicate stale keys indefinitely.
+			_wet_keys.erase(dead)
 			# The pool goes with its patch, exactly as patch EVICTION already does.
 			# Otherwise _pools keeps a row for every patch the arena has ever had
 			# and stops being bounded by max_wet_patches. The stain itself is owned
@@ -1880,6 +2009,74 @@ func _step_wet_patches(_delta: float) -> void:
 			_pools.erase(dead)
 		_wet_retire.clear()
 	_profile_stage("wet_patch_updates", start)
+
+func _step_bridges() -> void:
+	# Presentation of already-accounted wet mass, never a second deposit.
+	# Constant 27-neighbor lookup, only incoming deposits enqueue work.
+	var s := settings.stability
+	for job in s.bridge_ops_per_step:
+		if _bridge_pending.is_empty(): break
+		if frame_usage.stains >= s.stain_writes_per_frame - 8 or not can_query(41): break
+		var key: String = _bridge_pending.pop_front()
+		if not _wet_patches.has(key): continue
+		var patch: Dictionary = _wet_patches[key]
+		if _clock - float(patch.fresh_clock) > s.bridge_max_age_s: continue
+		var surface: BloodSurfaceResponse = patch.surface
+		if surface.absorption_rate > 0.4 or float(patch.wet) <= 0.0: continue
+		var source: Vector3 = patch.bridge_pos
+		var cell := Vector3i((source / s.wet_patch_cell_m).floor())
+		var normal_cell := Vector3i((Vector3(patch.normal) * 20).round())
+		var target: Vector3 = patch.latest
+		var pair := key + ":self"
+		var combined: float = patch.wet
+		var nearest := s.bridge_max_distance_m
+		for x in range(-1, 2):
+			for y in range(-1, 2):
+				for z in range(-1, 2):
+					var other_key := "%d:%s:%s" % [patch.owner, cell + Vector3i(x, y, z), normal_cell]
+					if other_key == key or not _wet_patches.has(other_key): continue
+					var other: Dictionary = _wet_patches[other_key]
+					if _clock - float(other.fresh_clock) > s.bridge_max_age_s or float(other.wet) <= 0.0: continue
+					var distance := source.distance_to(other.bridge_pos)
+					if distance >= nearest: continue
+					nearest = distance
+					target = other.bridge_pos
+					combined = float(patch.wet) + float(other.wet)
+					pair = (key + "|" + other_key) if key < other_key else (other_key + "|" + key)
+		if combined < s.bridge_min_mass or _bridge_pairs.has(pair): continue
+		if _bridge_pairs.size() >= s.bridge_pairs:
+			# Registry is bounded; old geometry stays alive and fades normally.
+			var oldest_pair: String = _bridge_pairs.keys()[0]
+			var old: Dictionary = _bridge_pairs[oldest_pair]
+			if _surface.is_active(old.slot) and _stain_ids[old.slot] == old.serial: continue
+			_bridge_pairs.erase(oldest_pair)
+		var n: Vector3 = patch.normal
+		var delta: Vector3 = target - source
+		if absf(delta.dot(n)) > s.support_plane_tolerance_m: continue
+		var length := delta.length()
+		if length < 0.035 or length > s.bridge_max_distance_m: continue
+		# Only adjacent wet footprints connect; cannot bridge an arbitrary dry gap.
+		var reach := sqrt(combined * s.pool_area_per_mass / PI) * 2.0
+		if length > reach: continue
+		var center: Vector3 = (source + target) * 0.5
+		var tangent := delta.normalized()
+		var width := clampf(sqrt(combined) * 0.45 / (1.0 + surface.roughness), 0.035, 0.11)
+		var basis := Basis(tangent * (length + width) / s.pool_mask_occupancy,
+			n.cross(tangent) * width / s.pool_mask_occupancy, n)
+		var slot := _acquire_stain_slot(_cell_key(center))
+		if slot < 0: continue
+		if not _write_surface(slot, Transform3D(basis, center + n * s.bridge_offset_m),
+			settings.pooled_blood_color, Color(0, 0, 1, 2), s.bridge_offset_m, s.bloom_max_duration_s, 0.12): continue
+		_stain_active[slot] = 1
+		_stain_life[slot] = -1.0
+		_stamp_causality(slot, center, 0.0)
+		var surface_cell := _cell_key(center)
+		_stain_cell[slot] = surface_cell
+		var owned: PackedInt32Array = _cell_slots.get(surface_cell, PackedInt32Array())
+		owned.append(slot)
+		_cell_slots[surface_cell] = owned
+		_bridge_pairs[pair] = {"slot": slot, "serial": _stain_ids[slot]}
+		material_stats["bridges"] = int(material_stats.get("bridges", 0)) + 1
 
 func _step_pools(delta: float) -> void:
 	for key in _pools:
@@ -2776,7 +2973,7 @@ func place_variant_for_test(
 		Transform3D(basis, pos + normal * settings.surface_offset),
 		profile.env_color,
 		# No bloom stamp: fixture marks are meant to be measured at final size.
-		Color(float(shape % ATLAS_COLS), float(shape / ATLAS_COLS), 1.0, 0.0)
+		BloodSurfacePresentation.encode(Color(float(shape % ATLAS_COLS), float(shape / ATLAS_COLS), 1.0, 0.0), _clock)
 	)
 	if slot < _stain_life.size():
 		_stain_life[slot] = -1.0
@@ -2861,15 +3058,12 @@ func aftermath_report_for_test() -> Dictionary:
 	var pct := stain_percentiles_for_test()
 	var bases := 0
 	var widest_base := 0.0
-	var pooled := int(BloodTypes.Stain.POOLED)
-	var want_r := float(pooled % ATLAS_COLS)
-	var want_g := float(pooled / ATLAS_COLS)
-	if _surface.record_writes:
-		for slot in _surface.capacity:
-			var c: Color = _surface.recorded_custom[slot]
-			if is_equal_approx(c.r, want_r) and is_equal_approx(c.g, want_g):
-				bases += 1
-				widest_base = maxf(widest_base, _surface.recorded_xform[slot].basis.x.length())
+	for pool in _pools.values():
+		var slot: int = pool.slot
+		if slot < 0 or not _surface.is_active(slot) or _stain_ids[slot] != pool.serial: continue
+		bases += 1
+		if _support.anchors.has(slot):
+			widest_base = maxf(widest_base, _support.anchors[slot].tangent_frame.x.length())
 	return {
 		"stain_count": led["stain_count"],
 		"nominal_summed_area": led["nominal_summed_area"],
@@ -3013,6 +3207,7 @@ func _event_telemetry() -> String:
 
 ## Wipe the arena. Blood Lab only.
 func clear_all() -> void:
+	if _rain_streaks!=null: _rain_streaks.clear()
 	_fade_count = 0
 	_fade_scan = 0
 	_presentation_queue.clear()
@@ -3022,6 +3217,7 @@ func clear_all() -> void:
 	_pending_remnants.clear()
 	if _support != null: _support.clear()
 	if _audio != null: _audio.clear()
+	if _impact_accent != null: _impact_accent.clear()
 	queued_blood_mass = 0.0
 	accepted_blood_mass = 0.0
 	accepted_tissue_mass = 0.0
@@ -3055,6 +3251,8 @@ func clear_all() -> void:
 	_remnant_family.clear()
 	_runoff_count = 0
 	_wet_patches.clear()
+	_bridge_pending.clear()
+	_bridge_pairs.clear()
 	_wet_keys.clear()
 	_wet_cursor = 0
 	_wet_retire.clear()
@@ -3080,8 +3278,19 @@ func _physics_process(delta: float) -> void:
 		return
 	_begin_frame()
 	_clock += delta
+	var only_streaks:=settings.stability.rain_streak_mode==2
+	_micro.visible=not only_streaks
+	_small.visible=not only_streaks
+	_medium.visible=not only_streaks
+	if _rep_count==0 and _rain_streaks.count>0: _rain_streaks.clear()
+	if _impact_accent != null: _impact_accent.advance(delta)
+	(_surface.material_override as ShaderMaterial).set_shader_parameter("blood_clock", _clock)
+	var maintenance_start := Time.get_ticks_usec() if profile_stages else 0
 	_step_stains(delta)
+	_profile_stage("fade", maintenance_start)
+	maintenance_start = Time.get_ticks_usec() if profile_stages else 0
 	_support.validate_owners()
+	_profile_stage("surface_support", maintenance_start)
 	var stage := Time.get_ticks_usec() if profile_stages else 0
 	_flush_presentation()
 	_profile_stage("presentation_queue", stage)
@@ -3109,6 +3318,9 @@ func _physics_process(delta: float) -> void:
 	stage = Time.get_ticks_usec() if profile_stages else 0
 	_step_pools(delta)
 	_profile_stage("pool_updates", stage)
+	stage = Time.get_ticks_usec() if profile_stages else 0
+	_step_bridges()
+	_profile_stage("coalescence", stage)
 	var audio_start := Time.get_ticks_usec() if profile_stages else 0
 	frame_usage.audio += _audio.advance(delta, maxi(0, settings.stability.audio_events_per_frame - int(frame_usage.audio)))
 	_profile_stage("audio_scheduling", audio_start)
@@ -3164,11 +3376,7 @@ func _build_layers() -> void:
 	# duplicated once at load. MEDIUM is the primary readable airborne blood and
 	# earns the larger boost; SMALL gets a smaller one; MICRO uses the flat
 	# material above and gets none at all, which is the intended hierarchy.
-	liquid_material.set_shader_parameter("readability_gain", settings.small_readability_gain)
-	liquid_material.set_shader_parameter("readability_ref_m", settings.readability_reference_m)
-	liquid_material.set_shader_parameter("readability_max", settings.readability_max_scale)
 	var medium_material: ShaderMaterial = liquid_material.duplicate()
-	medium_material.set_shader_parameter("readability_gain", settings.medium_readability_gain)
 	_small = _make_layer(bead, liquid_material, settings.max_small)
 	_medium = _make_layer(bead, medium_material, settings.max_medium)
 
@@ -3225,6 +3433,9 @@ func _build_layers() -> void:
 	_rep_flags.resize(physical_cap)
 	_rep_wait.resize(physical_cap)
 	_rep_rank.resize(physical_cap)
+	_rep_trail.resize(physical_cap)
+	_rep_trail_rank.resize(physical_cap)
+	_rep_body_hidden.resize(physical_cap)
 
 	_sol_slot.resize(settings.max_large)
 	_sol_age.resize(settings.max_large)
@@ -3295,10 +3506,7 @@ func _stain_material(atlas: Texture2D) -> ShaderMaterial:
 	mat.shader = load("res://presentation/gore/blood_stain.gdshader")
 	mat.set_shader_parameter("atlas", atlas)
 	mat.set_shader_parameter("atlas_cells", Vector2(ATLAS_COLS, ATLAS_ROWS))
-	# Bloom timing must match what the CPU packs into the atlas row fraction.
-	mat.set_shader_parameter("bloom_window", settings.stability.bloom_window_s)
-	mat.set_shader_parameter("bloom_duration", settings.stability.bloom_duration_s)
-	mat.set_shader_parameter("bloom_initial", settings.stability.bloom_initial)
+	mat.set_shader_parameter("blood_clock", _clock)
 	return mat
 
 

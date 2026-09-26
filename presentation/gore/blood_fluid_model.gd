@@ -32,6 +32,26 @@ static func advance_velocity(v: Vector3, d: float, dt: float, gravity: Vector3, 
 static func air_weber(d: float, speed: float, p: BloodPhysicsSettings) -> float:
 	return p.air_density * speed * speed * d / p.surface_tension
 
+## Explicit arcade descent, not a fluid constant. Called AFTER drag/gravity,
+## BEFORE position integration and the existing swept collision. No family gate.
+## Keep aerodynamic X/Z. While converging, cancel only vertical drag braking:
+## otherwise tiny representatives fight the assist and settle below its target.
+static func assist_descent(v: Vector3, previous_y: float, kind: int, diameter: float, dt: float, s: BloodStabilitySettings) -> Vector3:
+	if not s.fall_assist_enabled or v.y >= -s.fall_assist_threshold_m_s: return v
+	if kind == Liquid.LIGAMENT: kind=category(diameter)
+	var target:float
+	var cap:float
+	match kind:
+		Liquid.SMALL: target=s.fall_assist_small_target; cap=s.fall_assist_small_cap
+		Liquid.MEDIUM: target=s.fall_assist_medium_target; cap=s.fall_assist_medium_cap
+		Liquid.LARGE: target=s.fall_assist_large_target; cap=s.fall_assist_large_cap
+		Liquid.GLOB: target=s.fall_assist_glob_target; cap=s.fall_assist_glob_cap
+		_: return v
+	if v.y > -target:
+		v.y=minf(v.y,maxf(-target,minf(v.y,previous_y)-s.fall_assist_acceleration*dt))
+	v.y=maxf(v.y,-cap)
+	return v
+
 static func breakup_threshold(d: float, p: BloodPhysicsSettings) -> float:
 	var oh := p.viscosity / sqrt(p.density * p.surface_tension * maxf(d, 0.00002))
 	return p.breakup_weber * (1.0 + 1.077 * pow(oh, 1.6))
