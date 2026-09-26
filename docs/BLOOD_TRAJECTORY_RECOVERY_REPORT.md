@@ -91,4 +91,4 @@ Abrir THE_BOX, velocidade normal e câmera em movimento:
 
 ## Git
 
-Base Blood preexistente preservada separadamente em `77f6b92`. O commit seguinte contém a correção atual, fixtures e este relatório. Capturas, vídeos, caches e resultados anteriores modificados não foram incluídos. Main/origin: https://github.com/surdodeumlado/blood.git. Hash final e resultado do push registrados no handoff local e na resposta final.
+Base Blood preexistente preservada separadamente em `77f6b92`. Correção, fixtures e relatório em `05b516a`. Push normal para main/origin https://github.com/surdodeumlado/blood.git concluído, exit0. Capturas, vídeos, caches e resultados anteriores modificados não foram incluídos. Este registro final é apenas documentação posterior ao push da correção.
