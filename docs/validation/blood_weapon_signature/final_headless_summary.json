@@ -1,0 +1,2949 @@
+[
+    {
+        "telemetry":  null,
+        "queries":  5372,
+        "wall":  2.0,
+        "source_peak":  1,
+        "cpu_p95":  635,
+        "victims":  1,
+        "speed":  {
+                      "p50":  18.3781070709229,
+                      "p99":  52.9052276611328,
+                      "max":  52.9052276611328,
+                      "p90":  38.3861770629883,
+                      "n":  33
+                  },
+        "sources":  0,
+        "birth_count":  33,
+        "histogram":  [
+                          {
+                              "from":  0,
+                              "percent":  41.463414634146339,
+                              "mass":  0.037428255658596747,
+                              "count":  17
+                          },
+                          {
+                              "from":  2,
+                              "percent":  58.536585365853661,
+                              "mass":  0.064697846188209937,
+                              "count":  24
+                          },
+                          {
+                              "from":  5,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          },
+                          {
+                              "from":  10,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          },
+                          {
+                              "from":  15,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          }
+                      ],
+        "demand_peak":  30,
+        "ledger":  {
+                       "air_visual_mass_represented":  0.07956,
+                       "approx_unique_visible_coverage":  1.2625,
+                       "contact_retained_mass":  0.0,
+                       "estimated_total_stain_area":  1.82263736566756,
+                       "mean_stain_area":  0.020949854777788,
+                       "nominal_summed_area":  1.82263736566756,
+                       "physical_mass_recycled":  0.0,
+                       "physical_mass_represented":  0.14695537974912,
+                       "physical_mass_that_hit_world":  0.140949382679537,
+                       "physical_mass_that_timed_out":  0.00600600033067167,
+                       "release_blood_mass":  0.1768,
+                       "release_tissue_mass":  0.021216,
+                       "runoff_mass_claimed":  0.0173585776616819,
+                       "stain_count":  87,
+                       "surface_mass_ceiling":  0.0,
+                       "surface_mass_deposited":  0.280931772016777,
+                       "surface_mass_floor":  0.226205363972435,
+                       "surface_mass_wall":  0.054726408044342,
+                       "tissue_mass_deposited":  0.00495039988309145
+                   },
+        "angle":  {
+                      "p50":  11.9678660014328,
+                      "p99":  144.978496907661,
+                      "max":  144.978496907661,
+                      "p90":  129.894297333255,
+                      "n":  33
+                  },
+        "major_far":  0,
+        "range":  {
+                      "p50":  2.14944863319397,
+                      "p99":  2.72935199737549,
+                      "max":  2.72935199737549,
+                      "p90":  2.48743152618408,
+                      "n":  41
+                  },
+        "coarse_marks":  39,
+        "cpu_mean":  211.64333333333335,
+        "poor_far":  0,
+        "classes":  [
+                        {
+                            "diameter":  {
+                                             "p50":  0.000698296553306074,
+                                             "p99":  0.000976015017248898,
+                                             "max":  0.000976015017248898,
+                                             "p90":  0.000948939058957407,
+                                             "n":  19
+                                         },
+                            "speed":  {
+                                          "p50":  18.3781070709229,
+                                          "p99":  52.9052276611328,
+                                          "max":  52.9052276611328,
+                                          "p90":  48.4897308349609,
+                                          "n":  19
+                                      },
+                            "count":  19,
+                            "kind":  2
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00133662763983011,
+                                             "p99":  0.00170862255617976,
+                                             "max":  0.00170862255617976,
+                                             "p90":  0.00170862255617976,
+                                             "n":  4
+                                         },
+                            "speed":  {
+                                          "p50":  25.6027202606201,
+                                          "p99":  44.5552787780762,
+                                          "max":  44.5552787780762,
+                                          "p90":  44.5552787780762,
+                                          "n":  4
+                                      },
+                            "count":  4,
+                            "kind":  3
+                        },
+                        {
+                            "diameter":  {
+                                             "n":  0
+                                         },
+                            "speed":  {
+                                          "n":  0
+                                      },
+                            "count":  0,
+                            "kind":  4
+                        },
+                        {
+                            "diameter":  {
+                                             "n":  0
+                                         },
+                            "speed":  {
+                                          "n":  0
+                                      },
+                            "count":  0,
+                            "kind":  5
+                        }
+                    ],
+        "streak_peak":  34,
+        "peak":  40,
+        "life":  {
+                     "p50":  0.283333333333332,
+                     "p99":  3.54999999999999,
+                     "max":  3.54999999999999,
+                     "p90":  1.71666666666666,
+                     "n":  41
+                 },
+        "castoff":  {
+                        "angle":  {
+                                      "n":  0
+                                  },
+                        "speed":  {
+                                      "n":  0
+                                  },
+                        "count":  0
+                    },
+        "histogram_mass_is_birth_proxy":  false,
+        "visibility":  {
+                           "n":  0
+                       },
+        "weapon":  0,
+        "budgets":  {
+                        "audio":  0,
+                        "drops":  19,
+                        "micro":  27,
+                        "queries":  108,
+                        "runoff":  1,
+                        "solid_queries":  3,
+                        "solids":  3,
+                        "stains":  8,
+                        "wall_drops":  0
+                    },
+        "cpu_peak":  1278,
+        "wall_trace":  [
+
+                       ],
+        "capture":  false
+    },
+    {
+        "telemetry":  null,
+        "queries":  5415,
+        "wall":  7.0,
+        "source_peak":  1,
+        "cpu_p95":  783,
+        "victims":  1,
+        "speed":  {
+                      "p50":  17.6855621337891,
+                      "p99":  52.9052276611328,
+                      "max":  52.9052276611328,
+                      "p90":  38.3861770629883,
+                      "n":  33
+                  },
+        "sources":  0,
+        "birth_count":  33,
+        "histogram":  [
+                          {
+                              "from":  0,
+                              "percent":  40.54054054054054,
+                              "mass":  0.035901954746805131,
+                              "count":  15
+                          },
+                          {
+                              "from":  2,
+                              "percent":  37.837837837837839,
+                              "mass":  0.041174010257236646,
+                              "count":  14
+                          },
+                          {
+                              "from":  5,
+                              "percent":  21.621621621621621,
+                              "mass":  0.019519835710525516,
+                              "count":  8
+                          },
+                          {
+                              "from":  10,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          },
+                          {
+                              "from":  15,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          }
+                      ],
+        "demand_peak":  28,
+        "ledger":  {
+                       "air_visual_mass_represented":  0.07956,
+                       "approx_unique_visible_coverage":  1.2375,
+                       "contact_retained_mass":  0.0,
+                       "estimated_total_stain_area":  1.79425288711479,
+                       "mean_stain_area":  0.0263860718693351,
+                       "nominal_summed_area":  1.79425288711479,
+                       "physical_mass_recycled":  0.0,
+                       "physical_mass_represented":  0.1475570083806,
+                       "physical_mass_that_hit_world":  0.139549012295902,
+                       "physical_mass_that_timed_out":  0.00800800044089556,
+                       "release_blood_mass":  0.1768,
+                       "release_tissue_mass":  0.021216,
+                       "runoff_mass_claimed":  0.0,
+                       "stain_count":  68,
+                       "surface_mass_ceiling":  0.0,
+                       "surface_mass_deposited":  0.282375572464646,
+                       "surface_mass_floor":  0.277425172581555,
+                       "surface_mass_wall":  0.00495039988309145,
+                       "tissue_mass_deposited":  0.00495039988309145
+                   },
+        "angle":  {
+                      "p50":  15.5209560208828,
+                      "p99":  164.465354458788,
+                      "max":  164.465354458788,
+                      "p90":  129.894297333255,
+                      "n":  33
+                  },
+        "major_far":  8,
+        "range":  {
+                      "p50":  2.14944863319397,
+                      "p99":  5.52877616882324,
+                      "max":  5.52877616882324,
+                      "p90":  5.52865600585938,
+                      "n":  37
+                  },
+        "coarse_marks":  17,
+        "cpu_mean":  235.27,
+        "poor_far":  0,
+        "classes":  [
+                        {
+                            "diameter":  {
+                                             "p50":  0.000530529477224758,
+                                             "p99":  0.000910200353246182,
+                                             "max":  0.000910200353246182,
+                                             "p90":  0.000904019307785728,
+                                             "n":  18
+                                         },
+                            "speed":  {
+                                          "p50":  18.0589714050293,
+                                          "p99":  52.9052276611328,
+                                          "max":  52.9052276611328,
+                                          "p90":  48.4897308349609,
+                                          "n":  18
+                                      },
+                            "count":  18,
+                            "kind":  2
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00133662763983011,
+                                             "p99":  0.00170862255617976,
+                                             "max":  0.00170862255617976,
+                                             "p90":  0.00170862255617976,
+                                             "n":  4
+                                         },
+                            "speed":  {
+                                          "p50":  25.6027202606201,
+                                          "p99":  44.5552787780762,
+                                          "max":  44.5552787780762,
+                                          "p90":  44.5552787780762,
+                                          "n":  4
+                                      },
+                            "count":  4,
+                            "kind":  3
+                        },
+                        {
+                            "diameter":  {
+                                             "n":  0
+                                         },
+                            "speed":  {
+                                          "n":  0
+                                      },
+                            "count":  0,
+                            "kind":  4
+                        },
+                        {
+                            "diameter":  {
+                                             "n":  0
+                                         },
+                            "speed":  {
+                                          "n":  0
+                                      },
+                            "count":  0,
+                            "kind":  5
+                        }
+                    ],
+        "streak_peak":  33,
+        "peak":  40,
+        "life":  {
+                     "p50":  0.483333333333332,
+                     "p99":  2.81666666666675,
+                     "max":  2.81666666666675,
+                     "p90":  2.11666666666671,
+                     "n":  37
+                 },
+        "castoff":  {
+                        "angle":  {
+                                      "n":  0
+                                  },
+                        "speed":  {
+                                      "n":  0
+                                  },
+                        "count":  0
+                    },
+        "histogram_mass_is_birth_proxy":  false,
+        "visibility":  {
+                           "p50":  0.95,
+                           "p99":  1.0,
+                           "max":  1.0,
+                           "p90":  1.0,
+                           "n":  8
+                       },
+        "weapon":  0,
+        "budgets":  {
+                        "audio":  0,
+                        "drops":  19,
+                        "micro":  27,
+                        "queries":  107,
+                        "runoff":  0,
+                        "solid_queries":  3,
+                        "solids":  3,
+                        "stains":  8,
+                        "wall_drops":  0
+                    },
+        "cpu_peak":  1163,
+        "wall_trace":  [
+
+                       ],
+        "capture":  false
+    },
+    {
+        "telemetry":  null,
+        "queries":  5341,
+        "wall":  18.0,
+        "source_peak":  1,
+        "cpu_p95":  801,
+        "victims":  1,
+        "speed":  {
+                      "p50":  17.6855621337891,
+                      "p99":  52.9052276611328,
+                      "max":  52.9052276611328,
+                      "p90":  38.3861770629883,
+                      "n":  33
+                  },
+        "sources":  0,
+        "birth_count":  33,
+        "histogram":  [
+                          {
+                              "from":  0,
+                              "percent":  38.888888888888886,
+                              "mass":  0.032068068743683405,
+                              "count":  14
+                          },
+                          {
+                              "from":  2,
+                              "percent":  38.888888888888886,
+                              "mass":  0.041174010257236646,
+                              "count":  14
+                          },
+                          {
+                              "from":  5,
+                              "percent":  22.222222222222221,
+                              "mass":  0.019519835710525516,
+                              "count":  8
+                          },
+                          {
+                              "from":  10,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          },
+                          {
+                              "from":  15,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          }
+                      ],
+        "demand_peak":  29,
+        "ledger":  {
+                       "air_visual_mass_represented":  0.07956,
+                       "approx_unique_visible_coverage":  1.36,
+                       "contact_retained_mass":  0.0,
+                       "estimated_total_stain_area":  1.88386983535738,
+                       "mean_stain_area":  0.025806436100786,
+                       "nominal_summed_area":  1.88386983535738,
+                       "physical_mass_recycled":  0.0,
+                       "physical_mass_represented":  0.147150511361163,
+                       "physical_mass_that_hit_world":  0.139142514206469,
+                       "physical_mass_that_timed_out":  0.00800800044089556,
+                       "release_blood_mass":  0.1768,
+                       "release_tissue_mass":  0.021216,
+                       "runoff_mass_claimed":  0.0,
+                       "stain_count":  73,
+                       "surface_mass_ceiling":  0.0,
+                       "surface_mass_deposited":  0.283826178737827,
+                       "surface_mass_floor":  0.283826178737827,
+                       "surface_mass_wall":  0.0,
+                       "tissue_mass_deposited":  0.00495039988309145
+                   },
+        "angle":  {
+                      "p50":  15.5209560208828,
+                      "p99":  164.465354458788,
+                      "max":  164.465354458788,
+                      "p90":  129.894297333255,
+                      "n":  33
+                  },
+        "major_far":  8,
+        "range":  {
+                      "p50":  2.14944982528687,
+                      "p99":  5.52877426147461,
+                      "max":  5.52877426147461,
+                      "p90":  5.52864551544189,
+                      "n":  36
+                  },
+        "coarse_marks":  19,
+        "cpu_mean":  249.2,
+        "poor_far":  0,
+        "classes":  [
+                        {
+                            "diameter":  {
+                                             "p50":  0.000530529477224758,
+                                             "p99":  0.000910200353246182,
+                                             "max":  0.000910200353246182,
+                                             "p90":  0.000904019307785728,
+                                             "n":  18
+                                         },
+                            "speed":  {
+                                          "p50":  18.0589714050293,
+                                          "p99":  52.9052276611328,
+                                          "max":  52.9052276611328,
+                                          "p90":  48.4897308349609,
+                                          "n":  18
+                                      },
+                            "count":  18,
+                            "kind":  2
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00133662763983011,
+                                             "p99":  0.00170862255617976,
+                                             "max":  0.00170862255617976,
+                                             "p90":  0.00170862255617976,
+                                             "n":  4
+                                         },
+                            "speed":  {
+                                          "p50":  25.6027202606201,
+                                          "p99":  44.5552787780762,
+                                          "max":  44.5552787780762,
+                                          "p90":  44.5552787780762,
+                                          "n":  4
+                                      },
+                            "count":  4,
+                            "kind":  3
+                        },
+                        {
+                            "diameter":  {
+                                             "n":  0
+                                         },
+                            "speed":  {
+                                          "n":  0
+                                      },
+                            "count":  0,
+                            "kind":  4
+                        },
+                        {
+                            "diameter":  {
+                                             "n":  0
+                                         },
+                            "speed":  {
+                                          "n":  0
+                                      },
+                            "count":  0,
+                            "kind":  5
+                        }
+                    ],
+        "streak_peak":  33,
+        "peak":  40,
+        "life":  {
+                     "p50":  0.483333333333357,
+                     "p99":  2.81666666666681,
+                     "max":  2.81666666666681,
+                     "p90":  2.11666666666677,
+                     "n":  36
+                 },
+        "castoff":  {
+                        "angle":  {
+                                      "n":  0
+                                  },
+                        "speed":  {
+                                      "n":  0
+                                  },
+                        "count":  0
+                    },
+        "histogram_mass_is_birth_proxy":  false,
+        "visibility":  {
+                           "p50":  0.95,
+                           "p99":  1.0,
+                           "max":  1.0,
+                           "p90":  1.0,
+                           "n":  8
+                       },
+        "weapon":  0,
+        "budgets":  {
+                        "audio":  0,
+                        "drops":  19,
+                        "micro":  27,
+                        "queries":  107,
+                        "runoff":  0,
+                        "solid_queries":  3,
+                        "solids":  3,
+                        "stains":  8,
+                        "wall_drops":  0
+                    },
+        "cpu_peak":  1384,
+        "wall_trace":  [
+
+                       ],
+        "capture":  false
+    },
+    {
+        "telemetry":  null,
+        "queries":  19626,
+        "wall":  2.0,
+        "source_peak":  1,
+        "cpu_p95":  2290,
+        "victims":  1,
+        "speed":  {
+                      "p50":  8.4523458480835,
+                      "p99":  26.0525035858154,
+                      "max":  28.3584175109863,
+                      "p90":  18.2596111297607,
+                      "n":  189
+                  },
+        "sources":  0,
+        "birth_count":  189,
+        "histogram":  [
+                          {
+                              "from":  0,
+                              "percent":  13.812154696132596,
+                              "mass":  0.047181291854940341,
+                              "count":  25
+                          },
+                          {
+                              "from":  2,
+                              "percent":  86.1878453038674,
+                              "mass":  0.3548061388428323,
+                              "count":  156
+                          },
+                          {
+                              "from":  5,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          },
+                          {
+                              "from":  10,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          },
+                          {
+                              "from":  15,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          }
+                      ],
+        "demand_peak":  80,
+        "ledger":  {
+                       "air_visual_mass_represented":  0.156063055270744,
+                       "approx_unique_visible_coverage":  5.1175,
+                       "contact_retained_mass":  0.0075,
+                       "estimated_total_stain_area":  6.91658992282669,
+                       "mean_stain_area":  0.0358372534861486,
+                       "nominal_summed_area":  6.91658992282669,
+                       "physical_mass_recycled":  0.0,
+                       "physical_mass_represented":  0.233959674910097,
+                       "physical_mass_that_hit_world":  0.228368374344427,
+                       "physical_mass_that_timed_out":  0.0103713974822313,
+                       "release_blood_mass":  0.346806789490542,
+                       "release_tissue_mass":  0.645405247735971,
+                       "runoff_mass_claimed":  0.045217860202581,
+                       "stain_count":  193,
+                       "surface_mass_ceiling":  0.0,
+                       "surface_mass_deposited":  0.594982748098322,
+                       "surface_mass_floor":  0.43418036437392,
+                       "surface_mass_wall":  0.160802383724403,
+                       "tissue_mass_deposited":  0.206076757982373
+                   },
+        "angle":  {
+                      "p50":  34.6962920590597,
+                      "p99":  74.3533710028671,
+                      "max":  74.3533710028671,
+                      "p90":  65.4641325150948,
+                      "n":  189
+                  },
+        "major_far":  0,
+        "range":  {
+                      "p50":  2.4357602596283,
+                      "p99":  4.75709533691406,
+                      "max":  4.92261409759521,
+                      "p90":  3.6407368183136,
+                      "n":  181
+                  },
+        "coarse_marks":  101,
+        "cpu_mean":  969.62,
+        "poor_far":  0,
+        "classes":  [
+                        {
+                            "diameter":  {
+                                             "p50":  0.000558616477064788,
+                                             "p99":  0.00099166959989816,
+                                             "max":  0.00099166959989816,
+                                             "p90":  0.000909896160010248,
+                                             "n":  86
+                                         },
+                            "speed":  {
+                                          "p50":  8.52119445800781,
+                                          "p99":  24.9873428344727,
+                                          "max":  24.9873428344727,
+                                          "p90":  17.9744606018066,
+                                          "n":  86
+                                      },
+                            "count":  86,
+                            "kind":  2
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00133662763983011,
+                                             "p99":  0.00194871774874628,
+                                             "max":  0.00194871774874628,
+                                             "p90":  0.00178773584775627,
+                                             "n":  48
+                                         },
+                            "speed":  {
+                                          "p50":  9.19689083099365,
+                                          "p99":  28.3584175109863,
+                                          "max":  28.3584175109863,
+                                          "p90":  22.3254928588867,
+                                          "n":  48
+                                      },
+                            "count":  48,
+                            "kind":  3
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00393281225115061,
+                                             "p99":  0.00396716874092817,
+                                             "max":  0.00396716874092817,
+                                             "p90":  0.00396716874092817,
+                                             "n":  7
+                                         },
+                            "speed":  {
+                                          "p50":  10.7987241744995,
+                                          "p99":  15.6482000350952,
+                                          "max":  15.6482000350952,
+                                          "p90":  15.6482000350952,
+                                          "n":  7
+                                      },
+                            "count":  7,
+                            "kind":  4
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00642548594623804,
+                                             "p99":  0.00642548594623804,
+                                             "max":  0.00642548594623804,
+                                             "p90":  0.00642548594623804,
+                                             "n":  1
+                                         },
+                            "speed":  {
+                                          "p50":  6.74461936950684,
+                                          "p99":  6.74461936950684,
+                                          "max":  6.74461936950684,
+                                          "p90":  6.74461936950684,
+                                          "n":  1
+                                      },
+                            "count":  1,
+                            "kind":  5
+                        }
+                    ],
+        "streak_peak":  100,
+        "peak":  116,
+        "life":  {
+                     "p50":  0.499999999999972,
+                     "p99":  3.64999999999979,
+                     "max":  3.71666666666646,
+                     "p90":  1.98333333333322,
+                     "n":  181
+                 },
+        "castoff":  {
+                        "angle":  {
+                                      "p50":  0.6235646282364,
+                                      "p99":  0.811192486057589,
+                                      "max":  0.811192486057589,
+                                      "p90":  0.811192486057589,
+                                      "n":  4
+                                  },
+                        "speed":  {
+                                      "p50":  14.039116859436,
+                                      "p99":  14.0396928787231,
+                                      "max":  14.0396928787231,
+                                      "p90":  14.0396928787231,
+                                      "n":  4
+                                  },
+                        "count":  4
+                    },
+        "histogram_mass_is_birth_proxy":  false,
+        "visibility":  {
+                           "n":  0
+                       },
+        "weapon":  1,
+        "budgets":  {
+                        "audio":  0,
+                        "drops":  54,
+                        "micro":  53,
+                        "queries":  365,
+                        "runoff":  1,
+                        "solid_queries":  64,
+                        "solids":  72,
+                        "stains":  26,
+                        "wall_drops":  0
+                    },
+        "cpu_peak":  2958,
+        "wall_trace":  [
+
+                       ],
+        "capture":  false
+    },
+    {
+        "telemetry":  null,
+        "queries":  9786,
+        "wall":  7.0,
+        "source_peak":  1,
+        "cpu_p95":  2557,
+        "victims":  1,
+        "speed":  {
+                      "p50":  8.4581823348999,
+                      "p99":  26.115421295166,
+                      "max":  28.4269046783447,
+                      "p90":  18.0178718566895,
+                      "n":  104
+                  },
+        "sources":  1,
+        "birth_count":  104,
+        "histogram":  [
+                          {
+                              "from":  0,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          },
+                          {
+                              "from":  2,
+                              "percent":  91.588785046728972,
+                              "mass":  0.20751502795610577,
+                              "count":  98
+                          },
+                          {
+                              "from":  5,
+                              "percent":  8.4112149532710276,
+                              "mass":  0.026378978509455937,
+                              "count":  9
+                          },
+                          {
+                              "from":  10,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          },
+                          {
+                              "from":  15,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          }
+                      ],
+        "demand_peak":  81,
+        "ledger":  {
+                       "air_visual_mass_represented":  0.185877,
+                       "approx_unique_visible_coverage":  4.2725,
+                       "contact_retained_mass":  0.0175,
+                       "estimated_total_stain_area":  4.79331266176457,
+                       "mean_stain_area":  0.0266295147875809,
+                       "nominal_summed_area":  4.79331266176457,
+                       "physical_mass_recycled":  0.0,
+                       "physical_mass_represented":  0.362230742380434,
+                       "physical_mass_that_hit_world":  0.354821530519985,
+                       "physical_mass_that_timed_out":  0.0103713974822313,
+                       "release_blood_mass":  0.41306,
+                       "release_tissue_mass":  0.0516672,
+                       "runoff_mass_claimed":  0.0,
+                       "stain_count":  180,
+                       "surface_mass_ceiling":  0.0,
+                       "surface_mass_deposited":  0.563125608530499,
+                       "surface_mass_floor":  0.563125608530499,
+                       "surface_mass_wall":  0.0,
+                       "tissue_mass_deposited":  0.0120556805282831
+                   },
+        "angle":  {
+                      "p50":  34.4995552902066,
+                      "p99":  74.3527836065985,
+                      "max":  74.3527836065985,
+                      "p90":  62.251983340897,
+                      "n":  104
+                  },
+        "major_far":  9,
+        "range":  {
+                      "p50":  2.55710864067078,
+                      "p99":  6.65756797790527,
+                      "max":  6.65757179260254,
+                      "p90":  4.77890872955322,
+                      "n":  107
+                  },
+        "coarse_marks":  13,
+        "cpu_mean":  663.57,
+        "poor_far":  0,
+        "classes":  [
+                        {
+                            "diameter":  {
+                                             "p50":  0.000502572406498793,
+                                             "p99":  0.000985712484745331,
+                                             "max":  0.000985712484745331,
+                                             "p90":  0.000857073461887844,
+                                             "n":  46
+                                         },
+                            "speed":  {
+                                          "p50":  7.31942749023438,
+                                          "p99":  25.0476875305176,
+                                          "max":  25.0476875305176,
+                                          "p90":  17.4047336578369,
+                                          "n":  46
+                                      },
+                            "count":  46,
+                            "kind":  2
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00138870743103325,
+                                             "p99":  0.00194871774874628,
+                                             "max":  0.00194871774874628,
+                                             "p90":  0.00190796377137303,
+                                             "n":  27
+                                         },
+                            "speed":  {
+                                          "p50":  11.725227355957,
+                                          "p99":  28.4269046783447,
+                                          "max":  28.4269046783447,
+                                          "p90":  22.9088897705078,
+                                          "n":  27
+                                      },
+                            "count":  27,
+                            "kind":  3
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00237721600569785,
+                                             "p99":  0.00396716874092817,
+                                             "max":  0.00396716874092817,
+                                             "p90":  0.00396716874092817,
+                                             "n":  6
+                                         },
+                            "speed":  {
+                                          "p50":  14.0175046920776,
+                                          "p99":  15.5885620117188,
+                                          "max":  15.5885620117188,
+                                          "p90":  15.5885620117188,
+                                          "n":  6
+                                      },
+                            "count":  6,
+                            "kind":  4
+                        },
+                        {
+                            "diameter":  {
+                                             "n":  0
+                                         },
+                            "speed":  {
+                                          "n":  0
+                                      },
+                            "count":  0,
+                            "kind":  5
+                        }
+                    ],
+        "streak_peak":  100,
+        "peak":  106,
+        "life":  {
+                     "p50":  0.5833333333333,
+                     "p99":  3.64999999999979,
+                     "max":  3.71666666666646,
+                     "p90":  2.24999999999987,
+                     "n":  107
+                 },
+        "castoff":  {
+                        "angle":  {
+                                      "p50":  0.54986720725708,
+                                      "p99":  0.656720660984316,
+                                      "max":  0.656720660984316,
+                                      "p90":  0.656720660984316,
+                                      "n":  4
+                                  },
+                        "speed":  {
+                                      "p50":  14.0181503295898,
+                                      "p99":  14.018424987793,
+                                      "max":  14.018424987793,
+                                      "p90":  14.018424987793,
+                                      "n":  4
+                                  },
+                        "count":  4
+                    },
+        "histogram_mass_is_birth_proxy":  false,
+        "visibility":  {
+                           "p50":  1.0,
+                           "p99":  1.0,
+                           "max":  1.0,
+                           "p90":  1.0,
+                           "n":  9
+                       },
+        "weapon":  1,
+        "budgets":  {
+                        "audio":  0,
+                        "drops":  54,
+                        "micro":  53,
+                        "queries":  212,
+                        "runoff":  0,
+                        "solid_queries":  12,
+                        "solids":  12,
+                        "stains":  13,
+                        "wall_drops":  0
+                    },
+        "cpu_peak":  3848,
+        "wall_trace":  [
+
+                       ],
+        "capture":  false
+    },
+    {
+        "telemetry":  null,
+        "queries":  10085,
+        "wall":  18.0,
+        "source_peak":  1,
+        "cpu_p95":  2165,
+        "victims":  1,
+        "speed":  {
+                      "p50":  8.47391510009766,
+                      "p99":  26.1189842224121,
+                      "max":  28.4307765960693,
+                      "p90":  16.8813438415527,
+                      "n":  104
+                  },
+        "sources":  1,
+        "birth_count":  104,
+        "histogram":  [
+                          {
+                              "from":  0,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          },
+                          {
+                              "from":  2,
+                              "percent":  90.526315789473685,
+                              "mass":  0.1873755264095962,
+                              "count":  86
+                          },
+                          {
+                              "from":  5,
+                              "percent":  9.473684210526315,
+                              "mass":  0.026378978509455937,
+                              "count":  9
+                          },
+                          {
+                              "from":  10,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          },
+                          {
+                              "from":  15,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          }
+                      ],
+        "demand_peak":  76,
+        "ledger":  {
+                       "air_visual_mass_represented":  0.185877,
+                       "approx_unique_visible_coverage":  4.0825,
+                       "contact_retained_mass":  0.0175,
+                       "estimated_total_stain_area":  4.63101986215805,
+                       "mean_stain_area":  0.0258716193416651,
+                       "nominal_summed_area":  4.63101986215805,
+                       "physical_mass_recycled":  0.0,
+                       "physical_mass_represented":  0.366718390336755,
+                       "physical_mass_that_hit_world":  0.344012338202447,
+                       "physical_mass_that_timed_out":  0.0259284937055781,
+                       "release_blood_mass":  0.41306,
+                       "release_tissue_mass":  0.0516672,
+                       "runoff_mass_claimed":  0.0,
+                       "stain_count":  179,
+                       "surface_mass_ceiling":  0.0,
+                       "surface_mass_deposited":  0.567873512436308,
+                       "surface_mass_floor":  0.564748512389742,
+                       "surface_mass_wall":  0.00312500004656613,
+                       "tissue_mass_deposited":  0.0120556805282831
+                   },
+        "angle":  {
+                      "p50":  32.2293677497291,
+                      "p99":  71.0826939376715,
+                      "max":  74.3527562858418,
+                      "p90":  63.7257127675432,
+                      "n":  104
+                  },
+        "major_far":  9,
+        "range":  {
+                      "p50":  2.59652829170227,
+                      "p99":  6.65819358825684,
+                      "max":  6.65819358825684,
+                      "p90":  4.92933988571167,
+                      "n":  95
+                  },
+        "coarse_marks":  17,
+        "cpu_mean":  694.21,
+        "poor_far":  0,
+        "classes":  [
+                        {
+                            "diameter":  {
+                                             "p50":  0.000523277842492538,
+                                             "p99":  0.000960790758059768,
+                                             "max":  0.000960790758059768,
+                                             "p90":  0.000820277084130794,
+                                             "n":  41
+                                         },
+                            "speed":  {
+                                          "p50":  8.45933723449707,
+                                          "p99":  25.0511054992676,
+                                          "max":  25.0511054992676,
+                                          "p90":  17.4071063995361,
+                                          "n":  41
+                                      },
+                            "count":  41,
+                            "kind":  2
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00133662763983011,
+                                             "p99":  0.00194871774874628,
+                                             "max":  0.00194871774874628,
+                                             "p90":  0.00190111738629639,
+                                             "n":  30
+                                         },
+                            "speed":  {
+                                          "p50":  11.9649591445923,
+                                          "p99":  28.4307765960693,
+                                          "max":  28.4307765960693,
+                                          "p90":  20.0611782073975,
+                                          "n":  30
+                                      },
+                            "count":  30,
+                            "kind":  3
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00396563578397036,
+                                             "p99":  0.00396716874092817,
+                                             "max":  0.00396716874092817,
+                                             "p90":  0.00396716874092817,
+                                             "n":  3
+                                         },
+                            "speed":  {
+                                          "p50":  9.47613143920898,
+                                          "p99":  15.59068775177,
+                                          "max":  15.59068775177,
+                                          "p90":  15.59068775177,
+                                          "n":  3
+                                      },
+                            "count":  3,
+                            "kind":  4
+                        },
+                        {
+                            "diameter":  {
+                                             "n":  0
+                                         },
+                            "speed":  {
+                                          "n":  0
+                                      },
+                            "count":  0,
+                            "kind":  5
+                        }
+                    ],
+        "streak_peak":  101,
+        "peak":  106,
+        "life":  {
+                     "p50":  0.5833333333333,
+                     "p99":  3.91666666666645,
+                     "max":  3.91666666666645,
+                     "p90":  2.71666666666652,
+                     "n":  95
+                 },
+        "castoff":  {
+                        "angle":  {
+                                      "p50":  0.503688831887152,
+                                      "p99":  0.862343559308403,
+                                      "max":  0.862343559308403,
+                                      "p90":  0.862343559308403,
+                                      "n":  4
+                                  },
+                        "speed":  {
+                                      "p50":  13.9939870834351,
+                                      "p99":  13.9950323104858,
+                                      "max":  13.9950323104858,
+                                      "p90":  13.9950323104858,
+                                      "n":  4
+                                  },
+                        "count":  4
+                    },
+        "histogram_mass_is_birth_proxy":  false,
+        "visibility":  {
+                           "p50":  1.0,
+                           "p99":  1.0,
+                           "max":  1.0,
+                           "p90":  1.0,
+                           "n":  9
+                       },
+        "weapon":  1,
+        "budgets":  {
+                        "audio":  0,
+                        "drops":  55,
+                        "micro":  53,
+                        "queries":  213,
+                        "runoff":  0,
+                        "solid_queries":  12,
+                        "solids":  12,
+                        "stains":  11,
+                        "wall_drops":  0
+                    },
+        "cpu_peak":  3132,
+        "wall_trace":  [
+
+                       ],
+        "capture":  false
+    },
+    {
+        "telemetry":  null,
+        "queries":  22794,
+        "wall":  2.0,
+        "source_peak":  1,
+        "cpu_p95":  5304,
+        "victims":  1,
+        "speed":  {
+                      "p50":  4.98761796951294,
+                      "p99":  20.0904903411865,
+                      "max":  20.4076042175293,
+                      "p90":  14.6918478012085,
+                      "n":  258
+                  },
+        "sources":  0,
+        "birth_count":  258,
+        "histogram":  [
+                          {
+                              "from":  0,
+                              "percent":  19.245283018867923,
+                              "mass":  0.094731694320216789,
+                              "count":  51
+                          },
+                          {
+                              "from":  2,
+                              "percent":  77.735849056603769,
+                              "mass":  0.39637436694465583,
+                              "count":  206
+                          },
+                          {
+                              "from":  5,
+                              "percent":  3.0188679245283021,
+                              "mass":  0.016682357527315641,
+                              "count":  8
+                          },
+                          {
+                              "from":  10,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          },
+                          {
+                              "from":  15,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          }
+                      ],
+        "demand_peak":  214,
+        "ledger":  {
+                       "air_visual_mass_represented":  0.441,
+                       "approx_unique_visible_coverage":  15.905,
+                       "contact_retained_mass":  0.02,
+                       "estimated_total_stain_area":  18.1843793610834,
+                       "mean_stain_area":  0.0454609484027086,
+                       "nominal_summed_area":  18.1843793610834,
+                       "physical_mass_recycled":  0.0,
+                       "physical_mass_represented":  0.599304290199603,
+                       "physical_mass_that_hit_world":  0.550341238034889,
+                       "physical_mass_that_timed_out":  0.0614630577620119,
+                       "release_blood_mass":  0.98,
+                       "release_tissue_mass":  1.0,
+                       "runoff_mass_claimed":  0.0080208333930932,
+                       "stain_count":  400,
+                       "surface_mass_ceiling":  0.0,
+                       "surface_mass_deposited":  1.38370837900927,
+                       "surface_mass_floor":  1.14355660261028,
+                       "surface_mass_wall":  0.240151776398998,
+                       "tissue_mass_deposited":  0.350000002607703
+                   },
+        "angle":  {
+                      "p50":  32.4976405048542,
+                      "p99":  165.43260486791,
+                      "max":  168.847439905728,
+                      "p90":  103.872178180477,
+                      "n":  258
+                  },
+        "major_far":  3,
+        "range":  {
+                      "p50":  2.73722743988037,
+                      "p99":  6.3501124382019,
+                      "max":  8.46088027954102,
+                      "p90":  4.14887619018555,
+                      "n":  265
+                  },
+        "coarse_marks":  110,
+        "cpu_mean":  1172.0566666666666,
+        "poor_far":  0,
+        "classes":  [
+                        {
+                            "diameter":  {
+                                             "p50":  0.000634894648101181,
+                                             "p99":  0.000976140203420073,
+                                             "max":  0.000976140203420073,
+                                             "p90":  0.000925619476394783,
+                                             "n":  95
+                                         },
+                            "speed":  {
+                                          "p50":  4.14500999450684,
+                                          "p99":  20.3224964141846,
+                                          "max":  20.3224964141846,
+                                          "p90":  13.2714395523071,
+                                          "n":  95
+                                      },
+                            "count":  95,
+                            "kind":  2
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00150494556874037,
+                                             "p99":  0.0019792492967099,
+                                             "max":  0.0019792492967099,
+                                             "p90":  0.0018993925768882,
+                                             "n":  77
+                                         },
+                            "speed":  {
+                                          "p50":  6.53291940689087,
+                                          "p99":  20.0214080810547,
+                                          "max":  20.0214080810547,
+                                          "p90":  16.1788520812988,
+                                          "n":  77
+                                      },
+                            "count":  77,
+                            "kind":  3
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00308835413306952,
+                                             "p99":  0.00396716874092817,
+                                             "max":  0.00396716874092817,
+                                             "p90":  0.00393281225115061,
+                                             "n":  31
+                                         },
+                            "speed":  {
+                                          "p50":  6.75628137588501,
+                                          "p99":  19.7241287231445,
+                                          "max":  19.7241287231445,
+                                          "p90":  17.0894603729248,
+                                          "n":  31
+                                      },
+                            "count":  31,
+                            "kind":  4
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00459508318454027,
+                                             "p99":  0.00478967372328043,
+                                             "max":  0.00478967372328043,
+                                             "p90":  0.00478967372328043,
+                                             "n":  2
+                                         },
+                            "speed":  {
+                                          "p50":  9.23642826080322,
+                                          "p99":  9.46701335906982,
+                                          "max":  9.46701335906982,
+                                          "p90":  9.46701335906982,
+                                          "n":  2
+                                      },
+                            "count":  2,
+                            "kind":  5
+                        }
+                    ],
+        "streak_peak":  191,
+        "peak":  274,
+        "life":  {
+                     "p50":  0.449999999999974,
+                     "p99":  3.91666666666644,
+                     "max":  4.01666666666644,
+                     "p90":  1.2166666666666,
+                     "n":  265
+                 },
+        "castoff":  {
+                        "angle":  {
+                                      "p50":  1.12456599412856,
+                                      "p99":  1.75104428501536,
+                                      "max":  1.75104428501536,
+                                      "p90":  1.75104428501536,
+                                      "n":  7
+                                  },
+                        "speed":  {
+                                      "p50":  7.97676038742065,
+                                      "p99":  7.97895002365112,
+                                      "max":  7.97895002365112,
+                                      "p90":  7.97895002365112,
+                                      "n":  7
+                                  },
+                        "count":  7
+                    },
+        "histogram_mass_is_birth_proxy":  false,
+        "visibility":  {
+                           "p50":  1.0,
+                           "p99":  1.0,
+                           "max":  1.0,
+                           "p90":  1.0,
+                           "n":  3
+                       },
+        "weapon":  2,
+        "budgets":  {
+                        "audio":  0,
+                        "drops":  169,
+                        "micro":  63,
+                        "queries":  603,
+                        "runoff":  1,
+                        "solid_queries":  64,
+                        "solids":  72,
+                        "stains":  26,
+                        "wall_drops":  0
+                    },
+        "cpu_peak":  6784,
+        "wall_trace":  [
+                           {
+                               "id":  878,
+                               "stain_width":  0.553408741950989,
+                               "visible":  0.15,
+                               "relevant_ratio":  0.9,
+                               "visible_ratio":  0.346153846153866,
+                               "speed":  20.4076042175293,
+                               "life":  0.433333333333309,
+                               "kind":  3,
+                               "mass":  0.00183061556890607,
+                               "matched_stains":  1,
+                               "camera_relevant":  0.166666666666667,
+                               "range":  5.01529312133789,
+                               "event":  119
+                           }
+                       ],
+        "capture":  false
+    },
+    {
+        "telemetry":  null,
+        "queries":  23414,
+        "wall":  7.0,
+        "source_peak":  1,
+        "cpu_p95":  5342,
+        "victims":  1,
+        "speed":  {
+                      "p50":  5.10077333450317,
+                      "p99":  20.0913352966309,
+                      "max":  20.4084510803223,
+                      "p90":  14.9222211837769,
+                      "n":  258
+                  },
+        "sources":  0,
+        "birth_count":  258,
+        "histogram":  [
+                          {
+                              "from":  0,
+                              "percent":  18.3206106870229,
+                              "mass":  0.087934190756641356,
+                              "count":  48
+                          },
+                          {
+                              "from":  2,
+                              "percent":  74.809160305343511,
+                              "mass":  0.37654022278729832,
+                              "count":  196
+                          },
+                          {
+                              "from":  5,
+                              "percent":  6.8702290076335881,
+                              "mass":  0.036412175744771971,
+                              "count":  18
+                          },
+                          {
+                              "from":  10,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          },
+                          {
+                              "from":  15,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          }
+                      ],
+        "demand_peak":  215,
+        "ledger":  {
+                       "air_visual_mass_represented":  0.441,
+                       "approx_unique_visible_coverage":  17.2775,
+                       "contact_retained_mass":  0.02,
+                       "estimated_total_stain_area":  19.5468944064731,
+                       "mean_stain_area":  0.0488672360161828,
+                       "nominal_summed_area":  19.5468944064731,
+                       "physical_mass_recycled":  0.0,
+                       "physical_mass_represented":  0.598608636202927,
+                       "physical_mass_that_hit_world":  0.560495225479826,
+                       "physical_mass_that_timed_out":  0.0506134163588285,
+                       "release_blood_mass":  0.98,
+                       "release_tissue_mass":  1.0,
+                       "runoff_mass_claimed":  0.0,
+                       "stain_count":  400,
+                       "surface_mass_ceiling":  0.0,
+                       "surface_mass_deposited":  1.40210864444636,
+                       "surface_mass_floor":  1.30002531035244,
+                       "surface_mass_wall":  0.102083334093913,
+                       "tissue_mass_deposited":  0.350000002607703
+                   },
+        "angle":  {
+                      "p50":  32.4976883161784,
+                      "p99":  154.947267284321,
+                      "max":  168.848396132212,
+                      "p90":  105.668934573729,
+                      "n":  258
+                  },
+        "major_far":  12,
+        "range":  {
+                      "p50":  2.7495551109314,
+                      "p99":  8.29478740692139,
+                      "max":  8.46110248565674,
+                      "p90":  4.66088485717773,
+                      "n":  262
+                  },
+        "coarse_marks":  105,
+        "cpu_mean":  1155.63,
+        "poor_far":  0,
+        "classes":  [
+                        {
+                            "diameter":  {
+                                             "p50":  0.000589943723753095,
+                                             "p99":  0.000992218789333567,
+                                             "max":  0.000992218789333567,
+                                             "p90":  0.000928630528505892,
+                                             "n":  92
+                                         },
+                            "speed":  {
+                                          "p50":  4.64590311050415,
+                                          "p99":  20.3233413696289,
+                                          "max":  20.3233413696289,
+                                          "p90":  13.9299573898315,
+                                          "n":  92
+                                      },
+                            "count":  92,
+                            "kind":  2
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00149651581887156,
+                                             "p99":  0.0019792492967099,
+                                             "max":  0.0019792492967099,
+                                             "p90":  0.00187200587242842,
+                                             "n":  79
+                                         },
+                            "speed":  {
+                                          "p50":  6.54673290252686,
+                                          "p99":  20.0222396850586,
+                                          "max":  20.0222396850586,
+                                          "p90":  16.1795310974121,
+                                          "n":  79
+                                      },
+                            "count":  79,
+                            "kind":  3
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00308835413306952,
+                                             "p99":  0.00396716874092817,
+                                             "max":  0.00396716874092817,
+                                             "p90":  0.00393281225115061,
+                                             "n":  30
+                                         },
+                            "speed":  {
+                                          "p50":  6.21624660491943,
+                                          "p99":  19.7249488830566,
+                                          "max":  19.7249488830566,
+                                          "p90":  17.0901756286621,
+                                          "n":  30
+                                      },
+                            "count":  30,
+                            "kind":  4
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00459508318454027,
+                                             "p99":  0.00478967372328043,
+                                             "max":  0.00478967372328043,
+                                             "p90":  0.00478967372328043,
+                                             "n":  2
+                                         },
+                            "speed":  {
+                                          "p50":  9.23681354522705,
+                                          "p99":  9.46740913391113,
+                                          "max":  9.46740913391113,
+                                          "p90":  9.46740913391113,
+                                          "n":  2
+                                      },
+                            "count":  2,
+                            "kind":  5
+                        }
+                    ],
+        "streak_peak":  191,
+        "peak":  273,
+        "life":  {
+                     "p50":  0.483333333333306,
+                     "p99":  3.18333333333315,
+                     "max":  3.5499999999998,
+                     "p90":  1.04999999999994,
+                     "n":  262
+                 },
+        "castoff":  {
+                        "angle":  {
+                                      "p50":  0.846309263344975,
+                                      "p99":  1.67863766306746,
+                                      "max":  1.67863766306746,
+                                      "p90":  1.67863766306746,
+                                      "n":  7
+                                  },
+                        "speed":  {
+                                      "p50":  7.97719383239746,
+                                      "p99":  7.97974824905396,
+                                      "max":  7.97974824905396,
+                                      "p90":  7.97974824905396,
+                                      "n":  7
+                                  },
+                        "count":  7
+                    },
+        "histogram_mass_is_birth_proxy":  false,
+        "visibility":  {
+                           "p50":  1.0,
+                           "p99":  1.0,
+                           "max":  1.0,
+                           "p90":  1.0,
+                           "n":  12
+                       },
+        "weapon":  2,
+        "budgets":  {
+                        "audio":  0,
+                        "drops":  172,
+                        "micro":  63,
+                        "queries":  602,
+                        "runoff":  0,
+                        "solid_queries":  64,
+                        "solids":  72,
+                        "stains":  23,
+                        "wall_drops":  0
+                    },
+        "cpu_peak":  6868,
+        "wall_trace":  [
+
+                       ],
+        "capture":  false
+    },
+    {
+        "telemetry":  null,
+        "queries":  23690,
+        "wall":  18.0,
+        "source_peak":  1,
+        "cpu_p95":  5253,
+        "victims":  1,
+        "speed":  {
+                      "p50":  4.98465871810913,
+                      "p99":  20.0784530639648,
+                      "max":  20.3955192565918,
+                      "p90":  14.6830358505249,
+                      "n":  258
+                  },
+        "sources":  0,
+        "birth_count":  258,
+        "histogram":  [
+                          {
+                              "from":  0,
+                              "percent":  21.132075471698112,
+                              "mass":  0.10103958705440165,
+                              "count":  56
+                          },
+                          {
+                              "from":  2,
+                              "percent":  72.0754716981132,
+                              "mass":  0.37033665599301463,
+                              "count":  191
+                          },
+                          {
+                              "from":  5,
+                              "percent":  6.7924528301886795,
+                              "mass":  0.036412175744771971,
+                              "count":  18
+                          },
+                          {
+                              "from":  10,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          },
+                          {
+                              "from":  15,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          }
+                      ],
+        "demand_peak":  214,
+        "ledger":  {
+                       "air_visual_mass_represented":  0.441,
+                       "approx_unique_visible_coverage":  18.2,
+                       "contact_retained_mass":  0.02,
+                       "estimated_total_stain_area":  19.9244148139603,
+                       "mean_stain_area":  0.0510882431127188,
+                       "nominal_summed_area":  19.9244148139603,
+                       "physical_mass_recycled":  0.0,
+                       "physical_mass_represented":  0.582078124258014,
+                       "physical_mass_that_hit_world":  0.550866543315351,
+                       "physical_mass_that_timed_out":  0.0437115868553519,
+                       "release_blood_mass":  0.98,
+                       "release_tissue_mass":  1.0,
+                       "runoff_mass_claimed":  0.0,
+                       "stain_count":  390,
+                       "surface_mass_ceiling":  0.0,
+                       "surface_mass_deposited":  1.3855781327784,
+                       "surface_mass_floor":  1.32932813238259,
+                       "surface_mass_wall":  0.0562500003958121,
+                       "tissue_mass_deposited":  0.350000002607703
+                   },
+        "angle":  {
+                      "p50":  32.4968550330997,
+                      "p99":  165.436156566278,
+                      "max":  168.829449187454,
+                      "p90":  103.883543615255,
+                      "n":  258
+                  },
+        "major_far":  12,
+        "range":  {
+                      "p50":  2.73728346824646,
+                      "p99":  8.29159355163574,
+                      "max":  8.4577169418335,
+                      "p90":  4.65979528427124,
+                      "n":  265
+                  },
+        "coarse_marks":  101,
+        "cpu_mean":  1153.6966666666667,
+        "poor_far":  0,
+        "classes":  [
+                        {
+                            "diameter":  {
+                                             "p50":  0.000634894648101181,
+                                             "p99":  0.000976140203420073,
+                                             "max":  0.000976140203420073,
+                                             "p90":  0.000925619476394783,
+                                             "n":  95
+                                         },
+                            "speed":  {
+                                          "p50":  4.14257383346558,
+                                          "p99":  20.3104476928711,
+                                          "max":  20.3104476928711,
+                                          "p90":  13.2635869979858,
+                                          "n":  95
+                                      },
+                            "count":  95,
+                            "kind":  2
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00148553506005555,
+                                             "p99":  0.0019792492967099,
+                                             "max":  0.0019792492967099,
+                                             "p90":  0.00187200587242842,
+                                             "n":  78
+                                         },
+                            "speed":  {
+                                          "p50":  6.52906847000122,
+                                          "p99":  20.0095500946045,
+                                          "max":  20.0095500946045,
+                                          "p90":  16.1691112518311,
+                                          "n":  78
+                                      },
+                            "count":  78,
+                            "kind":  3
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00308835413306952,
+                                             "p99":  0.00396716874092817,
+                                             "max":  0.00396716874092817,
+                                             "p90":  0.00393281225115061,
+                                             "n":  30
+                                         },
+                            "speed":  {
+                                          "p50":  6.21234226226807,
+                                          "p99":  19.7124481201172,
+                                          "max":  19.7124481201172,
+                                          "p90":  17.079231262207,
+                                          "n":  30
+                                      },
+                            "count":  30,
+                            "kind":  4
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00459508318454027,
+                                             "p99":  0.00478967372328043,
+                                             "max":  0.00478967372328043,
+                                             "p90":  0.00478967372328043,
+                                             "n":  2
+                                         },
+                            "speed":  {
+                                          "p50":  9.23089599609375,
+                                          "p99":  9.46137237548828,
+                                          "max":  9.46137237548828,
+                                          "p90":  9.46137237548828,
+                                          "n":  2
+                                      },
+                            "count":  2,
+                            "kind":  5
+                        }
+                    ],
+        "streak_peak":  191,
+        "peak":  273,
+        "life":  {
+                     "p50":  0.483333333333306,
+                     "p99":  3.91666666666644,
+                     "max":  4.01666666666644,
+                     "p90":  1.2166666666666,
+                     "n":  265
+                 },
+        "castoff":  {
+                        "angle":  {
+                                      "p50":  1.33647271984992,
+                                      "p99":  1.81570099013281,
+                                      "max":  1.81570099013281,
+                                      "p90":  1.81570099013281,
+                                      "n":  7
+                                  },
+                        "speed":  {
+                                      "p50":  7.9782190322876,
+                                      "p99":  7.98005533218384,
+                                      "max":  7.98005533218384,
+                                      "p90":  7.98005533218384,
+                                      "n":  7
+                                  },
+                        "count":  7
+                    },
+        "histogram_mass_is_birth_proxy":  false,
+        "visibility":  {
+                           "p50":  1.0,
+                           "p99":  1.0,
+                           "max":  1.0,
+                           "p90":  1.0,
+                           "n":  12
+                       },
+        "weapon":  2,
+        "budgets":  {
+                        "audio":  0,
+                        "drops":  169,
+                        "micro":  63,
+                        "queries":  608,
+                        "runoff":  0,
+                        "solid_queries":  64,
+                        "solids":  72,
+                        "stains":  23,
+                        "wall_drops":  0
+                    },
+        "cpu_peak":  7444,
+        "wall_trace":  [
+
+                       ],
+        "capture":  false
+    },
+    {
+        "telemetry":  null,
+        "queries":  26916,
+        "wall":  2.0,
+        "source_peak":  1,
+        "cpu_p95":  3090,
+        "victims":  1,
+        "speed":  {
+                      "p50":  16.0525550842285,
+                      "p99":  43.7937545776367,
+                      "max":  44.5433387756348,
+                      "p90":  33.9999961853027,
+                      "n":  222
+                  },
+        "sources":  0,
+        "birth_count":  222,
+        "histogram":  [
+                          {
+                              "from":  0,
+                              "percent":  19.58041958041958,
+                              "mass":  0.096597261901479214,
+                              "count":  56
+                          },
+                          {
+                              "from":  2,
+                              "percent":  77.972027972027973,
+                              "mass":  0.37997045183146833,
+                              "count":  223
+                          },
+                          {
+                              "from":  5,
+                              "percent":  2.4475524475524475,
+                              "mass":  0.01430419459939003,
+                              "count":  7
+                          },
+                          {
+                              "from":  10,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          },
+                          {
+                              "from":  15,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          }
+                      ],
+        "demand_peak":  256,
+        "ledger":  {
+                       "air_visual_mass_represented":  0.45,
+                       "approx_unique_visible_coverage":  12.25,
+                       "contact_retained_mass":  0.0,
+                       "estimated_total_stain_area":  13.9855328018912,
+                       "mean_stain_area":  0.0347898825917691,
+                       "nominal_summed_area":  13.9855328018912,
+                       "physical_mass_recycled":  0.0,
+                       "physical_mass_represented":  0.609608636202927,
+                       "physical_mass_that_hit_world":  0.539402756214258,
+                       "physical_mass_that_timed_out":  0.0702058845199645,
+                       "release_blood_mass":  1.0,
+                       "release_tissue_mass":  1.0,
+                       "runoff_mass_claimed":  0.130649417496752,
+                       "stain_count":  402,
+                       "surface_mass_ceiling":  0.0,
+                       "surface_mass_deposited":  1.3085957743862,
+                       "surface_mass_floor":  0.793340166143026,
+                       "surface_mass_wall":  0.515255608243169,
+                       "tissue_mass_deposited":  0.277083335397765
+                   },
+        "angle":  {
+                      "p50":  51.3728580309007,
+                      "p99":  169.990540365221,
+                      "max":  173.395143779662,
+                      "p90":  110.810619018645,
+                      "n":  222
+                  },
+        "major_far":  7,
+        "range":  {
+                      "p50":  2.51421546936035,
+                      "p99":  6.38344287872314,
+                      "max":  6.59501934051514,
+                      "p90":  3.35141730308533,
+                      "n":  286
+                  },
+        "coarse_marks":  193,
+        "cpu_mean":  1171.2733333333333,
+        "poor_far":  0,
+        "classes":  [
+                        {
+                            "diameter":  {
+                                             "p50":  0.000561075925361365,
+                                             "p99":  0.000976140203420073,
+                                             "max":  0.000976140203420073,
+                                             "p90":  0.00086231321859497,
+                                             "n":  58
+                                         },
+                            "speed":  {
+                                          "p50":  31.1517086029053,
+                                          "p99":  44.5433387756348,
+                                          "max":  44.5433387756348,
+                                          "p90":  35.9926261901855,
+                                          "n":  58
+                                      },
+                            "count":  58,
+                            "kind":  2
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00198497320525348,
+                                             "p99":  0.00198990385979414,
+                                             "max":  0.00198990385979414,
+                                             "p90":  0.00198912317864597,
+                                             "n":  70
+                                         },
+                            "speed":  {
+                                          "p50":  15.1206502914429,
+                                          "p99":  16.0,
+                                          "max":  16.0,
+                                          "p90":  16.0,
+                                          "n":  70
+                                      },
+                            "count":  70,
+                            "kind":  3
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00350936804898083,
+                                             "p99":  0.00388029823079705,
+                                             "max":  0.00388029823079705,
+                                             "p90":  0.00385384587571025,
+                                             "n":  31
+                                         },
+                            "speed":  {
+                                          "p50":  16.1537132263184,
+                                          "p99":  16.5808010101318,
+                                          "max":  16.5808010101318,
+                                          "p90":  16.4261913299561,
+                                          "n":  31
+                                      },
+                            "count":  31,
+                            "kind":  4
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00589483696967363,
+                                             "p99":  0.00746563589200377,
+                                             "max":  0.00746563589200377,
+                                             "p90":  0.00746563589200377,
+                                             "n":  4
+                                         },
+                            "speed":  {
+                                          "p50":  16.8980808258057,
+                                          "p99":  17.4521007537842,
+                                          "max":  17.4521007537842,
+                                          "p90":  17.4521007537842,
+                                          "n":  4
+                                      },
+                            "count":  4,
+                            "kind":  5
+                        }
+                    ],
+        "streak_peak":  192,
+        "peak":  307,
+        "life":  {
+                     "p50":  0.183333333333323,
+                     "p99":  3.94999999999978,
+                     "max":  4.01666666666644,
+                     "p90":  1.44999999999992,
+                     "n":  286
+                 },
+        "castoff":  {
+                        "angle":  {
+                                      "n":  0
+                                  },
+                        "speed":  {
+                                      "n":  0
+                                  },
+                        "count":  0
+                    },
+        "histogram_mass_is_birth_proxy":  false,
+        "visibility":  {
+                           "p50":  1.0,
+                           "p99":  1.0,
+                           "max":  1.0,
+                           "p90":  1.0,
+                           "n":  7
+                       },
+        "weapon":  3,
+        "budgets":  {
+                        "audio":  0,
+                        "drops":  140,
+                        "micro":  128,
+                        "queries":  602,
+                        "runoff":  3,
+                        "solid_queries":  64,
+                        "solids":  72,
+                        "stains":  34,
+                        "wall_drops":  0
+                    },
+        "cpu_peak":  7890,
+        "wall_trace":  [
+                           {
+                               "id":  1549,
+                               "stain_width":  0.560000002384186,
+                               "visible":  0.65,
+                               "relevant_ratio":  1.0,
+                               "visible_ratio":  1.00000000000006,
+                               "speed":  16.0,
+                               "life":  0.649999999999963,
+                               "kind":  3,
+                               "mass":  0.00204613222740591,
+                               "matched_stains":  1,
+                               "camera_relevant":  0.65,
+                               "range":  5.15652179718018,
+                               "event":  133
+                           }
+                       ],
+        "capture":  false
+    },
+    {
+        "telemetry":  null,
+        "queries":  29505,
+        "wall":  7.0,
+        "source_peak":  1,
+        "cpu_p95":  4121,
+        "victims":  1,
+        "speed":  {
+                      "p50":  16.0,
+                      "p99":  42.8729934692383,
+                      "max":  43.9840850830078,
+                      "p90":  33.1198806762695,
+                      "n":  222
+                  },
+        "sources":  0,
+        "birth_count":  222,
+        "histogram":  [
+                          {
+                              "from":  0,
+                              "percent":  3.8596491228070176,
+                              "mass":  0.025714271469041726,
+                              "count":  11
+                          },
+                          {
+                              "from":  2,
+                              "percent":  84.21052631578948,
+                              "mass":  0.40801305825880257,
+                              "count":  240
+                          },
+                          {
+                              "from":  5,
+                              "percent":  11.929824561403509,
+                              "mass":  0.054227772343438133,
+                              "count":  34
+                          },
+                          {
+                              "from":  10,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          },
+                          {
+                              "from":  15,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          }
+                      ],
+        "demand_peak":  262,
+        "ledger":  {
+                       "air_visual_mass_represented":  0.45,
+                       "approx_unique_visible_coverage":  12.3075,
+                       "contact_retained_mass":  0.0,
+                       "estimated_total_stain_area":  13.5413537772566,
+                       "mean_stain_area":  0.0439654343417423,
+                       "nominal_summed_area":  13.5413537772566,
+                       "physical_mass_recycled":  0.0,
+                       "physical_mass_represented":  0.610125356211693,
+                       "physical_mass_that_hit_world":  0.535390064949752,
+                       "physical_mass_that_timed_out":  0.0747352964244783,
+                       "release_blood_mass":  1.0,
+                       "release_tissue_mass":  1.0,
+                       "runoff_mass_claimed":  0.0,
+                       "stain_count":  308,
+                       "surface_mass_ceiling":  0.0,
+                       "surface_mass_deposited":  1.30318091874069,
+                       "surface_mass_floor":  1.10361924133322,
+                       "surface_mass_wall":  0.199561677407473,
+                       "tissue_mass_deposited":  0.24791666851379
+                   },
+        "angle":  {
+                      "p50":  62.92996840848,
+                      "p99":  169.990540365221,
+                      "max":  173.395143779662,
+                      "p90":  119.992626735001,
+                      "n":  222
+                  },
+        "major_far":  34,
+        "range":  {
+                      "p50":  2.85378932952881,
+                      "p99":  6.59501552581787,
+                      "max":  6.72890996932983,
+                      "p90":  5.55288553237915,
+                      "n":  285
+                  },
+        "coarse_marks":  91,
+        "cpu_mean":  1390.3366666666666,
+        "poor_far":  0,
+        "classes":  [
+                        {
+                            "diameter":  {
+                                             "p50":  0.000523481518030167,
+                                             "p99":  0.000976140203420073,
+                                             "max":  0.000976140203420073,
+                                             "p90":  0.000844260677695274,
+                                             "n":  56
+                                         },
+                            "speed":  {
+                                          "p50":  30.9540424346924,
+                                          "p99":  43.9840850830078,
+                                          "max":  43.9840850830078,
+                                          "p90":  34.0,
+                                          "n":  56
+                                      },
+                            "count":  56,
+                            "kind":  2
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00198497320525348,
+                                             "p99":  0.00198990385979414,
+                                             "max":  0.00198990385979414,
+                                             "p90":  0.00198912317864597,
+                                             "n":  70
+                                         },
+                            "speed":  {
+                                          "p50":  15.1206502914429,
+                                          "p99":  16.0,
+                                          "max":  16.0,
+                                          "p90":  16.0,
+                                          "n":  70
+                                      },
+                            "count":  70,
+                            "kind":  3
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00350936804898083,
+                                             "p99":  0.00388029823079705,
+                                             "max":  0.00388029823079705,
+                                             "p90":  0.00385384587571025,
+                                             "n":  31
+                                         },
+                            "speed":  {
+                                          "p50":  16.1537132263184,
+                                          "p99":  16.5808010101318,
+                                          "max":  16.5808010101318,
+                                          "p90":  16.4261913299561,
+                                          "n":  31
+                                      },
+                            "count":  31,
+                            "kind":  4
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00589483696967363,
+                                             "p99":  0.00746563589200377,
+                                             "max":  0.00746563589200377,
+                                             "p90":  0.00746563589200377,
+                                             "n":  4
+                                         },
+                            "speed":  {
+                                          "p50":  16.8980808258057,
+                                          "p99":  17.4521007537842,
+                                          "max":  17.4521007537842,
+                                          "p90":  17.4521007537842,
+                                          "n":  4
+                                      },
+                            "count":  4,
+                            "kind":  5
+                        }
+                    ],
+        "streak_peak":  192,
+        "peak":  317,
+        "life":  {
+                     "p50":  0.216666666666654,
+                     "p99":  3.68333333333312,
+                     "max":  3.84999999999978,
+                     "p90":  1.44999999999992,
+                     "n":  285
+                 },
+        "castoff":  {
+                        "angle":  {
+                                      "n":  0
+                                  },
+                        "speed":  {
+                                      "n":  0
+                                  },
+                        "count":  0
+                    },
+        "histogram_mass_is_birth_proxy":  false,
+        "visibility":  {
+                           "p50":  1.0,
+                           "p99":  1.0,
+                           "max":  1.0,
+                           "p90":  1.0,
+                           "n":  34
+                       },
+        "weapon":  3,
+        "budgets":  {
+                        "audio":  0,
+                        "drops":  137,
+                        "micro":  128,
+                        "queries":  602,
+                        "runoff":  0,
+                        "solid_queries":  64,
+                        "solids":  72,
+                        "stains":  35,
+                        "wall_drops":  0
+                    },
+        "cpu_peak":  9038,
+        "wall_trace":  [
+                           {
+                               "id":  2070,
+                               "stain_width":  0.344939291477203,
+                               "visible":  0.35,
+                               "relevant_ratio":  0.954545454545455,
+                               "visible_ratio":  0.954545454545509,
+                               "speed":  28.9686412811279,
+                               "life":  0.366666666666646,
+                               "kind":  4,
+                               "mass":  0.00127930787857622,
+                               "matched_stains":  1,
+                               "camera_relevant":  0.366666666666667,
+                               "range":  6.53200626373291,
+                               "event":  137
+                           },
+                           {
+                               "id":  2102,
+                               "stain_width":  null,
+                               "visible":  0.35,
+                               "relevant_ratio":  0.954545454545455,
+                               "visible_ratio":  0.954545454545509,
+                               "speed":  28.9686412811279,
+                               "life":  0.366666666666646,
+                               "kind":  4,
+                               "mass":  0.00127930787857622,
+                               "matched_stains":  0,
+                               "camera_relevant":  0.366666666666667,
+                               "range":  6.53045988082886,
+                               "event":  137
+                           },
+                           {
+                               "id":  1919,
+                               "stain_width":  0.344048380851746,
+                               "visible":  0.366666666666667,
+                               "relevant_ratio":  1.0,
+                               "visible_ratio":  1.00000000000006,
+                               "speed":  28.9686412811279,
+                               "life":  0.366666666666646,
+                               "kind":  6,
+                               "mass":  0.00127930787857622,
+                               "matched_stains":  1,
+                               "camera_relevant":  0.366666666666667,
+                               "range":  6.50065088272095,
+                               "event":  137
+                           },
+                           {
+                               "id":  2127,
+                               "stain_width":  0.346979051828384,
+                               "visible":  0.35,
+                               "relevant_ratio":  0.91304347826087,
+                               "visible_ratio":  0.913043478260921,
+                               "speed":  28.9686412811279,
+                               "life":  0.383333333333312,
+                               "kind":  4,
+                               "mass":  0.00127930787857622,
+                               "matched_stains":  1,
+                               "camera_relevant":  0.383333333333333,
+                               "range":  6.56378841400146,
+                               "event":  137
+                           }
+                       ],
+        "capture":  false
+    },
+    {
+        "telemetry":  null,
+        "queries":  31347,
+        "wall":  18.0,
+        "source_peak":  1,
+        "cpu_p95":  3866,
+        "victims":  1,
+        "speed":  {
+                      "p50":  16.0,
+                      "p99":  41.5247497558594,
+                      "max":  43.6529541015625,
+                      "p90":  33.9999961853027,
+                      "n":  222
+                  },
+        "sources":  0,
+        "birth_count":  222,
+        "histogram":  [
+                          {
+                              "from":  0,
+                              "percent":  6.8965517241379306,
+                              "mass":  0.033770246969652355,
+                              "count":  20
+                          },
+                          {
+                              "from":  2,
+                              "percent":  84.137931034482762,
+                              "mass":  0.41828124603489414,
+                              "count":  244
+                          },
+                          {
+                              "from":  5,
+                              "percent":  8.96551724137931,
+                              "mass":  0.045836667704861625,
+                              "count":  26
+                          },
+                          {
+                              "from":  10,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          },
+                          {
+                              "from":  15,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          }
+                      ],
+        "demand_peak":  261,
+        "ledger":  {
+                       "air_visual_mass_represented":  0.45,
+                       "approx_unique_visible_coverage":  11.82,
+                       "contact_retained_mass":  0.0,
+                       "estimated_total_stain_area":  12.9594709781827,
+                       "mean_stain_area":  0.04305472085775,
+                       "nominal_summed_area":  12.9594709781827,
+                       "physical_mass_recycled":  0.0,
+                       "physical_mass_represented":  0.609608636202927,
+                       "physical_mass_that_hit_world":  0.546196874071029,
+                       "physical_mass_that_timed_out":  0.0634117666631937,
+                       "release_blood_mass":  1.0,
+                       "release_tissue_mass":  1.0,
+                       "runoff_mass_claimed":  0.0108927424065769,
+                       "stain_count":  301,
+                       "surface_mass_ceiling":  0.0,
+                       "surface_mass_deposited":  1.26377530806523,
+                       "surface_mass_floor":  1.07352310700808,
+                       "surface_mass_wall":  0.190252201057155,
+                       "tissue_mass_deposited":  0.204166668187827
+                   },
+        "angle":  {
+                      "p50":  62.7905300965742,
+                      "p99":  169.990540365221,
+                      "max":  173.395143779662,
+                      "p90":  115.321241795575,
+                      "n":  222
+                  },
+        "major_far":  26,
+        "range":  {
+                      "p50":  2.84905767440796,
+                      "p99":  9.66724681854248,
+                      "max":  9.66739273071289,
+                      "p90":  4.88532114028931,
+                      "n":  290
+                  },
+        "coarse_marks":  81,
+        "cpu_mean":  1298.3933333333334,
+        "poor_far":  0,
+        "classes":  [
+                        {
+                            "diameter":  {
+                                             "p50":  0.000592004507780075,
+                                             "p99":  0.000976140203420073,
+                                             "max":  0.000976140203420073,
+                                             "p90":  0.00088773494140476,
+                                             "n":  55
+                                         },
+                            "speed":  {
+                                          "p50":  31.298002243042,
+                                          "p99":  41.1005935668945,
+                                          "max":  41.1005935668945,
+                                          "p90":  34.3387718200684,
+                                          "n":  55
+                                      },
+                            "count":  55,
+                            "kind":  2
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00198497320525348,
+                                             "p99":  0.00198990385979414,
+                                             "max":  0.00198990385979414,
+                                             "p90":  0.00198912317864597,
+                                             "n":  70
+                                         },
+                            "speed":  {
+                                          "p50":  15.1206502914429,
+                                          "p99":  16.0,
+                                          "max":  16.0,
+                                          "p90":  16.0,
+                                          "n":  70
+                                      },
+                            "count":  70,
+                            "kind":  3
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00350936804898083,
+                                             "p99":  0.00388029823079705,
+                                             "max":  0.00388029823079705,
+                                             "p90":  0.00385384587571025,
+                                             "n":  31
+                                         },
+                            "speed":  {
+                                          "p50":  16.1537132263184,
+                                          "p99":  16.5808010101318,
+                                          "max":  16.5808010101318,
+                                          "p90":  16.4261913299561,
+                                          "n":  31
+                                      },
+                            "count":  31,
+                            "kind":  4
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00589483696967363,
+                                             "p99":  0.00746563589200377,
+                                             "max":  0.00746563589200377,
+                                             "p90":  0.00746563589200377,
+                                             "n":  4
+                                         },
+                            "speed":  {
+                                          "p50":  16.8980808258057,
+                                          "p99":  17.4521007537842,
+                                          "max":  17.4521007537842,
+                                          "p90":  17.4521007537842,
+                                          "n":  4
+                                      },
+                            "count":  4,
+                            "kind":  5
+                        }
+                    ],
+        "streak_peak":  192,
+        "peak":  317,
+        "life":  {
+                     "p50":  0.216666666666654,
+                     "p99":  3.81666666666645,
+                     "max":  3.94999999999978,
+                     "p90":  1.63333333333324,
+                     "n":  290
+                 },
+        "castoff":  {
+                        "angle":  {
+                                      "n":  0
+                                  },
+                        "speed":  {
+                                      "n":  0
+                                  },
+                        "count":  0
+                    },
+        "histogram_mass_is_birth_proxy":  false,
+        "visibility":  {
+                           "p50":  1.0,
+                           "p99":  1.0,
+                           "max":  1.0,
+                           "p90":  1.0,
+                           "n":  26
+                       },
+        "weapon":  3,
+        "budgets":  {
+                        "audio":  0,
+                        "drops":  140,
+                        "micro":  128,
+                        "queries":  605,
+                        "runoff":  1,
+                        "solid_queries":  64,
+                        "solids":  72,
+                        "stains":  34,
+                        "wall_drops":  0
+                    },
+        "cpu_peak":  8000,
+        "wall_trace":  [
+
+                       ],
+        "capture":  false
+    },
+    {
+        "telemetry":  null,
+        "queries":  38526,
+        "wall":  18.0,
+        "source_peak":  2,
+        "cpu_p95":  6214,
+        "victims":  2,
+        "speed":  {
+                      "p50":  16.0,
+                      "p99":  43.7778778076172,
+                      "max":  46.5721054077148,
+                      "p90":  34.0,
+                      "n":  320
+                  },
+        "sources":  0,
+        "birth_count":  320,
+        "histogram":  [
+                          {
+                              "from":  0,
+                              "percent":  4.4041450777202069,
+                              "mass":  0.053576962905935908,
+                              "count":  17
+                          },
+                          {
+                              "from":  2,
+                              "percent":  84.974093264248708,
+                              "mass":  0.84227044315775856,
+                              "count":  328
+                          },
+                          {
+                              "from":  5,
+                              "percent":  10.621761658031089,
+                              "mass":  0.10176010814029725,
+                              "count":  41
+                          },
+                          {
+                              "from":  10,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          },
+                          {
+                              "from":  15,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          }
+                      ],
+        "demand_peak":  357,
+        "ledger":  {
+                       "air_visual_mass_represented":  0.45,
+                       "approx_unique_visible_coverage":  17.275,
+                       "contact_retained_mass":  0.0,
+                       "estimated_total_stain_area":  20.3228329546297,
+                       "mean_stain_area":  0.0496890781286789,
+                       "nominal_summed_area":  20.3228329546297,
+                       "physical_mass_recycled":  0.0,
+                       "physical_mass_represented":  0.823031516809388,
+                       "physical_mass_that_hit_world":  1.05420338298427,
+                       "physical_mass_that_timed_out":  0.126328121870756,
+                       "release_blood_mass":  1.0,
+                       "release_tissue_mass":  1.0,
+                       "runoff_mass_claimed":  0.00766591803403571,
+                       "stain_count":  409,
+                       "surface_mass_ceiling":  0.0,
+                       "surface_mass_deposited":  2.27393568063803,
+                       "surface_mass_floor":  2.11695167466249,
+                       "surface_mass_wall":  0.156984005975537,
+                       "tissue_mass_deposited":  0.171111115254462
+                   },
+        "angle":  {
+                      "p50":  51.9541788462551,
+                      "p99":  152.172339009464,
+                      "max":  167.247454432274,
+                      "p90":  92.8724727108729,
+                      "n":  320
+                  },
+        "major_far":  41,
+        "range":  {
+                      "p50":  2.94203495979309,
+                      "p99":  8.55903339385986,
+                      "max":  8.55928516387939,
+                      "p90":  5.21550941467285,
+                      "n":  386
+                  },
+        "coarse_marks":  81,
+        "cpu_mean":  1765.62,
+        "poor_far":  0,
+        "classes":  [
+                        {
+                            "diameter":  {
+                                             "p50":  0.000594583980273455,
+                                             "p99":  0.000975062342832382,
+                                             "max":  0.000991323147900403,
+                                             "p90":  0.000901516107799569,
+                                             "n":  102
+                                         },
+                            "speed":  {
+                                          "p50":  31.5775718688965,
+                                          "p99":  43.5679969787598,
+                                          "max":  43.7778778076172,
+                                          "p90":  36.4126319885254,
+                                          "n":  102
+                                      },
+                            "count":  102,
+                            "kind":  2
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.001984269823879,
+                                             "p99":  0.00198979256674647,
+                                             "max":  0.00198993273079395,
+                                             "p90":  0.00198895903304219,
+                                             "n":  105
+                                         },
+                            "speed":  {
+                                          "p50":  15.1101093292236,
+                                          "p99":  16.0,
+                                          "max":  16.0,
+                                          "p90":  16.0,
+                                          "n":  105
+                                      },
+                            "count":  105,
+                            "kind":  3
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00345872947946191,
+                                             "p99":  0.00386976543813944,
+                                             "max":  0.00386976543813944,
+                                             "p90":  0.00383019633591175,
+                                             "n":  34
+                                         },
+                            "speed":  {
+                                          "p50":  16.1895141601563,
+                                          "p99":  16.5932788848877,
+                                          "max":  16.5932788848877,
+                                          "p90":  16.4930419921875,
+                                          "n":  34
+                                      },
+                            "count":  34,
+                            "kind":  4
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00652256375178695,
+                                             "p99":  0.00746563589200377,
+                                             "max":  0.00746563589200377,
+                                             "p90":  0.00746563589200377,
+                                             "n":  5
+                                         },
+                            "speed":  {
+                                          "p50":  17.2793502807617,
+                                          "p99":  17.4101810455322,
+                                          "max":  17.4101810455322,
+                                          "p90":  17.4101810455322,
+                                          "n":  5
+                                      },
+                            "count":  5,
+                            "kind":  5
+                        }
+                    ],
+        "streak_peak":  192,
+        "peak":  424,
+        "life":  {
+                     "p50":  0.249999999999986,
+                     "p99":  3.51666666666647,
+                     "max":  3.94999999999978,
+                     "p90":  1.41666666666659,
+                     "n":  386
+                 },
+        "castoff":  {
+                        "angle":  {
+                                      "n":  0
+                                  },
+                        "speed":  {
+                                      "n":  0
+                                  },
+                        "count":  0
+                    },
+        "histogram_mass_is_birth_proxy":  false,
+        "visibility":  {
+                           "p50":  1.0,
+                           "p99":  1.0,
+                           "max":  1.0,
+                           "p90":  1.0,
+                           "n":  41
+                       },
+        "weapon":  3,
+        "budgets":  {
+                        "audio":  0,
+                        "drops":  192,
+                        "micro":  128,
+                        "queries":  607,
+                        "runoff":  1,
+                        "solid_queries":  64,
+                        "solids":  72,
+                        "stains":  40,
+                        "wall_drops":  0
+                    },
+        "cpu_peak":  11698,
+        "wall_trace":  [
+
+                       ],
+        "capture":  false
+    },
+    {
+        "telemetry":  null,
+        "queries":  50919,
+        "wall":  18.0,
+        "source_peak":  4,
+        "cpu_p95":  6402,
+        "victims":  4,
+        "speed":  {
+                      "p50":  16.0,
+                      "p99":  43.5350036621094,
+                      "max":  46.5721054077148,
+                      "p90":  34.0,
+                      "n":  346
+                  },
+        "sources":  1,
+        "birth_count":  346,
+        "histogram":  [
+                          {
+                              "from":  0,
+                              "percent":  7.159353348729792,
+                              "mass":  0.15814750047866258,
+                              "count":  31
+                          },
+                          {
+                              "from":  2,
+                              "percent":  84.295612009237871,
+                              "mass":  1.5344383640913291,
+                              "count":  365
+                          },
+                          {
+                              "from":  5,
+                              "percent":  8.5450346420323324,
+                              "mass":  0.16675498452968895,
+                              "count":  37
+                          },
+                          {
+                              "from":  10,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          },
+                          {
+                              "from":  15,
+                              "percent":  0,
+                              "mass":  0,
+                              "count":  0
+                          }
+                      ],
+        "demand_peak":  352,
+        "ledger":  {
+                       "air_visual_mass_represented":  0.2925,
+                       "approx_unique_visible_coverage":  30.29,
+                       "contact_retained_mass":  0.0,
+                       "estimated_total_stain_area":  35.2814006438231,
+                       "mean_stain_area":  0.0364854194868905,
+                       "nominal_summed_area":  35.2814006438231,
+                       "physical_mass_recycled":  0.0,
+                       "physical_mass_represented":  1.1946971916282,
+                       "physical_mass_that_hit_world":  2.02957091492135,
+                       "physical_mass_that_timed_out":  0.232766717206687,
+                       "release_blood_mass":  0.65,
+                       "release_tissue_mass":  0.078,
+                       "runoff_mass_claimed":  0.207407710622763,
+                       "stain_count":  967,
+                       "surface_mass_ceiling":  0.0,
+                       "surface_mass_deposited":  4.30093709187278,
+                       "surface_mass_floor":  3.96121075842063,
+                       "surface_mass_wall":  0.339726333452156,
+                       "tissue_mass_deposited":  0.420000010170042
+                   },
+        "angle":  {
+                      "p50":  48.8734595871613,
+                      "p99":  148.920322021081,
+                      "max":  161.299916948324,
+                      "p90":  98.4418089601013,
+                      "n":  346
+                  },
+        "major_far":  37,
+        "range":  {
+                      "p50":  2.82815361022949,
+                      "p99":  6.68951511383057,
+                      "max":  9.5501823425293,
+                      "p90":  4.58297777175903,
+                      "n":  433
+                  },
+        "coarse_marks":  236,
+        "cpu_mean":  1993.0333333333333,
+        "poor_far":  0,
+        "classes":  [
+                        {
+                            "diameter":  {
+                                             "p50":  0.000548379749380563,
+                                             "p99":  0.00094814753279647,
+                                             "max":  0.000980237392537869,
+                                             "p90":  0.000886189925950021,
+                                             "n":  103
+                                         },
+                            "speed":  {
+                                          "p50":  30.0118522644043,
+                                          "p99":  42.987907409668,
+                                          "max":  44.4177742004395,
+                                          "p90":  35.7046203613281,
+                                          "n":  103
+                                      },
+                            "count":  103,
+                            "kind":  2
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00198518601246178,
+                                             "p99":  0.00198979373089969,
+                                             "max":  0.00198979373089969,
+                                             "p90":  0.001988964388147,
+                                             "n":  86
+                                         },
+                            "speed":  {
+                                          "p50":  15.0469255447388,
+                                          "p99":  16.0,
+                                          "max":  16.0,
+                                          "p90":  16.0,
+                                          "n":  86
+                                      },
+                            "count":  86,
+                            "kind":  3
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00325252278707922,
+                                             "p99":  0.00388593389652669,
+                                             "max":  0.00388593389652669,
+                                             "p90":  0.00385384587571025,
+                                             "n":  38
+                                         },
+                            "speed":  {
+                                          "p50":  16.1607131958008,
+                                          "p99":  16.6588287353516,
+                                          "max":  16.6588287353516,
+                                          "p90":  16.5350799560547,
+                                          "n":  38
+                                      },
+                            "count":  38,
+                            "kind":  4
+                        },
+                        {
+                            "diameter":  {
+                                             "p50":  0.00669635692611337,
+                                             "p99":  0.00746563589200377,
+                                             "max":  0.00746563589200377,
+                                             "p90":  0.00745602371171117,
+                                             "n":  10
+                                         },
+                            "speed":  {
+                                          "p50":  17.2237854003906,
+                                          "p99":  17.4655914306641,
+                                          "max":  17.4655914306641,
+                                          "p90":  17.3498878479004,
+                                          "n":  10
+                                      },
+                            "count":  10,
+                            "kind":  5
+                        }
+                    ],
+        "streak_peak":  192,
+        "peak":  450,
+        "life":  {
+                     "p50":  0.23333333333332,
+                     "p99":  3.38333333333314,
+                     "max":  4.01666666666644,
+                     "p90":  1.54999999999991,
+                     "n":  433
+                 },
+        "castoff":  {
+                        "angle":  {
+                                      "n":  0
+                                  },
+                        "speed":  {
+                                      "n":  0
+                                  },
+                        "count":  0
+                    },
+        "histogram_mass_is_birth_proxy":  false,
+        "visibility":  {
+                           "p50":  1.0,
+                           "p99":  1.0,
+                           "max":  1.0,
+                           "p90":  1.0,
+                           "n":  37
+                       },
+        "weapon":  3,
+        "budgets":  {
+                        "audio":  0,
+                        "drops":  192,
+                        "micro":  128,
+                        "queries":  608,
+                        "runoff":  2,
+                        "solid_queries":  64,
+                        "solids":  72,
+                        "stains":  48,
+                        "wall_drops":  0
+                    },
+        "cpu_peak":  10913,
+        "wall_trace":  [
+
+                       ],
+        "capture":  false
+    }
+]

@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+SIGNATURE_CASE w0 wall=2.0 births=33 impacts=41 stains=99
+SIGNATURE_CASE w0 wall=7.0 births=33 impacts=37 stains=77
+SIGNATURE_CASE w0 wall=18.0 births=33 impacts=36 stains=81
+SIGNATURE_CASE w1 wall=2.0 births=189 impacts=181 stains=356
+SIGNATURE_CASE w1 wall=7.0 births=104 impacts=107 stains=204
+SIGNATURE_CASE w1 wall=18.0 births=104 impacts=95 stains=204
+SIGNATURE_CASE w2 wall=2.0 births=258 impacts=265 stains=438
+SIGNATURE_CASE w2 wall=7.0 births=258 impacts=262 stains=448
+SIGNATURE_CASE w2 wall=18.0 births=258 impacts=265 stains=430
+SIGNATURE_CASE w3 wall=2.0 births=222 impacts=286 stains=444
+SIGNATURE_CASE w3 wall=7.0 births=222 impacts=285 stains=343
+SIGNATURE_CASE w3 wall=18.0 births=222 impacts=290 stains=338
+SIGNATURE_CASE w3 wall=18.0 births=320 impacts=386 stains=469
+SIGNATURE_CASE w3 wall=18.0 births=346 impacts=433 stains=1079
+SIGNATURE_SAVED phase=final failures=0

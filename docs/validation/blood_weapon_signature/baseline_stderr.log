@@ -1,0 +1,8 @@
+ERROR: Failed to read the root certificate store.
+   at: get_system_ca_certificates (platform/windows/os_windows.cpp:2582)
+WARNING: Blood foley bank absent: impacts silent, no synthetic fallback. See docs/audio/BLOOD_RAIN_AUDIO_SOURCES.md
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] setup (res://presentation/gore/blood_impact_audio_accumulator.gd:56)
+       [1] _ready (res://presentation/gore/blood_system.gd:496)
+       [2] run (res://tests/blood_signature_live.gd:18)

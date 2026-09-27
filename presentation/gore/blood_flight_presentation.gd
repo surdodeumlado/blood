@@ -72,10 +72,14 @@ static func rain_tail(kind: int, speed: float, s: BloodStabilitySettings, distan
 		length = maxf(length, s.falling_trail_min_pixels * distance / maxf(focal, 1.0))
 	return minf(s.rain_tail_cap_m * weight, length)
 
-static func trail_priority(kind: int, velocity: Vector3, distance_squared: float, in_front: bool, s: BloodStabilitySettings) -> int:
+static func trail_priority(kind: int, velocity: Vector3, distance_squared: float, in_front: bool, s: BloodStabilitySettings, mass := 0.0) -> int:
 	var relevant := in_front and distance_squared < s.importance_distance_m * s.importance_distance_m
-	if not relevant: return 4
-	if kind >= BloodFluidModel.Liquid.MEDIUM and kind <= BloodFluidModel.Liquid.GLOB and velocity.y < -1.0: return 0
-	if kind == BloodFluidModel.Liquid.LARGE or kind == BloodFluidModel.Liquid.GLOB: return 1
-	if kind >= BloodFluidModel.Liquid.MEDIUM: return 2
-	return 3
+	if not in_front: return 5
+	var major := mass >= 0.0005 and (kind >= BloodFluidModel.Liquid.SMALL or mass >= 0.001)
+	# Keep meaningful directional/distant transport ahead of low-value noise.
+	# Fixed192 quads, no prediction, history, allocation or weapon-family gate.
+	if major and velocity.length_squared() > 36.0 and (velocity.y > -1.0 or distance_squared > 64.0): return 0
+	if relevant and kind >= BloodFluidModel.Liquid.MEDIUM and velocity.y < -1.0: return 1
+	if major: return 2
+	if relevant and kind >= BloodFluidModel.Liquid.MEDIUM: return 3
+	return 4

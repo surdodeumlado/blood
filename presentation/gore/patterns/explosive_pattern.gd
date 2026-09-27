@@ -72,6 +72,10 @@ func sample(layer: BloodTypes.Layer, u: float) -> void:
 	out_dir = (scattered + _blast * BLAST_BIAS).normalized()
 
 	out_speed = _rng.randf_range(SPEED_MIN, SPEED_MAX)
+	if layer == BloodTypes.Layer.SMALL:
+		# Preserve rare energetic fringe, not a uniform fast cloud.
+		var percentile := (out_speed - SPEED_MIN) / (SPEED_MAX - SPEED_MIN)
+		out_speed = lerpf(0.55, SPEED_MAX, percentile * percentile)
 	out_size = 1.2
 	out_stretch = 2.2
 

@@ -1,0 +1,1 @@
+C:\Program Files (x86)\Steam\steamapps\common\Godot Engine\godot.windows.opt.tools.64.exe --headless --path "C:\Users\Usuario\Desktop\BloodSplatterNineCircles" --script res://tests/blood_signature_model.gd

@@ -346,7 +346,9 @@ func _drain_coarse() -> void:
 	while not _coarse_jobs.is_empty() and can_query(12) and processed < 12:
 		var job: Dictionary = _coarse_jobs.pop_front()
 		_ray.from = job.origin
-		_ray.to = job.origin + job.dir * settings.cloud_probe_distance
+		# Statistical material has no individual readable flight. Keep this
+		# emission fallback local; distant deposits require physical transport.
+		_ray.to = job.origin + job.dir * minf(settings.cloud_probe_distance, 2.0)
 		var hit := _query()
 		if hit.is_empty():
 			_ray.from = job.origin + job.dir * minf(settings.cloud_probe_distance, 2.0)
@@ -630,6 +632,10 @@ func _release_now(rel: BloodRelease) -> void:
 		pattern = BloodPattern.for_family(ctx.damage_type)
 		_patterns[int(ctx.damage_type)] = pattern
 	pattern.begin(rel, frame, _rng)
+	if record_causality:
+		_record_causal({"action":"release_frame","event_id":rel.event_id,"origin":ctx.position_ws,
+			"axis":ctx.weapon_velocity_ws.normalized() if ctx.weapon_velocity_ws.length()>1 else ctx.primary_axis(),
+			"tip_speed":ctx.weapon_velocity_ws.length(),"family":int(ctx.damage_type)})
 	_causal_event = rel.event_id
 
 	var stamp := Time.get_ticks_usec() if profile_stages else 0
@@ -761,7 +767,12 @@ func _emit_small(profile: BloodProfile, rel: BloodRelease, pattern: BloodPattern
 	for i in count:
 		_sample(pattern, BloodTypes.Layer.SMALL, float(i) / maxf(count, 1))
 		var d := exp(_rng.randf_range(log(0.00008), log(0.001)))
-		var velocity := pattern.out_dir * profile.small_speed * pattern.out_speed * (0.7 + rel.total_mass() * 1.2)
+		var reach := 0.7 + rel.total_mass() * 1.2
+		if rel.family() in [BloodTypes.DamageType.SLASHING, BloodTypes.DamageType.BLUNT]:
+			reach = clampf(rel.context.weapon_velocity_ws.length() / 10.0, 0.75, 1.3)
+		elif rel.family() == BloodTypes.DamageType.HIGH_ENERGY:
+			reach = minf(reach, 1.5)
+		var velocity := pattern.out_dir * profile.small_speed * pattern.out_speed * reach
 		_emit_representative(profile, _safe_release_origin(rel.position_ws(), pattern.out_origin),
 			velocity, 0.0, parcel / count, 1.0, d, -1, rel.event_id, 1)
 	_led_physical_mass += parcel
@@ -811,10 +822,20 @@ func _emit_medium(profile: BloodProfile, rel: BloodRelease, pattern: BloodPatter
 		if violent and not rel.is_residual and _rng.randf() < settings.fluid.ligament_fraction:
 			kind = BloodFluidModel.Liquid.LIGAMENT
 		var velocity := pattern.out_dir * profile.medium_speed * pattern.out_speed * (0.8 + rel.total_mass() * 1.1)
+		if not rel.is_residual and rel.family() in [BloodTypes.DamageType.SLASHING, BloodTypes.DamageType.BLUNT]:
+			# Logical parcel mass controls accounting/count, not launch impulse.
+			velocity = pattern.out_dir * profile.medium_speed * pattern.out_speed * clampf(rel.context.weapon_velocity_ws.length() / 10.0, 0.75, 1.3)
 		var high_arc := false
 		if profile.damage_type == BloodTypes.DamageType.HIGH_ENERGY and not rel.is_residual:
 			high_arc = kind<=BloodFluidModel.Liquid.MEDIUM and velocity.y>0 and fmod(float(i)*0.61803398875,1.0)<settings.stability.rain_high_arc_fraction
 			velocity = BloodFlightPresentation.explosive_velocity(velocity, kind, settings.stability,high_arc)
+			if settings.stability.rain_enabled and not high_arc and kind == BloodFluidModel.Liquid.SMALL:
+				# The medium render layer also contains physical SMALL drops. These
+				# escaped the carrier launch calibration (up to159m/s in THE_BOX).
+				# Compress only their initial speed, retaining direction and a spread;
+				# reuse the approved energetic-spray envelope, never clamp travel.
+				var envelope := maxf(settings.stability.rain_high_arc_speed_cap, 1.0)
+				velocity /= sqrt(1.0 + velocity.length_squared() / (envelope * envelope))
 		# Ballistic fine drops launch faster on average; size bands still overlap.
 		if profile.damage_type == BloodTypes.DamageType.BALLISTIC:
 			velocity *= clampf(pow(0.0015 / diameters[i], 0.18), 0.7, 1.35)
@@ -1150,7 +1171,8 @@ func _write_representative(i: int) -> void:
 	if not settings.stability.rain_rejected_baseline_debug:
 		var drawn := false
 		if _writing_rain and _rep_trail[i]!=0 and settings.stability.rain_streak_mode!=0:
-			var dims:=BloodFlightPresentation.streak_dimensions(_rep_kind[i],_rep_vel[i].length(),_view_position.distance_to(_rep_pos[i]),_view_pixels_per_radian,_rep_vel[i].y < -1,settings.stability)
+			var visual_kind := maxi(_rep_kind[i], BloodFluidModel.Liquid.SMALL) if _rep_mass[i]>=0.001 else _rep_kind[i]
+			var dims:=BloodFlightPresentation.streak_dimensions(visual_kind,_rep_vel[i].length(),_view_position.distance_to(_rep_pos[i]),_view_pixels_per_radian,_rep_vel[i].y < -1,settings.stability)
 			drawn=_rain_streaks.write(_rep_pos[i],_rep_vel[i],_view_position,_view_right,dims,_rep_color[i],_rep_id[i])
 		if (drawn and _rep_kind[i]<=BloodFluidModel.Liquid.MEDIUM) or settings.stability.rain_streak_mode==2:
 			# Hidden bodies need one zero-scale write, not a basis rebuild every step.
@@ -1232,19 +1254,19 @@ func _step_representatives(delta: float) -> void:
 				rank = 1
 		_rep_rank[j] = rank
 		var relative := _rep_pos[j] - camera_pos
-		var in_front := camera == null or relative.dot(-camera.global_basis.z) > 0.0
-		_rep_trail_rank[j] = BloodFlightPresentation.trail_priority(_rep_kind[j], _rep_vel[j], relative.length_squared(), in_front, settings.stability)
+		var in_front := camera == null or camera.is_position_in_frustum(_rep_pos[j])
+		_rep_trail_rank[j] = BloodFlightPresentation.trail_priority(_rep_kind[j], _rep_vel[j], relative.length_squared(), in_front, settings.stability, _rep_mass[j])
 	# Fixed storage, choose wakes by current importance, never by a recycled slot ID.
 	_rep_trail.fill(0)
 	var trail_count := 0
-	for priority in 5:
+	for priority in 6:
 		for j in _rep_count:
 			var budget:=settings.stability.max_trails if settings.stability.rain_rejected_baseline_debug else mini(settings.stability.rain_streak_budget,_rain_streaks.slots.size())
 			if trail_count >= budget: break
 			if _rep_trail_rank[j] != priority: continue
 			if settings.stability.rain_rejected_baseline_debug:
 				if trail_length_for(_rep_kind[j],_rep_vel[j].length(),_rep_profile[j].damage_type)<=0: continue
-			elif _rep_kind[j]<BloodFluidModel.Liquid.SMALL or _rep_vel[j].length()<settings.stability.rain_streak_min_speed: continue
+			elif (_rep_kind[j]<BloodFluidModel.Liquid.SMALL and _rep_mass[j]<0.001) or _rep_vel[j].length()<settings.stability.rain_streak_min_speed: continue
 			_rep_trail[j] = 1
 			trail_count += 1
 	for priority in 3:
@@ -1336,7 +1358,7 @@ func _land_representative(i: int, point: Vector3, normal: Vector3, vel: Vector3)
 	material_stats.collisions += 1
 	_led_hit_world += mass
 	_record_causal({"action": "collision", "drop_id": _causal_drop, "event_id": _causal_event,
-		"parent_id": _rep_parent[i], "position": point, "velocity": vel, "diameter": _rep_diameter[i],
+		"parent_id": _rep_parent[i], "position": point, "normal":normal, "velocity": vel, "diameter": _rep_diameter[i],
 		"mass": mass, "impact": _impact_response.duplicate()})
 	var radius := _stain_radius(profile, mass) * float(_impact_response.spread)
 	var kind := int(_rep_kind[i])

@@ -1,0 +1,25 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+OpenGL API 3.3.0 Core Profile Context 26.8.1.260810 - Compatibility - Using Device: ATI Technologies Inc. - AMD Radeon RX 9060 XT
+
+SIGNATURE_CASE w0 wall=2.0 births=33 impacts=37 stains=106
+SIGNATURE_CASE w0 wall=7.0 births=33 impacts=39 stains=76
+SIGNATURE_CASE w0 wall=18.0 births=33 impacts=42 stains=79
+SIGNATURE_CASE w1 wall=2.0 births=189 impacts=183 stains=357
+SIGNATURE_CASE w1 wall=7.0 births=104 impacts=104 stains=198
+SIGNATURE_CASE w1 wall=18.0 births=104 impacts=104 stains=203
+SIGNATURE_CASE w2 wall=2.0 births=258 impacts=265 stains=439
+SIGNATURE_CASE w2 wall=7.0 births=258 impacts=265 stains=440
+SIGNATURE_CASE w2 wall=18.0 births=258 impacts=262 stains=444
+SIGNATURE_CASE w3 wall=2.0 births=223 impacts=281 stains=433
+SIGNATURE_CASE w3 wall=7.0 births=222 impacts=286 stains=342
+SIGNATURE_CASE w3 wall=18.0 births=222 impacts=288 stains=334
+SIGNATURE_CASE w3 wall=18.0 births=320 impacts=390 stains=484
+SIGNATURE_CASE w3 wall=18.0 births=346 impacts=448 stains=1026
+SIGNATURE_CASE w0 wall=7.0 births=33 impacts=37 stains=79
+SIGNATURE_CASE w1 wall=7.0 births=104 impacts=104 stains=208
+SIGNATURE_CASE w2 wall=7.0 births=258 impacts=262 stains=449
+SIGNATURE_CASE w3 wall=7.0 births=222 impacts=284 stains=338
+SIGNATURE_CASE w3 wall=18.0 births=0 impacts=0 stains=0
+SIGNATURE_CASE w3 wall=18.0 births=0 impacts=0 stains=0
+SIGNATURE_CASE w3 wall=18.0 births=0 impacts=0 stains=0
+SIGNATURE_SAVED phase=final failures=0

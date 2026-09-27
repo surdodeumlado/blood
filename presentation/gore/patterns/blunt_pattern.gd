@@ -127,8 +127,9 @@ func sample(layer: BloodTypes.Layer, u: float) -> void:
 	# Speed rises with how closely this piece followed the blow: material thrown
 	# straight down the momentum axis got the most energy out of the impact.
 	var along: float = clampf(out_dir.dot(_axis), 0.0, 1.0)
-	out_speed = lerpf(TRAVEL_SPEED_MIN, TRAVEL_SPEED_MAX, along * along)
-	out_speed *= _rng.randf_range(0.8, 1.25)
+	# Alignment defines direction, not maximum speed for every travelling drop.
+	out_speed = lerpf(TRAVEL_SPEED_MIN, TRAVEL_SPEED_MAX, pow(_rng.randf(), 2.0))
+	out_speed *= lerpf(0.8, 1.25, along)
 
 	# Born across the contact patch, and pushed along the axis so the trail
 	# starts on the far side of the victim rather than inside it.

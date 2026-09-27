@@ -33,6 +33,7 @@ const LEADING_EDGE_SPEED := 1.9
 var _cut_axis := Vector3.RIGHT
 var _cut_length := 0.6
 var _plane_normal := Vector3.UP
+var _launch_axis := Vector3.FORWARD
 
 
 func _on_begin() -> void:
@@ -41,6 +42,11 @@ func _on_begin() -> void:
 	# swing plane, which the melee weapon does.
 	_plane_normal = _frame.y
 	_cut_axis = _frame.x
+	_launch_axis = _frame.z
+	var motion := _release.context.weapon_velocity_ws
+	if motion.length_squared() > 1.0:
+		_cut_axis = motion.normalized()
+		_launch_axis = (_cut_axis * 0.9 + _frame.z * 0.1).normalized()
 	_cut_length = CUT_LENGTH * (0.45 + _release.total_mass())
 
 
@@ -53,7 +59,7 @@ func sample(layer: BloodTypes.Layer, u: float) -> void:
 
 	# --- DIRECTION: rotate the swing axis about the plane normal. Pure planar.
 	var angle := deg_to_rad(ARC_HALF_ANGLE) * t
-	var dir := _frame.z.rotated(_plane_normal, angle)
+	var dir := _launch_axis.rotated(_plane_normal, angle)
 	# Only a few degrees of thickness, so the sheet stays a sheet.
 	var wobble := deg_to_rad(_rng.randf_range(-OUT_OF_PLANE, OUT_OF_PLANE))
 	# Heavy material sags out of the plane a little more than mist does.
@@ -64,7 +70,8 @@ func sample(layer: BloodTypes.Layer, u: float) -> void:
 	# --- SPEED: fastest at the leading edge of the sweep, trailing off behind.
 	# `t` runs from the start of the arc to its end, so the far end is the tip.
 	var edge: float = clampf((t + 1.0) * 0.5, 0.0, 1.0)
-	out_speed = lerpf(0.55, LEADING_EDGE_SPEED, edge) * _rng.randf_range(0.8, 1.25)
+	# Dense slower fan, sparse energetic leading edge.
+	out_speed = lerpf(0.4, LEADING_EDGE_SPEED, pow(edge, 2.0)) * _rng.randf_range(0.8, 1.25)
 
 	# --- ORIGIN: spread ALONG the cut, not around a point.
 	out_origin = _cut_axis * (t * _cut_length * 0.5)

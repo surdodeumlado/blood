@@ -1,0 +1,7 @@
+[
+    "presentation\\gore\\blood_flight_presentation.gd",
+    "presentation\\gore\\blood_system.gd",
+    "presentation\\gore\\patterns\\slashing_pattern.gd",
+    "presentation\\gore\\patterns\\explosive_pattern.gd",
+    "presentation\\gore\\patterns\\blunt_pattern.gd"
+]
