@@ -1,6 +1,6 @@
-﻿# Weapon signature handoff — 2026-09-26
+# Weapon signature handoff — 2026-09-26
 
-CURRENT PHASE: implementation and feasible technical validation complete; Git review/commit/push next. Full-speed player acceptance remains pending.
+CURRENT PHASE: implementation, feasible technical validation, Git review, commit and normal push complete. Full-speed player acceptance remains pending. STOP AFTER THIS PASS.
 ORIGINAL RESEARCH RECOVERED: YES. BLOOD_PHYSICS_RESEARCH sections11–13 and pattern/profile history since12d862b. Baseline5a41f7f.
 BALLISTIC ROOT CAUSE: no launch regression measured; original directional/back-spatter signature retained.
 SLASHING ROOT CAUSE: generic blended frame instead of actual cut tangent; edge speed and total-mass multiplier exaggerated launch. Corrected tangent, statistical speed weighting, tip-based calibration.
@@ -25,8 +25,8 @@ VALIDATION: model clean;14-case final headless exit0; existing regression42/0; O
 PERFORMANCE: native trace-disabled physical CPU mean/P95/peak ms:1 victim1.210/3.715/7.750;2 victims1.575/5.580/13.695;4 victims1.813/7.417/15.745. Physical peaks317/423/454; fixed192 streaks. Details/limits in BLOOD_WEAPON_SIGNATURE_REPORT.md.
 MEMORY P0 STATUS: historical0xC0000005 unresolved; NONE observed this pass. No new production nodes/resources/histories, resizing or teardown changes. Fixture overflow0. RAM high-water not measured.
 KNOWN LIMITATIONS: preexisting absent foley warning, audio locked. Player-moving and all head/body/angle combinations remain manual acceptance. Raw captures/traces kept local, not committed. Baseline histogram mass is explicitly a birth-mass proxy; final collision mass is accurate.
-GIT COMMIT: pending.
-PUSH STATUS: pending.
-LAST COMMAND: native exit0 and summary/hash/diff review; report written.
-NEXT EXACT ACTION: git status --short; git diff --check; review and stage only five production files, current fixtures/docs/compact evidence; commit; verify origin/main; normal push. Preserve unrelated dirty tests/reports and earlier untracked evidence.
+GIT COMMIT: 6ec91ea — fix(blood): rebuild weapon splatter ranges and causal flight visibility. Branch main; remote origin https://github.com/surdodeumlado/blood.git.
+PUSH STATUS: SUCCESS. Normal git push origin main advanced5a41f7f→6ec91ea. This documentation follow-up records the completed implementation push.
+LAST COMMAND: git push origin main (exit0, main -> main).
+NEXT EXACT ACTION: player full-speed THE_BOX checklist in BLOOD_WEAPON_SIGNATURE_REPORT.md. No additional automatic tuning or native runs. Unrelated dirty tests/reports and earlier untracked evidence remain preserved.
 DO NOT RESTART: no new physics/rain/audio/surface pass; no repeat native validation. Player perception remains final authority.
