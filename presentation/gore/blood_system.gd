@@ -693,7 +693,8 @@ func estimate_release(ctx: BloodContext) -> BloodRelease:
 	else:
 		blood = cfg.max_blood * cfg.hit_blood_fraction * scale
 		tissue = blood * cfg.hit_tissue_ratio
-	var rel := BloodRelease.make(ctx, blood, tissue)
+	var rel := BloodRelease.make(ctx, blood * cfg.blood_quantity_multiplier, tissue)
+	rel.quantity_multiplier = cfg.blood_quantity_multiplier
 	rel.tissue_mix = cfg.tissue_mix_for(ctx.damage_type)
 	rel.wound_severity = cfg.wound_severity_for(ctx.damage_type)
 	return rel
@@ -734,11 +735,11 @@ func _admit(layer: BloodMultiMeshLayer, demand: float, floor_count: int) -> int:
 
 
 func _emit_micro(profile: BloodProfile, rel: BloodRelease, pattern: BloodPattern) -> void:
-	var demand := rel.blood_mass * settings.micro_per_mass * profile.micro_weight
+	var demand := rel.emission_blood_mass() * settings.micro_per_mass * profile.micro_weight
 	var count := _admit(_micro, demand, settings.min_micro_per_event)
 	if rel.is_residual:
 		count = mini(count, 6)
-	var reach := 0.6 + rel.total_mass() * 1.4
+	var reach := 0.6 + rel.emission_mass() * 1.4
 	for i in count:
 		var u := float(i) / maxf(float(count), 1.0)
 		_sample(pattern, BloodTypes.Layer.MICRO, u)
@@ -758,7 +759,7 @@ func _emit_micro(profile: BloodProfile, rel: BloodRelease, pattern: BloodPattern
 
 
 func _emit_small(profile: BloodProfile, rel: BloodRelease, pattern: BloodPattern) -> void:
-	var count := mini(_admit(_small, rel.blood_mass * settings.small_per_mass * profile.small_weight * (settings.stability.explosion_small_sampling if settings.stability.rain_enabled and profile.damage_type == BloodTypes.DamageType.HIGH_ENERGY else 1.0), 4), _small.free_slots())
+	var count := mini(_admit(_small, rel.emission_blood_mass() * settings.small_per_mass * profile.small_weight * (settings.stability.explosion_small_sampling if settings.stability.rain_enabled and profile.damage_type == BloodTypes.DamageType.HIGH_ENERGY else 1.0), 4), _small.free_slots())
 	if rel.is_residual: return
 	var parcel := rel.blood_mass * settings.physical_mass_share * 0.35
 	if count <= 0:
@@ -767,7 +768,7 @@ func _emit_small(profile: BloodProfile, rel: BloodRelease, pattern: BloodPattern
 	for i in count:
 		_sample(pattern, BloodTypes.Layer.SMALL, float(i) / maxf(count, 1))
 		var d := exp(_rng.randf_range(log(0.00008), log(0.001)))
-		var reach := 0.7 + rel.total_mass() * 1.2
+		var reach := 0.7 + rel.emission_mass() * 1.2
 		if rel.family() in [BloodTypes.DamageType.SLASHING, BloodTypes.DamageType.BLUNT]:
 			reach = clampf(rel.context.weapon_velocity_ws.length() / 10.0, 0.75, 1.3)
 		elif rel.family() == BloodTypes.DamageType.HIGH_ENERGY:
@@ -779,7 +780,7 @@ func _emit_small(profile: BloodProfile, rel: BloodRelease, pattern: BloodPattern
 	if not rel.is_residual: last_small_spawned = count
 
 func _emit_medium(profile: BloodProfile, rel: BloodRelease, pattern: BloodPattern) -> void:
-	var count := mini(_admit(_medium, rel.blood_mass * settings.medium_per_mass * profile.medium_weight * (settings.stability.explosion_medium_sampling if settings.stability.rain_enabled and profile.damage_type == BloodTypes.DamageType.HIGH_ENERGY else 1.0), settings.min_medium_per_event), _medium.free_slots())
+	var count := mini(_admit(_medium, rel.emission_blood_mass() * settings.medium_per_mass * profile.medium_weight * (settings.stability.explosion_medium_sampling if settings.stability.rain_enabled and profile.damage_type == BloodTypes.DamageType.HIGH_ENERGY else 1.0), settings.min_medium_per_event), _medium.free_slots())
 	if rel.is_residual: count = mini(count, 3)
 	var parcel := rel.blood_mass if rel.is_residual else rel.blood_mass * settings.physical_mass_share * 0.65
 	if count <= 0:
@@ -821,7 +822,7 @@ func _emit_medium(profile: BloodProfile, rel: BloodRelease, pattern: BloodPatter
 		var violent := profile.damage_type == BloodTypes.DamageType.BLUNT or profile.damage_type == BloodTypes.DamageType.HIGH_ENERGY
 		if violent and not rel.is_residual and _rng.randf() < settings.fluid.ligament_fraction:
 			kind = BloodFluidModel.Liquid.LIGAMENT
-		var velocity := pattern.out_dir * profile.medium_speed * pattern.out_speed * (0.8 + rel.total_mass() * 1.1)
+		var velocity := pattern.out_dir * profile.medium_speed * pattern.out_speed * (0.8 + rel.emission_mass() * 1.1)
 		if not rel.is_residual and rel.family() in [BloodTypes.DamageType.SLASHING, BloodTypes.DamageType.BLUNT]:
 			# Logical parcel mass controls accounting/count, not launch impulse.
 			velocity = pattern.out_dir * profile.medium_speed * pattern.out_speed * clampf(rel.context.weapon_velocity_ws.length() / 10.0, 0.75, 1.3)
@@ -876,7 +877,7 @@ func _emit_solids(profile: BloodProfile, rel: BloodRelease, pattern: BloodPatter
 		return
 	var grain_demand := rel.tissue_mass * settings.grains_per_tissue * profile.grain_weight
 	var chunk_demand := rel.tissue_mass * settings.large_per_tissue * profile.chunk_weight
-	var reach := 0.7 + rel.total_mass()
+	var reach := 0.7 + rel.emission_mass()
 	# Recycle settled organic debris only; a live slot must have one simulator.
 	var wanted := mini(int(ceil((grain_demand + chunk_demand) * settings.quality_scale())), _large.capacity)
 	while _large.free_slots() < wanted and not _sol_settled.is_empty():
@@ -955,7 +956,7 @@ func _coarse_deposition(profile: BloodProfile, rel: BloodRelease, pattern: Blood
 		if rel.is_residual: return
 		var mass := rel.blood_mass * (1.0 - settings.physical_mass_share)
 		_led_air_mass += mass
-		var probes := clampi(int(ceil(mass * settings.cloud_probes_per_mass * _density)), 2, settings.cloud_probes_max)
+		var probes := clampi(int(ceil(rel.emission_blood_mass() * (1.0 - settings.physical_mass_share) * settings.cloud_probes_per_mass * _density)), 2, settings.cloud_probes_max)
 		for probe in probes:
 			_sample(pattern, BloodTypes.Layer.MEDIUM, float(probe) / probes)
 			_queue_coarse(profile, _safe_release_origin(rel.position_ws(), pattern.out_origin), pattern.out_dir, mass / probes, rel.event_id, false, rel.is_kill())
@@ -967,7 +968,7 @@ func _coarse_deposition(profile: BloodProfile, rel: BloodRelease, pattern: Blood
 	if cloud_mass <= 0.0:
 		return
 	var probes := clampi(
-		int(round(cloud_mass * settings.cloud_probes_per_mass)), 1, settings.cloud_probes_max
+		int(round(rel.emission_blood_mass() * (1.0 - settings.physical_mass_share) * settings.cloud_probes_per_mass)), 1, settings.cloud_probes_max
 	)
 	var per_probe := cloud_mass / float(probes)
 	var space := get_world_3d().direct_space_state

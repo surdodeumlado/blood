@@ -1,0 +1,155 @@
+{
+    "failures":  [
+
+                 ],
+    "comparison":  [
+                       {
+                           "weapon":  1,
+                           "mass_ratio":  1.3816192640029847727554601504,
+                           "after":  {
+                                         "queries":  12005,
+                                         "budgets":  {
+                                                         "audio":  0,
+                                                         "drops":  54,
+                                                         "micro":  53,
+                                                         "queries":  231,
+                                                         "runoff":  1,
+                                                         "solid_queries":  12,
+                                                         "solids":  12,
+                                                         "stains":  16,
+                                                         "wall_drops":  0
+                                                     },
+                                         "physical_cpu_ms":  {
+                                                                 "peak":  2.528,
+                                                                 "mean":  0.45666111111111107,
+                                                                 "p95":  1.84
+                                                             },
+                                         "surface_peak":  263,
+                                         "weapon":  1,
+                                         "accepted_mass":  0.782304585186255,
+                                         "representative_peak":  105,
+                                         "stages_cpu_ms":  {
+                                                               "peak":  7.442,
+                                                               "mean":  1.436102777777778,
+                                                               "p95":  3.401
+                                                           },
+                                         "gain":  1.5,
+                                         "events":  1,
+                                         "quad_area":  18.5404902392662,
+                                         "streak_peak":  100,
+                                         "victims":  1,
+                                         "streak_demand":  80
+                                     },
+                           "before":  {
+                                          "queries":  10508,
+                                          "budgets":  {
+                                                          "audio":  0,
+                                                          "drops":  54,
+                                                          "micro":  53,
+                                                          "queries":  212,
+                                                          "runoff":  0,
+                                                          "solid_queries":  12,
+                                                          "solids":  12,
+                                                          "stains":  14,
+                                                          "wall_drops":  0
+                                                      },
+                                          "physical_cpu_ms":  {
+                                                                  "peak":  2.741,
+                                                                  "mean":  0.45317777777777779,
+                                                                  "p95":  1.905
+                                                              },
+                                          "surface_peak":  212,
+                                          "weapon":  1,
+                                          "accepted_mass":  0.566222986005329,
+                                          "representative_peak":  105,
+                                          "stages_cpu_ms":  {
+                                                                "peak":  7.755,
+                                                                "mean":  1.3033166666666667,
+                                                                "p95":  3.233
+                                                            },
+                                          "gain":  1.0,
+                                          "events":  1,
+                                          "quad_area":  14.9498872106443,
+                                          "streak_peak":  100,
+                                          "victims":  1,
+                                          "streak_demand":  80
+                                      },
+                           "area_ratio":  1.2401759276194000563188744314,
+                           "victims":  1
+                       },
+                       {
+                           "weapon":  2,
+                           "mass_ratio":  1.5053839190713512852322513886,
+                           "after":  {
+                                         "queries":  24723,
+                                         "budgets":  {
+                                                         "audio":  0,
+                                                         "drops":  169,
+                                                         "micro":  63,
+                                                         "queries":  608,
+                                                         "runoff":  0,
+                                                         "solid_queries":  64,
+                                                         "solids":  72,
+                                                         "stains":  25,
+                                                         "wall_drops":  0
+                                                     },
+                                         "physical_cpu_ms":  {
+                                                                 "peak":  6.006,
+                                                                 "mean":  0.83196944444444443,
+                                                                 "p95":  4.872
+                                                             },
+                                         "surface_peak":  482,
+                                         "weapon":  2,
+                                         "accepted_mass":  1.54012535621169,
+                                         "representative_peak":  274,
+                                         "stages_cpu_ms":  {
+                                                               "peak":  21.159,
+                                                               "mean":  2.3819111111111111,
+                                                               "p95":  8.848
+                                                           },
+                                         "gain":  1.5,
+                                         "events":  1,
+                                         "quad_area":  55.151886304663,
+                                         "streak_peak":  191,
+                                         "victims":  1,
+                                         "streak_demand":  216
+                                     },
+                           "before":  {
+                                          "queries":  21863,
+                                          "budgets":  {
+                                                          "audio":  0,
+                                                          "drops":  169,
+                                                          "micro":  63,
+                                                          "queries":  608,
+                                                          "runoff":  0,
+                                                          "solid_queries":  64,
+                                                          "solids":  72,
+                                                          "stains":  24,
+                                                          "wall_drops":  0
+                                                      },
+                                          "physical_cpu_ms":  {
+                                                                  "peak":  6.499,
+                                                                  "mean":  0.82,
+                                                                  "p95":  4.886
+                                                              },
+                                          "surface_peak":  433,
+                                          "weapon":  2,
+                                          "accepted_mass":  1.02307812425801,
+                                          "representative_peak":  273,
+                                          "stages_cpu_ms":  {
+                                                                "peak":  21.023,
+                                                                "mean":  2.2394833333333333,
+                                                                "p95":  8.661
+                                                            },
+                                          "gain":  1.0,
+                                          "events":  1,
+                                          "quad_area":  43.2088549933071,
+                                          "streak_peak":  191,
+                                          "victims":  1,
+                                          "streak_demand":  214
+                                      },
+                           "area_ratio":  1.2764024020818379389338952199,
+                           "victims":  1
+                       }
+                   ]
+}

@@ -24,6 +24,9 @@ var context: BloodContext
 
 ## How much BLOOD this release is worth, in reservoir units.
 var blood_mass := 0.0
+## Snapshot of the reservoir's quantity tuning. Only emission sampling uses
+## the reference amount; all accounting/contact/deposition uses blood_mass.
+var quantity_multiplier := 1.0
 ## Blood retained on the contacting implement, carved out before emission.
 ## blood_mass + contact_retained_mass equals the body's original withdrawal.
 var contact_retained_mass := 0.0
@@ -72,10 +75,20 @@ func energy() -> float:
 	return context.energy if context != null else 1.0
 
 
-## Total material, used for the coarse "how big was this event" decisions like
-## how far the pattern should reach.
+## Actual logical material for accounting. Launch geometry/speed uses the
+## separate emission reference so quantity tuning cannot lengthen trajectories.
 func total_mass() -> float:
 	return blood_mass + tissue_mass
+
+
+func emission_blood_mass() -> float:
+	# Blade retention is unchanged in absolute mass. Undo the quantity scale
+	# before subtracting that same retained amount from the launch reference.
+	return maxf(0.0, (blood_mass + contact_retained_mass) / maxf(quantity_multiplier, 1.0) - contact_retained_mass)
+
+
+func emission_mass() -> float:
+	return emission_blood_mass() + tissue_mass
 
 
 ## How much of the tissue budget belongs to one category.

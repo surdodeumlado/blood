@@ -47,7 +47,7 @@ func _on_begin() -> void:
 	if motion.length_squared() > 1.0:
 		_cut_axis = motion.normalized()
 		_launch_axis = (_cut_axis * 0.9 + _frame.z * 0.1).normalized()
-	_cut_length = CUT_LENGTH * (0.45 + _release.total_mass())
+	_cut_length = CUT_LENGTH * (0.45 + _release.emission_mass())
 
 
 func sample(layer: BloodTypes.Layer, u: float) -> void:

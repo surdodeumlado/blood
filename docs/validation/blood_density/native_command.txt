@@ -1,0 +1,1 @@
+C:\Program Files (x86)\Steam\steamapps\common\Godot Engine\godot.windows.opt.tools.64.exe --rendering-method gl_compatibility --resolution 1280x720 --max-fps 60 --path "C:\Users\Usuario\Desktop\BloodSplatterNineCircles" res://tests/blood_density_live.tscn --log-file "C:\Users\Usuario\Desktop\BloodSplatterNineCircles\docs\validation\blood_density/native.log"

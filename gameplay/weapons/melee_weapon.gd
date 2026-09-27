@@ -324,7 +324,7 @@ func _retain_contact_blood(release: BloodRelease) -> void:
 	if blood == null: return
 	var unit_mass := blood.settings.fluid.castoff_load_mass
 	var wanted := minf(blood_load_per_hit, 1.0 - blood_load) * unit_mass
-	var taken := minf(wanted, release.blood_mass * blood.settings.fluid.contact_retained_fraction)
+	var taken := minf(wanted, release.emission_blood_mass() * blood.settings.fluid.contact_retained_fraction)
 	release.blood_mass -= taken
 	release.contact_retained_mass += taken
 	blood_load = minf(blood_load + taken / maxf(unit_mass, 0.000001), 1.0)

@@ -41,7 +41,7 @@ func _on_begin() -> void:
 	_back_axis = ctx.victim_to_attacker_ws()
 	_back_frame = _basis_around(_back_axis)
 	# A headshot blows a bigger channel than a torso hit.
-	_channel = 0.14 + 0.5 * _release.total_mass()
+	_channel = 0.14 + 0.5 * _release.emission_mass()
 	_back_fraction = 0.18
 
 

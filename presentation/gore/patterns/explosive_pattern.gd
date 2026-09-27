@@ -44,7 +44,7 @@ func _on_begin() -> void:
 		_blast = Vector3.UP
 	_blast = _blast.normalized()
 
-	var spread := BODY_RADIUS * (0.6 + _release.total_mass())
+	var spread := BODY_RADIUS * (0.6 + _release.emission_mass())
 	_origins.resize(SUB_ORIGINS)
 	for i in SUB_ORIGINS:
 		# Scattered across the body, then pushed along the blast axis so the

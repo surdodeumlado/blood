@@ -43,9 +43,9 @@ func refill() -> void:
 	generation += 1
 	remnant_transferred = 0.0
 	for w in wounds: w.exhaust()
-	remaining_blood = config.max_blood
+	remaining_blood = config.max_blood * config.blood_quantity_multiplier
 	remaining_tissue = config.max_tissue
-	death_release_allowance = config.max_blood * config.death_release_allowance
+	death_release_allowance = config.max_blood * config.blood_quantity_multiplier * config.death_release_allowance
 	wounds.clear()
 
 
@@ -85,11 +85,11 @@ func withdraw(ctx: BloodContext) -> BloodRelease:
 		if ctx.body_region == BloodTypes.BodyRegion.HEAD:
 			fraction = minf(fraction * config.kill_head_multiplier, 1.0)
 		blood = remaining_blood * fraction * scale
-		tissue = blood * config.kill_tissue_ratio
+		tissue = blood / config.blood_quantity_multiplier * config.kill_tissue_ratio
 		severity = config.remnant_severity
 	else:
 		blood = remaining_blood * minf(config.hit_blood_fraction * scale, config.max_nonlethal_fraction)
-		tissue = blood * config.hit_tissue_ratio
+		tissue = blood / config.blood_quantity_multiplier * config.hit_tissue_ratio
 		severity = config.wound_severity_for(family) * clampf(scale, 0.3, 2.0)
 
 	# A body cannot give what it does not have. A corpse keeps a small allowance
@@ -99,6 +99,7 @@ func withdraw(ctx: BloodContext) -> BloodRelease:
 	remaining_tissue = maxf(remaining_tissue - tissue, 0.0)
 
 	var release := BloodRelease.make(ctx, blood, tissue)
+	release.quantity_multiplier = config.blood_quantity_multiplier
 	release.tissue_mix = config.tissue_mix_for(family)
 	release.wound_severity = severity
 	total_released += blood
@@ -118,7 +119,7 @@ func _draw_blood(wanted: float, is_kill: bool) -> float:
 		# A kill empties what it took AND unlocks the corpse allowance, so the
 		# body still has something left for a remnant to leak.
 		death_release_allowance = maxf(
-			death_release_allowance, config.max_blood * config.death_release_allowance * 0.5
+			death_release_allowance, config.max_blood * config.blood_quantity_multiplier * config.death_release_allowance * 0.5
 		)
 	return drawn
 

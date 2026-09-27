@@ -1,0 +1,30 @@
+{
+	"audio_peak_voices": 0,
+	"captures": [],
+	"checks": 42,
+	"failures": [],
+	"frame_peak_usage": {
+		"audio": 0,
+		"drops": 104,
+		"micro": 128,
+		"queries": 600,
+		"runoff": 1,
+		"solid_queries": 0,
+		"solids": 0,
+		"stains": 48,
+		"wall_drops": 0
+	},
+	"physical_counts_after_three_steps_1_2_4_8_victims": [
+		72,
+		105,
+		150,
+		176
+	],
+	"pool_area_samples_m2": [
+		0.0,
+		0.0539999958873546,
+		0.108000000938773,
+		0.161999986080874,
+		0.215999983549418
+	]
+}

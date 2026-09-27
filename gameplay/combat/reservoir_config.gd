@@ -11,6 +11,9 @@ extends Resource
 @export_group("Capacity")
 ## A full body. Every draw below is a fraction of this.
 @export var max_blood := 1.0
+## More represented liquid, not faster/larger physical drops or more tissue.
+## Emission sampling is normalized separately by BloodRelease.
+@export_range(1.0, 2.0) var blood_quantity_multiplier := 1.0
 @export var max_tissue := 1.0
 ## A dead body may keep giving material up to this fraction of its capacity,
 ## which is what pays for post-mortem hits and residual leakage.

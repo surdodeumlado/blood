@@ -56,7 +56,7 @@ var _axis := Vector3.FORWARD
 
 
 func _on_begin() -> void:
-	var mass := _release.total_mass()
+	var mass := _release.emission_mass()
 	_contact = CONTACT_RADIUS * (0.6 + mass)
 	_cloud_radius = 0.35 + mass * 1.1
 	# The momentum axis. penetration_direction_ws is the swing's real momentum

@@ -5,6 +5,7 @@
 [resource]
 script = ExtResource("1_reservoir")
 max_blood = 1.0
+blood_quantity_multiplier = 1.5
 max_tissue = 1.0
 death_release_allowance = 0.35
 hit_blood_fraction = 0.13
