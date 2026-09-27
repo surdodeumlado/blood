@@ -1,5 +1,5 @@
-﻿# Blood density handoff — 2026-09-27
-CURRENT PHASE: implementation and technical/visual diagnostic validation complete; review/commit/push next.
+# Blood density handoff — 2026-09-27
+CURRENT PHASE: implementation, validation, diff review, commit and normal push complete. Player playtest acceptance pending. STOP AFTER THIS PASS.
 BASELINE: 9a72fee. Prior approved weapon signatures preserved.
 PRODUCTION: blood_quantity_multiplier1.5 in reservoir_defaults.tres. Real stock and primary blood releases+50%; finite corpse allowance scaled. Existing family/head/kill hierarchy retained. Tissue and blade load unchanged.
 EMISSION: normalized reference mass for count, launch/footprint and coarse-probe demand; actual larger mass used for accounting, physical parcels and existing surface deposits. No extra particle-count setting or physical diameter increase.
@@ -9,7 +9,7 @@ PERFORMANCE: native4-victim physical mean/P95/peak ms before→after: Cannon.559
 LOCKED: global physics/trajectory/fall, streak geometry/readability, crimson, puddle/fade/runoff/drip rules, wound lifecycle, audio, movement and weapon rules unchanged. Melee edit only blood retention reference.
 MEMORY P0: historical0xC0000005 unresolved; none observed. Same fixed capacities/slot resets, no new production nodes/resources/per-drop fields. One scalar added to existing release snapshot. No new teardown behavior. RAM high-water unmeasured.
 LIMITATIONS: single-hit distant difference modest; real-play judgment pending. Preexisting missing-foley/certificate warnings; audio untouched. Existing unrelated dirty tests/reports preserved. Raw timings/captures remain local untracked diagnostics.
-GIT COMMIT: pending.
-PUSH STATUS: pending.
-LAST COMMAND: review matched native captures and summarize native/headless A/B; git diff --check clean.
-NEXT EXACT ACTION: review final diff, stage only this pass, commit and normal push to existing origin/main. Then stop; no new blood redesign.
+GIT COMMIT: c9ef029 — feat(blood): increase represented blood quantity within existing budgets.
+PUSH STATUS: SUCCESS. origin/main at https://github.com/surdodeumlado/blood.git advanced9a72fee→c9ef029 by normal push. Documentation follow-up records this completed push.
+LAST COMMAND: git push origin main (exit0).
+NEXT EXACT ACTION: player THE_BOX playtest: hits versus kills, all four weapons,1/2/4victims; judge heavier floor/wall aftermath and frame stability. No automatic retuning or further native runs.
